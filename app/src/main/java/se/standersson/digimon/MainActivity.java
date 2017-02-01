@@ -15,6 +15,11 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         Intent intent = getIntent();
+
+        /* Suppress the warning about Unchecked Cast since we know what we're doing
+            Then, get the preferences from the intent.
+         */
+        @SuppressWarnings("unchecked")
         HashMap<String, String> prefs = (HashMap<String, String>)intent.getSerializableExtra("prefs");
     }
 }

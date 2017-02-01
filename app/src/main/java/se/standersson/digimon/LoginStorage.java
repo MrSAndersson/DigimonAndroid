@@ -5,21 +5,23 @@ import android.content.SharedPreferences;
 import java.util.HashMap;
 
 
-public class LoginStorage {
+ class LoginStorage {
     private SharedPreferences loginDetails;
     LoginStorage(Activity activity){
         loginDetails = activity.getPreferences(Activity.MODE_PRIVATE);
     }
 
-    void setPreferences(HashMap<String, String> prefs){
-        loginDetails.edit().putString("serverString", prefs.get("serverString")).commit();
-        loginDetails.edit().putString("username", prefs.get("username")).commit();
-        loginDetails.edit().putString("password", prefs.get("password")).commit();
+     // Save Login details
+    void setLoginDetails(HashMap<String, String> prefs){
+        loginDetails.edit().putString("serverString", prefs.get("serverString")).apply();
+        loginDetails.edit().putString("username", prefs.get("username")).apply();
+        loginDetails.edit().putString("password", prefs.get("password")).apply();
 
     }
 
-    HashMap<String, String> getPreferences(){
-        HashMap<String, String> prefs = new HashMap<String, String>();
+     // Serve Login details
+    HashMap<String, String> getLoginDetails(){
+        HashMap<String, String> prefs = new HashMap<>();
         prefs.put("serverString", loginDetails.getString("serverString", "test"));
         prefs.put("username", loginDetails.getString("username", "weee"));
         prefs.put("password", loginDetails.getString("password", "woo"));

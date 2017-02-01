@@ -21,7 +21,7 @@ public class LoginActivity extends Activity {
 
 
     public void logIn(View view){
-        Intent intent = new Intent(this,MainActivity.class);
+
 
         EditText editTextServer = (EditText) findViewById(R.id.login_server);
         EditText editTextUsername = (EditText) findViewById(R.id.login_username);
@@ -36,14 +36,22 @@ public class LoginActivity extends Activity {
         prefs.put("username", username);
         prefs.put("password", password);
 
+        /*
+        Store the settings and start the MainActivity
+         */
+        new LoginStorage(this).setLoginDetails(prefs);
+        Intent intent = new Intent(this,MainActivity.class);
         intent.putExtra("prefs", prefs);
-        new LoginStorage(this).setPreferences(prefs);
+
         startActivity(intent);
     }
 
     public void showPrefs(View view){
+        /*
+        A method for testing the storage.
+         */
         showPrefs = (TextView)findViewById(R.id.show_prefs);
-        HashMap<String, String> prefs = new LoginStorage(this).getPreferences();
+        HashMap<String, String> prefs = new LoginStorage(this).getLoginDetails();
         String outputString = "Server: " + prefs.get("serverString") + "\n" + "Username: " + prefs.get("username") + "\n" + "Password: " + prefs.get("password");
         showPrefs.setText(outputString);
     }
