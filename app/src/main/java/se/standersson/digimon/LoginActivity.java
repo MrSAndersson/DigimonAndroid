@@ -1,6 +1,7 @@
 package se.standersson.digimon;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -20,6 +21,8 @@ public class LoginActivity extends Activity {
 
 
     public void logIn(View view){
+        Intent intent = new Intent(this,MainActivity.class);
+
         EditText editTextServer = (EditText) findViewById(R.id.login_server);
         EditText editTextUsername = (EditText) findViewById(R.id.login_username);
         EditText editTextPassword = (EditText) findViewById(R.id.login_password);
@@ -33,7 +36,9 @@ public class LoginActivity extends Activity {
         prefs.put("username", username);
         prefs.put("password", password);
 
+        intent.putExtra("prefs", prefs);
         new LoginStorage(this).setPreferences(prefs);
+        startActivity(intent);
     }
 
     public void showPrefs(View view){
