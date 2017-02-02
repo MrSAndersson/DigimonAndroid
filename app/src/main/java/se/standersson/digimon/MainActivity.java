@@ -21,5 +21,6 @@ public class MainActivity extends Activity {
          */
         @SuppressWarnings("unchecked")
         HashMap<String, String> prefs = (HashMap<String, String>)intent.getSerializableExtra("prefs");
+        IcingaInteraction.updateData(prefs);
     }
 }
