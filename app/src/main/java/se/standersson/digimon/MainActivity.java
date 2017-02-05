@@ -3,6 +3,9 @@ package se.standersson.digimon;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
@@ -14,6 +17,26 @@ public class MainActivity extends Activity {
 
     static String reply;
     static JSONObject data;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.logout:
+                Intent intent = new Intent(this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,5 +62,7 @@ public class MainActivity extends Activity {
         } catch (JSONException e) {
             Toast.makeText(this, "Unable to parse JSON", Toast.LENGTH_LONG).show();
         }
+
+
     }
 }

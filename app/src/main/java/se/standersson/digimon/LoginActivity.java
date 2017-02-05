@@ -27,8 +27,6 @@ public class LoginActivity extends Activity {
 
 
     void logIn(View view){
-
-
         EditText editTextServer = (EditText) findViewById(R.id.login_server);
         EditText editTextUsername = (EditText) findViewById(R.id.login_username);
         EditText editTextPassword = (EditText) findViewById(R.id.login_password);
@@ -49,26 +47,26 @@ public class LoginActivity extends Activity {
         updateData(this, prefs);
     }
 
-    void showPrefs(View view){
+    void savedLogin(View view){
         /*
         A method for testing the storage.
          */
         showPrefs = (TextView)findViewById(R.id.show_prefs);
         HashMap<String, String> prefs = new LoginStorage(this).getLoginDetails();
         String outputString = "Server: " + prefs.get("serverString") + "\n" + "Username: " + prefs.get("username") + "\n" + "Password: " + prefs.get("password");
-        //showPrefs.setText(outputString);
-        savedLogin(prefs);
-
-    }
-
-    void savedLogin(HashMap<String, String> prefs) {
         /*
         Login with the saved credentials
          */
-        updateData(this, prefs);
+        if (prefs.get("serverString").equals("") && prefs.get("username").equals("") && prefs.get("password").equals("")) {
+            Toast.makeText(this, "No Saved Credentials", Toast.LENGTH_LONG).show();
+        } else {
+            updateData(this, prefs);
+        }
+
     }
 
     void updateData(final Context context, final HashMap<String, String> prefs) {
+
         new Thread() {
             public void run() {
                 final String reply = IcingaInteraction.fetchData(prefs);
@@ -94,6 +92,7 @@ public class LoginActivity extends Activity {
                         Intent intent = new Intent(context,MainActivity.class);
                         intent.putExtra("reply", reply);
                         startActivity(intent);
+                        finish();
                     }
                 });
             }

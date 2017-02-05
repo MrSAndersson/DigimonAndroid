@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 
 class LoginStorage {
-    private SharedPreferences loginDetails;
+   static private SharedPreferences loginDetails;
     LoginStorage(Activity activity){
         loginDetails = activity.getPreferences(Activity.MODE_PRIVATE);
     }
