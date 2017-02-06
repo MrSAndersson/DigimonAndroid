@@ -17,12 +17,24 @@ public class LoginActivity extends Activity {
 
     TextView showPrefs;
     private static Handler handler;
+    View serverView;
+    View usernameView;
+    View passwordView;
+    View loginButton;
+    View savedButton;
+    View progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log_in);
         handler = new Handler();
+        serverView = findViewById(R.id.login_server);
+        usernameView = findViewById(R.id.login_username);
+        passwordView = findViewById(R.id.login_password);
+        loginButton = findViewById(R.id.login_button);
+        savedButton = findViewById(R.id.saved_button);
+        progressBar = findViewById(R.id.login_progressbar);
     }
 
 
@@ -51,7 +63,6 @@ public class LoginActivity extends Activity {
         /*
         A method for testing the storage.
          */
-        showPrefs = (TextView)findViewById(R.id.show_prefs);
         HashMap<String, String> prefs = new LoginStorage(this).getLoginDetails();
         String outputString = "Server: " + prefs.get("serverString") + "\n" + "Username: " + prefs.get("username") + "\n" + "Password: " + prefs.get("password");
         /*
@@ -66,12 +77,14 @@ public class LoginActivity extends Activity {
     }
 
     void updateData(final Context context, final HashMap<String, String> prefs) {
-
+        progressBar.setVisibility(View.VISIBLE);
         new Thread() {
             public void run() {
+
                 final String reply = IcingaInteraction.fetchData(prefs);
                 handler.post(new Runnable(){
                     public void run(){
+                        
                         switch (reply) {
                             case "Wrong credentials\n":
                                 Toast.makeText(context, "Wrong Credentials", Toast.LENGTH_LONG).show();
@@ -92,11 +105,20 @@ public class LoginActivity extends Activity {
                         Intent intent = new Intent(context,MainActivity.class);
                         intent.putExtra("reply", reply);
                         startActivity(intent);
+
                         finish();
+                    }
+                });
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setVisibility(View.GONE);
                     }
                 });
             }
         }.start();
+
     }
 
 }
