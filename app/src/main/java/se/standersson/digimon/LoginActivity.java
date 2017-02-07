@@ -3,6 +3,8 @@ package se.standersson.digimon;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -77,47 +79,64 @@ public class LoginActivity extends Activity {
     }
 
     void updateData(final Context context, final HashMap<String, String> prefs) {
-        progressBar.setVisibility(View.VISIBLE);
-        new Thread() {
-            public void run() {
 
-                final String reply = IcingaInteraction.fetchData(prefs);
-                handler.post(new Runnable(){
-                    public void run(){
-                        
-                        switch (reply) {
-                            case "Wrong credentials\n":
-                                Toast.makeText(context, "Wrong Credentials", Toast.LENGTH_LONG).show();
-                                return;
-                            case "Invalid URL":
-                                Toast.makeText(context, reply, Toast.LENGTH_LONG).show();
-                                return;
-                            case "Resolve Failed":
-                                Toast.makeText(context, reply, Toast.LENGTH_LONG).show();
-                                return;
-                            case "FileNotFoundException":
-                                Toast.makeText(context, reply, Toast.LENGTH_LONG).show();
-                                return;
-                            case "Unknown Exception":
-                                Toast.makeText(context, reply, Toast.LENGTH_LONG).show();
-                                return;
+        /*
+        * Check Network Connectivity and then request data from Icinga
+        * */
+        ConnectivityManager cm =
+                (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+
+        if (isConnected) {
+
+
+            progressBar.setVisibility(View.VISIBLE);
+            new Thread() {
+                public void run() {
+
+                    final String reply = IcingaInteraction.fetchData(prefs);
+                    handler.post(new Runnable() {
+                        public void run() {
+
+                            switch (reply) {
+                                case "Wrong credentials\n":
+                                    Toast.makeText(context, "Wrong Credentials", Toast.LENGTH_LONG).show();
+                                    return;
+                                case "Invalid URL":
+                                    Toast.makeText(context, reply, Toast.LENGTH_LONG).show();
+                                    return;
+                                case "Resolve Failed":
+                                    Toast.makeText(context, reply, Toast.LENGTH_LONG).show();
+                                    return;
+                                case "FileNotFoundException":
+                                    Toast.makeText(context, reply, Toast.LENGTH_LONG).show();
+                                    return;
+                                case "Unknown Exception":
+                                    Toast.makeText(context, reply, Toast.LENGTH_LONG).show();
+                                    return;
+                            }
+                            Intent intent = new Intent(context, MainActivity.class);
+                            intent.putExtra("reply", reply);
+                            startActivity(intent);
+
+                            finish();
                         }
-                        Intent intent = new Intent(context,MainActivity.class);
-                        intent.putExtra("reply", reply);
-                        startActivity(intent);
+                    });
 
-                        finish();
-                    }
-                });
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressBar.setVisibility(View.GONE);
-                    }
-                });
-            }
-        }.start();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressBar.setVisibility(View.GONE);
+                        }
+                    });
+                }
+            }.start();
+        } else {
+            Toast.makeText(this, "No Internet Connectivity", Toast.LENGTH_LONG).show();
+        }
 
     }
 
