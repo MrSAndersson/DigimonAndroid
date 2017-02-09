@@ -11,10 +11,8 @@ import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 import android.widget.Toolbar;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,10 +20,10 @@ import java.util.List;
 
 public class MainActivity extends Activity {
 
-    private ExpandableListView listView;
-    private ExpandableListAdapter listAdapter;
-    private List<String> listDataHeader;
-    private HashMap<String, List<String>> listHashMap;
+    private List<String> expandableOldListGroup;
+    private List<String> expandableListGroup;
+    private HashMap<String, List<String>> listOldHashMap;
+    private HashMap<String, List<String>> listContainer;
 
     static String reply;
     static JSONObject data;
@@ -41,9 +39,7 @@ public class MainActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.logout:
-                Intent intent = new Intent(this, LoginActivity.class);
-                startActivity(intent);
-                finish();
+                logOut();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -59,16 +55,6 @@ public class MainActivity extends Activity {
 
         Intent intent = getIntent();
 
-        listView = (ExpandableListView)findViewById(R.id.main_expand_list);
-        initData();
-        listAdapter = new expandableListAdapter(this, listDataHeader, listHashMap);
-        listView.setAdapter(listAdapter);
-
-        if (savedInstanceState == null) {
-            //getFragmentManager().beginTransaction().add(R.id.activity_main, new MainListFragment()).commit();
-
-        }
-
         /* Suppress the warning about Unchecked Cast since we know what we're doing
             Then, get the data from the indent.
          */
@@ -79,22 +65,43 @@ public class MainActivity extends Activity {
             data = new JSONObject(reply);
         } catch (JSONException e) {
             Toast.makeText(this, "Unable to parse JSON", Toast.LENGTH_LONG).show();
+            logOut();
         }
+
+        ExpandableListView listView = (ExpandableListView) findViewById(R.id.main_expand_list);
+        createOldExpandableListData();
+        ExpandableListAdapter listAdapter = new mainExpandableListAdapter(this, expandableOldListGroup, listOldHashMap);
+        listView.setAdapter(listAdapter);
+    }
+
+    private void createExpandableListData() {
+        expandableListGroup = new ArrayList<>();
+        listContainer = new HashMap<>();
+
+        try {
+            int services = data.getJSONArray("services").length();
+            int hostsDown = data.getJSONArray("hosts").length();
+        } catch (JSONException e) {
+            Toast.makeText(this, "Couldn't find a Host/Services Array", Toast.LENGTH_LONG).show();
+            logOut();
+        }
+
 
 
     }
 
-    private void initData() {
-        listDataHeader = new ArrayList<>();
-        listHashMap = new HashMap<>();
+    private void createOldExpandableListData() {
+        expandableOldListGroup = new ArrayList<>();
+        listOldHashMap = new HashMap<>();
 
-        listDataHeader.add("Grupp1");
-        listDataHeader.add("Grupptvåan");
-        listDataHeader.add("fddfdfddf");
-        listDataHeader.add("weee");
+        expandableOldListGroup.add("grupp1an");
+        expandableOldListGroup.add("Sfff");
+        expandableOldListGroup.add("fddfdfddf");
+        expandableOldListGroup.add("weee");
 
         List<String> grupp1 = new ArrayList<>();
         grupp1.add("This is Expandable ListView");
+
         List<String> gruppTvaan = new ArrayList<>();
         gruppTvaan.add("Expanded Listview");
         gruppTvaan.add("en grej");
@@ -109,6 +116,16 @@ public class MainActivity extends Activity {
         List<String> wEEE = new ArrayList<>();
         wEEE.add("TWeee");
         wEEE.add("Expanded Leeeeeistview");
+        listOldHashMap.put(expandableOldListGroup.get(0), grupp1);
+        listOldHashMap.put(expandableOldListGroup.get(1), gruppTvaan);
+        listOldHashMap.put(expandableOldListGroup.get(2), ffdD);
+        listOldHashMap.put(expandableOldListGroup.get(3), wEEE);
+    }
+
+    private void logOut () {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 
 }

@@ -4,7 +4,7 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/main_exp_list_item"
+        android:id="@+id/expandedListItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"/>
