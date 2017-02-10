@@ -2,8 +2,10 @@ package se.standersson.digimon;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.RippleDrawable;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
@@ -84,6 +86,33 @@ public class mainExpandableListAdapter extends BaseExpandableListAdapter {
 
         if (downedHosts.contains(headerTitle)) {
             convertView.setBackgroundColor(ContextCompat.getColor(context, R.color.colorHostDown));
+            convertView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    // TODO Auto-generated method stub
+                    switch(event.getAction())
+                    {
+                        case MotionEvent.ACTION_DOWN:
+                            v.setBackgroundColor(ContextCompat.getColor(context, R.color.colorHostDownPressed));
+                            break;
+                        case MotionEvent.ACTION_UP:
+
+                            //set color back to default
+                            v.setBackgroundColor(ContextCompat.getColor(context, R.color.colorHostDown));
+                            break;
+                        case MotionEvent.ACTION_OUTSIDE:
+                            //set color back to default
+                            v.setBackgroundColor(ContextCompat.getColor(context, R.color.colorHostDown));
+                            break;
+                        case MotionEvent.ACTION_CANCEL:
+                            //set color back to default
+                            v.setBackgroundColor(ContextCompat.getColor(context, R.color.colorHostDown));
+                            break;
+
+                    }
+                    return true;
+                }
+            });
             main_exp_list_service_count.setVisibility(View.GONE);
         } else {
             String count = Integer.toString(hostServiceCounter.get(expandableListGroup.get(groupPosition)).size());

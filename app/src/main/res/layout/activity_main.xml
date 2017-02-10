@@ -11,7 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:elevation="4dp"
-        android:background="@color/colorPrimary"/>
+        android:background="@color/colorPrimary"
+        />
 
     <ExpandableListView
         android:id="@+id/main_expand_list"
