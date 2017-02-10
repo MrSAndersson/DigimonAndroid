@@ -1,7 +1,6 @@
 package se.standersson.digimon;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,12 +20,9 @@ import java.util.List;
 
 public class MainActivity extends Activity {
 
-    private List<String> expandableOldListGroup;
     private List<String> expandableListGroup;
-    private HashMap<String, List<String>> listOldHashMap;
-    private HashMap<String, List<String>> listContainer;
-
-    static String reply;
+    private HashMap<String, List<Integer>> hostServiceCounter;
+    private List<String> hostsDowned;
     static JSONObject data;
 
     @Override
@@ -70,18 +66,18 @@ public class MainActivity extends Activity {
         }
 
         ExpandableListView listView = (ExpandableListView) findViewById(R.id.main_expand_list);
-        //createOldExpandableListData();
-        //ExpandableListAdapter listAdapter = new mainExpandableListAdapter(this, expandableOldListGroup, listOldHashMap);
-        ExpandableListAdapter listAdapter = new mainExpandableListAdapter(this, data);
+        createExpandableListSummary();
+        ExpandableListAdapter listAdapter = new mainExpandableListAdapter(this, data, expandableListGroup, hostServiceCounter, hostsDowned);
         listView.setAdapter(listAdapter);
     }
 
-    private void createExpandableListData() {
+    private void createExpandableListSummary() {
         expandableListGroup = new ArrayList<>();
-        listContainer = new HashMap<>();
+        hostServiceCounter = new HashMap<>();
+        hostsDowned = new ArrayList<>();
         int services = 0, hostsDown = 0;
-        HashMap <String, int> hostSummary;
 
+        // Check how many Hosts and Services are having trouble
         try {
             services = data.getJSONArray("services").length();
             hostsDown = data.getJSONArray("hosts").length();
@@ -89,49 +85,41 @@ public class MainActivity extends Activity {
             Toast.makeText(this, "Couldn't find a Host/Services Array", Toast.LENGTH_LONG).show();
             logOut();
         }
+
+
         try {
-            for (int x=0 ; x < services ; x++) {
-                if ()
+            String tempHostName;
+            /*
+            * Add all downed hosts to the list first
+             */
+            for (int x=0 ; x < hostsDown ; x++) {
+                tempHostName = data.getJSONArray("hosts").getJSONObject(x).getJSONObject("attrs").getString("name");
+                expandableListGroup.add(tempHostName);
+                hostsDowned.add(tempHostName);
             }
-        } catch (Exception e) {
 
+            /*
+            * Loop through all services and store the hostname and the location of their respective failing services
+             */
+            for (int x=0 ; x < services ; x++) {
+                tempHostName = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getString("host_name");
+                if (expandableListGroup.contains(tempHostName)) {
+                    if (hostServiceCounter.containsKey(tempHostName)) {
+                        hostServiceCounter.get(tempHostName).add(x);
+                    } else {
+                        hostServiceCounter.put(tempHostName, new ArrayList<Integer>());
+                        hostServiceCounter.get(tempHostName).add(x);
+                    }
+                } else {
+                    expandableListGroup.add(tempHostName);
+                    hostServiceCounter.put(tempHostName, new ArrayList<Integer>());
+                    hostServiceCounter.get(tempHostName).add(x);
+                }
+            }
+        } catch (JSONException e) {
+            Toast.makeText(this, "Problem with parsing hosts/services", Toast.LENGTH_LONG).show();
         }
-
-
-
     }
-
-    /*private void createOldExpandableListData() {
-        expandableOldListGroup = new ArrayList<>();
-        listOldHashMap = new HashMap<>();
-
-        expandableOldListGroup.add("grupp1an");
-        expandableOldListGroup.add("Sfff");
-        expandableOldListGroup.add("fddfdfddf");
-        expandableOldListGroup.add("weee");
-
-        List<String> grupp1 = new ArrayList<>();
-        grupp1.add("This is Expandable ListView");
-
-        List<String> gruppTvaan = new ArrayList<>();
-        gruppTvaan.add("Expanded Listview");
-        gruppTvaan.add("en grej");
-        gruppTvaan.add("Ewww");
-
-        List<String> ffdD = new ArrayList<>();
-        ffdD.add("This is Expandable LifffstView");
-        ffdD.add("Expanded Leeeeeistview");
-        ffdD.add("en grefdfsfdj");
-        ffdD.add("Ewwasasasdfw");
-
-        List<String> wEEE = new ArrayList<>();
-        wEEE.add("TWeee");
-        wEEE.add("Expanded Leeeeeistview");
-        listOldHashMap.put(expandableOldListGroup.get(0), grupp1);
-        listOldHashMap.put(expandableOldListGroup.get(1), gruppTvaan);
-        listOldHashMap.put(expandableOldListGroup.get(2), ffdD);
-        listOldHashMap.put(expandableOldListGroup.get(3), wEEE);
-    }*/
 
     private void logOut () {
         Intent intent = new Intent(this, LoginActivity.class);
