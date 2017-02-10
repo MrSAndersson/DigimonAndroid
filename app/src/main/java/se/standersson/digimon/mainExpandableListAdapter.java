@@ -6,6 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -14,15 +19,21 @@ public class mainExpandableListAdapter extends BaseExpandableListAdapter {
     private Context context;
     private List<String> listDataGroup;
     private HashMap<String, List<String>> listHashMap;
+    JSONObject data;
 
-    public mainExpandableListAdapter(Context context, List<String> listDataGroup, HashMap<String, List<String>> listHashMap) {
+    public mainExpandableListAdapter(Context context, JSONObject data) {
+        this.data = data;
+    }
+
+    /*public mainExpandableListAdapter(Context context, List<String> listDataGroup, HashMap<String, List<String>> listHashMap) {
         this.context = context;
         this.listDataGroup = listDataGroup;
         this.listHashMap = listHashMap;
-    }
+    }*/
 
     @Override
     public int getGroupCount() {
+
         return listDataGroup.size();
     }
 

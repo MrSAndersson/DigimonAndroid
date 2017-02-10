@@ -1,6 +1,7 @@
 package se.standersson.digimon;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -69,28 +70,38 @@ public class MainActivity extends Activity {
         }
 
         ExpandableListView listView = (ExpandableListView) findViewById(R.id.main_expand_list);
-        createOldExpandableListData();
-        ExpandableListAdapter listAdapter = new mainExpandableListAdapter(this, expandableOldListGroup, listOldHashMap);
+        //createOldExpandableListData();
+        //ExpandableListAdapter listAdapter = new mainExpandableListAdapter(this, expandableOldListGroup, listOldHashMap);
+        ExpandableListAdapter listAdapter = new mainExpandableListAdapter(this, data);
         listView.setAdapter(listAdapter);
     }
 
     private void createExpandableListData() {
         expandableListGroup = new ArrayList<>();
         listContainer = new HashMap<>();
+        int services = 0, hostsDown = 0;
+        HashMap <String, int> hostSummary;
 
         try {
-            int services = data.getJSONArray("services").length();
-            int hostsDown = data.getJSONArray("hosts").length();
+            services = data.getJSONArray("services").length();
+            hostsDown = data.getJSONArray("hosts").length();
         } catch (JSONException e) {
             Toast.makeText(this, "Couldn't find a Host/Services Array", Toast.LENGTH_LONG).show();
             logOut();
+        }
+        try {
+            for (int x=0 ; x < services ; x++) {
+                if ()
+            }
+        } catch (Exception e) {
+
         }
 
 
 
     }
 
-    private void createOldExpandableListData() {
+    /*private void createOldExpandableListData() {
         expandableOldListGroup = new ArrayList<>();
         listOldHashMap = new HashMap<>();
 
@@ -120,7 +131,7 @@ public class MainActivity extends Activity {
         listOldHashMap.put(expandableOldListGroup.get(1), gruppTvaan);
         listOldHashMap.put(expandableOldListGroup.get(2), ffdD);
         listOldHashMap.put(expandableOldListGroup.get(3), wEEE);
-    }
+    }*/
 
     private void logOut () {
         Intent intent = new Intent(this, LoginActivity.class);
