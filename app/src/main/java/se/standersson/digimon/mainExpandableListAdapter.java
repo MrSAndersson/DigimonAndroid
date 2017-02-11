@@ -1,11 +1,9 @@
 package se.standersson.digimon;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.RippleDrawable;
 import android.support.v4.content.ContextCompat;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
@@ -22,9 +20,15 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
     private List<String> downedHosts;
     private HashMap<String, List<Integer>> hostServiceCounter;
     private JSONObject data;
+    private HashMap<String, HashMap<String, String>> dataMap;
+    private HashMap<String, List<String>> serviceList;
+    private SparseArray<View> groupList = new SparseArray<>();
 
+   // mainExpandableListAdapter(Context context, HashMap<String, HashMap<String, String>> dataMap, HashMap<String, List<String>> serviceList, List<String> expandableListGroup, HashMap<String, List<Integer>> hostServiceCounter, List<String> downedHosts) {
     mainExpandableListAdapter(Context context, JSONObject data, List<String> expandableListGroup, HashMap<String, List<Integer>> hostServiceCounter, List<String> downedHosts) {
         this.data = data;
+        /*this.dataMap = dataMap;
+        this.serviceList = serviceList;*/
         this.context = context;
         this.expandableListGroup = expandableListGroup;
         this.hostServiceCounter = hostServiceCounter;
@@ -49,6 +53,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
+        //return serviceList.get(expandableListGroup.get(groupPosition)).get(childPosition);
         try {
             String host = expandableListGroup.get(groupPosition);
             Integer serviceNr = hostServiceCounter.get(host).get(childPosition);
@@ -79,7 +84,6 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.main_expanded_list_group, parent, false);
-
             TextView main_exp_list_header = (TextView)convertView.findViewById(R.id.main_exp_list_hostname);
             main_exp_list_header.setText(headerTitle);
             TextView main_exp_list_service_count = (TextView) convertView.findViewById(R.id.main_exp_list_service_count);
@@ -97,20 +101,33 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
                 main_exp_list_service_count.setText(count);
                 convertView.setBackground(ContextCompat.getDrawable(context, R.drawable.host_ripple));
             }
+            groupList.put(groupPosition, convertView);
+            return convertView;
+        } else {
+            return groupList.get(groupPosition);
         }
-
-
-        return convertView;
     }
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         final String childText = (String)getChild(groupPosition, childPosition);
+        String details;
+        //String hostname = expandableListGroup.get(groupPosition);
+        //String serviceName = serviceList.get(hostname).get(childPosition);
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.main_expanded_list_item, parent, false);
         }
         TextView main_exp_list_item = (TextView)convertView.findViewById(R.id.expandedListItem);
+        TextView main_exp_list_item_details = (TextView)convertView.findViewById(R.id.exp_service_details);
+        //details = dataMap.get(hostname).get(serviceName);
+        try {
+            details = data.getJSONArray("services").getJSONObject(hostServiceCounter.get(expandableListGroup.get(groupPosition)).get(childPosition))
+                    .getJSONObject("attrs").getJSONObject("last_check_result").getString("output");
+        } catch (JSONException e) {
+            details = "Couldn't parse check result";
+        }
+        main_exp_list_item_details.setText(details);
         main_exp_list_item.setText(childText);
         return convertView;
     }
