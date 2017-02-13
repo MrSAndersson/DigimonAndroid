@@ -2,6 +2,7 @@ package se.standersson.digimon;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
     private HashMap<String, HashMap<String, String>> dataMap;
     private HashMap<String, List<String>> serviceList;
     private SparseArray<View> groupList = new SparseArray<>();
+    private HashMap<Integer, View> groupID = new HashMap<>();
 
    // mainExpandableListAdapter(Context context, HashMap<String, HashMap<String, String>> dataMap, HashMap<String, List<String>> serviceList, List<String> expandableListGroup, HashMap<String, List<Integer>> hostServiceCounter, List<String> downedHosts) {
     mainExpandableListAdapter(Context context, JSONObject data, List<String> expandableListGroup, HashMap<String, List<Integer>> hostServiceCounter, List<String> downedHosts) {
@@ -81,18 +83,63 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         String headerTitle = (String)getGroup(groupPosition);
+        Log.d("List", "Group " + groupPosition + " view " + convertView);
+
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.main_expanded_list_group, parent, false);
-            TextView main_exp_list_header = (TextView)convertView.findViewById(R.id.main_exp_list_hostname);
-            main_exp_list_header.setText(headerTitle);
-            TextView main_exp_list_service_count = (TextView) convertView.findViewById(R.id.main_exp_list_service_count);
+
+            if (downedHosts.contains(headerTitle)) {
+                convertView.setBackground(context.getDrawable(R.drawable.host_down_ripple));
+            } else {
+                String count = Integer.toString(hostServiceCounter.get(expandableListGroup.get(groupPosition)).size());
+                convertView.setBackground(ContextCompat.getDrawable(context, R.drawable.host_ripple));
+            }
+
+        }
+
+        TextView main_exp_list_header = (TextView)convertView.findViewById(R.id.main_exp_list_hostname);
+        main_exp_list_header.setText(headerTitle);
+        TextView main_exp_list_service_count = (TextView) convertView.findViewById(R.id.main_exp_list_service_count);
 
             /*
             * On all hosts that are down, change the background to red and on others, print the number of services down
              */
 
 
+        if (downedHosts.contains(headerTitle)) {
+            //convertView.setBackground(context.getDrawable(R.drawable.host_down_ripple));
+            main_exp_list_service_count.setText(R.string.host_down);
+                Log.d("Background", convertView.getBackground().getConstantState() + " " + ContextCompat.getDrawable(context, R.drawable.host_down_ripple).getConstantState());
+        } else {
+            String count = Integer.toString(hostServiceCounter.get(expandableListGroup.get(groupPosition)).size());
+            main_exp_list_service_count.setText(count);
+            //convertView.setBackground(ContextCompat.getDrawable(context, R.drawable.host_ripple));
+            if (convertView.getBackground().getConstantState() == ContextCompat.getDrawable(context, R.drawable.host_ripple).getConstantState()){
+                Log.d("Background", "Blue is Blue");
+            }
+        }
+        //groupList.put(groupPosition, convertView);
+        groupID.put(groupPosition, convertView);
+        if (!convertView.equals(groupID.get(groupPosition))) {
+            Log.d("List", "GroupID not equal " + groupPosition + " view " + convertView + " Saved: " + groupID.get(groupPosition));
+        }
+
+
+        return convertView;
+
+        /*if (convertView == null) {
+            LayoutInflater inflater = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = inflater.inflate(R.layout.main_expanded_list_group, parent, false);
+            TextView main_exp_list_header = (TextView)convertView.findViewById(R.id.main_exp_list_hostname);
+            main_exp_list_header.setText(headerTitle);
+            TextView main_exp_list_service_count = (TextView) convertView.findViewById(R.id.main_exp_list_service_count);
+*/
+            /*
+            * On all hosts that are down, change the background to red and on others, print the number of services down
+             */
+
+/*
             if (downedHosts.contains(headerTitle)) {
                 convertView.setBackground(context.getDrawable(R.drawable.host_down_ripple));
                 main_exp_list_service_count.setText(R.string.host_down);
@@ -105,7 +152,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
             return convertView;
         } else {
             return groupList.get(groupPosition);
-        }
+        }*/
     }
 
     @Override
