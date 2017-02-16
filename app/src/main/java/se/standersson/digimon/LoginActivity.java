@@ -105,6 +105,9 @@ public class LoginActivity extends Activity {
                                 case "Wrong credentials\n":
                                     Toast.makeText(context, "Wrong Credentials", Toast.LENGTH_LONG).show();
                                     return;
+                                case "Connection Timed Out":
+                                    Toast.makeText(context, reply, Toast.LENGTH_LONG).show();
+                                    return;
                                 case "Invalid URL":
                                     Toast.makeText(context, reply, Toast.LENGTH_LONG).show();
                                     return;
