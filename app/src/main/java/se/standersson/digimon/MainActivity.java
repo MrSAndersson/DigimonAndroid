@@ -25,8 +25,6 @@ public class MainActivity extends Activity {
     private HashMap<String, List<Integer>> hostServiceCounter;
     private List<String> hostsDowned;
     static JSONObject data;
-    private HashMap<String,HashMap<String, String>> dataMap;
-    private HashMap<String,List<String>> serviceList;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -79,8 +77,6 @@ public class MainActivity extends Activity {
         expandableListGroup = new ArrayList<>();
         hostServiceCounter = new HashMap<>();
         hostsDowned = new ArrayList<>();
-        dataMap = new HashMap<>();
-        serviceList = new HashMap<>();
 
         int services = 0, hostsDown = 0;
 
@@ -96,8 +92,6 @@ public class MainActivity extends Activity {
 
         try {
             String hostName;
-            String serviceName;
-            String serviceOutput;
 
             /*
             * Add all downed hosts to the list first
@@ -106,8 +100,6 @@ public class MainActivity extends Activity {
                 hostName = data.getJSONArray("hosts").getJSONObject(x).getJSONObject("attrs").getString("name");
                 expandableListGroup.add(hostName);
                 hostsDowned.add(hostName);
-                dataMap.put(hostName, new HashMap<String, String>());
-                serviceList.put(hostName, new ArrayList<String>());
             }
 
             /*
@@ -115,25 +107,15 @@ public class MainActivity extends Activity {
              */
             for (int x=0 ; x < services ; x++) {
                 hostName = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getString("host_name");
-                serviceName = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getString("name");
-                serviceOutput = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getJSONObject("last_check_result").getString("output");
                 if (expandableListGroup.contains(hostName)) {
                     if (hostServiceCounter.containsKey(hostName)) {
                         hostServiceCounter.get(hostName).add(x);
-                        dataMap.get(hostName).put(serviceName, serviceOutput);
-                        serviceList.get(hostName).add(serviceName);
                     } else {
                         hostServiceCounter.put(hostName, new ArrayList<Integer>());
                         hostServiceCounter.get(hostName).add(x);
-                        dataMap.get(hostName).put(serviceName, serviceOutput);
-                        serviceList.get(hostName).add(serviceName);
                     }
                 } else {
                     expandableListGroup.add(hostName);
-                    serviceList.put(hostName, new ArrayList<String>());
-                    dataMap.put(hostName, new HashMap<String, String>());
-                    dataMap.get(hostName).put(serviceName, serviceOutput);
-                    serviceList.get(hostName).add(serviceName);
                     hostServiceCounter.put(hostName, new ArrayList<Integer>());
                     hostServiceCounter.get(hostName).add(x);
                 }

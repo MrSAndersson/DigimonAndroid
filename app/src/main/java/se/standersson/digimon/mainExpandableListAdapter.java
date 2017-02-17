@@ -74,7 +74,6 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         String headerTitle = (String)getGroup(groupPosition);
-        Log.d("List", "Group " + groupPosition + " view " + convertView);
 
 
         if (convertView == null) {
