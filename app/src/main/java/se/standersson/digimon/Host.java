@@ -6,54 +6,36 @@ import android.util.SparseIntArray;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by stefan on 2017-02-18.
- */
-
 class Host {
     /*
     * Declaration of host details
      */
     private String hostName;
-    private List<Integer> services;
-    private SparseArray<String> serviceNames;
-    private SparseArray<String> serviceDetails;
-    private SparseIntArray serviceState;
+    private List<Integer> services = new ArrayList<>();
+    private SparseArray<String> serviceNames = new SparseArray<>();
+    private SparseArray<String> serviceDetails = new SparseArray<>();
+    private SparseIntArray serviceState = new SparseIntArray();
     private Integer jsonHostPosition;
-    private SparseArray<Integer> stateCounter;
+    private boolean isDown = false;
+    private SparseIntArray stateCounter = new SparseIntArray();
 
 
 
     Host(String hostName){
         this.hostName = hostName;
-
-        this.stateCounter = new SparseArray<>();
         this.jsonHostPosition = null;
         stateCounter.put(1,0);
         stateCounter.put(2,0);
         stateCounter.put(3,0);
-
-        this.services = new ArrayList<>();
-        this.serviceNames = new SparseArray<>();
-        this.serviceDetails = new SparseArray<>();
-        this.serviceState = new SparseIntArray();
-
-
     }
 
     Host(String hostName, int jsonHostPosition) {
         this.hostName = hostName;
-        this.stateCounter = new SparseArray<>();
         this.jsonHostPosition = jsonHostPosition;
+        this.isDown = true;
         stateCounter.put(1,0);
         stateCounter.put(2,0);
         stateCounter.put(3,0);
-
-
-        this.services = new ArrayList<>();
-        this.serviceNames = new SparseArray<>();
-        this.serviceDetails = new SparseArray<>();
-        this.serviceState = new SparseIntArray();
     }
 
     void addService(int jsonPosition, String serviceName, String serviceDetails, int state){
@@ -94,11 +76,7 @@ class Host {
     }
 
     boolean isDown(){
-        if (jsonHostPosition == null){
-            return false;
-        } else {
-            return true;
-        }
+        return isDown;
     }
     int jsonHostPosition(){
         return jsonHostPosition;
