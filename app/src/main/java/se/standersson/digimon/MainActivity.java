@@ -22,9 +22,11 @@ import java.util.List;
 public class MainActivity extends Activity {
 
     private List<String> expandableListGroup;
-    private HashMap<String, List<Integer>> hostServiceCounter;
+    private HashMap<String, HashMap<String, List<Integer>>> hostServiceCounter;
     private List<String> hostsDowned;
     static JSONObject data;
+    private List<Host> hosts;
+    private HashMap<String, Integer> hostPositions;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -68,8 +70,7 @@ public class MainActivity extends Activity {
 
         ExpandableListView listView = (ExpandableListView) findViewById(R.id.main_expand_list);
         createExpandableListSummary();
-        //ExpandableListAdapter listAdapter = new mainExpandableListAdapter(this, dataMap, serviceList, expandableListGroup, hostServiceCounter, hostsDowned);
-        ExpandableListAdapter listAdapter = new mainExpandableListAdapter(this, data, expandableListGroup, hostServiceCounter, hostsDowned);
+        ExpandableListAdapter listAdapter = new mainExpandableListAdapter(this, hosts);
         listView.setAdapter(listAdapter);
     }
 
@@ -77,6 +78,8 @@ public class MainActivity extends Activity {
         expandableListGroup = new ArrayList<>();
         hostServiceCounter = new HashMap<>();
         hostsDowned = new ArrayList<>();
+        hosts = new ArrayList<>();
+        hostPositions = new HashMap<>();
 
         int services = 0, hostsDown = 0;
 
@@ -91,15 +94,18 @@ public class MainActivity extends Activity {
 
 
         try {
-            String hostName;
+            String hostName, serviceName;
+            String serviceDetails;
+            int state;
+
 
             /*
             * Add all downed hosts to the list first
              */
             for (int x=0 ; x < hostsDown ; x++) {
                 hostName = data.getJSONArray("hosts").getJSONObject(x).getJSONObject("attrs").getString("name");
-                expandableListGroup.add(hostName);
-                hostsDowned.add(hostName);
+                hosts.add(new Host(hostName, x));
+                hostPositions.put(hostName, x);
             }
 
             /*
@@ -107,17 +113,16 @@ public class MainActivity extends Activity {
              */
             for (int x=0 ; x < services ; x++) {
                 hostName = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getString("host_name");
-                if (expandableListGroup.contains(hostName)) {
-                    if (hostServiceCounter.containsKey(hostName)) {
-                        hostServiceCounter.get(hostName).add(x);
-                    } else {
-                        hostServiceCounter.put(hostName, new ArrayList<Integer>());
-                        hostServiceCounter.get(hostName).add(x);
-                    }
+                serviceName = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getString("name");
+                serviceDetails = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getJSONObject("last_check_result").getString("output");
+                state = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getInt("state");
+
+                if (hostPositions.containsKey(hostName)) {
+                    hosts.get(hostPositions.get(hostName)).addService(x, serviceName, serviceDetails, state);
                 } else {
-                    expandableListGroup.add(hostName);
-                    hostServiceCounter.put(hostName, new ArrayList<Integer>());
-                    hostServiceCounter.get(hostName).add(x);
+                    hostPositions.put(hostName, hosts.size());
+                    hosts.add(new Host(hostName));
+                    hosts.get(hostPositions.get(hostName)).addService(x, serviceName, serviceDetails, state);
                 }
             }
         } catch (JSONException e) {
