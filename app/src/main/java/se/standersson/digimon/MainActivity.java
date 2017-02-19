@@ -1,7 +1,12 @@
 package se.standersson.digimon;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
@@ -25,6 +30,7 @@ public class MainActivity extends Activity {
     private List<Host> hosts;
     private HashMap<String, Integer> hostPositions;
     private SwipeRefreshLayout swipeContainer;
+    private String[] prefsString;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -58,11 +64,29 @@ public class MainActivity extends Activity {
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+
+                prefsString = new String[3];
+                SharedPreferences prefStorage = getSharedPreferences("Login", 0);
+                prefsString[0] = prefStorage.getString("serverString", "");
+                prefsString[1] = prefStorage.getString("username", "");
+                prefsString[2] = prefStorage.getString("password", "");
+
+
+
+
+                    if (isConnected()){
+
+                        new refreshFetch().execute(prefsString);
+                    }
+
+                //HashMap<String, String> prefs = new LoginStorage(getApplicationContext()).getLoginDetails();
+
                 // Your code to refresh the list here.
                 // Make sure you call swipeContainer.setRefreshing(false)
                 // once the network request has completed successfully.
 
                 ///////fetchTimelineAsync(0);
+                swipeContainer.setRefreshing(false);
             }
         });
 
@@ -72,7 +96,6 @@ public class MainActivity extends Activity {
          */
         @SuppressWarnings("unchecked")
         String reply = intent.getStringExtra("reply");
-        Log.d("DataPayload", reply);
         try {
             data = new JSONObject(reply);
         } catch (JSONException e) {
@@ -140,9 +163,52 @@ public class MainActivity extends Activity {
     }
 
     private void logOut () {
+        SharedPreferences prefStorage = getSharedPreferences("Login", 0);
+        prefStorage.edit().putString("serverString", "").apply();
+        prefStorage.edit().putString("username", "").apply();
+        prefStorage.edit().putString("password", "").apply();
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
         finish();
+    }
+
+
+    boolean isConnected(){
+        /*
+        * Check Network Connectivity and then request data from Icinga
+        * */
+
+        ConnectivityManager cm =
+                (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+    }
+
+    private class refreshFetch extends AsyncTask<String[], Integer, String> {
+        @Override
+        protected String doInBackground(String[]... data) {
+
+            return ServerInteraction.fetchData(data[0]);
+        }
+
+        protected void onPostExecute(String reply){
+            if (ServerInteraction.checkReply(getApplicationContext(), reply)) {
+                try {
+                    data = new JSONObject(reply);
+                    ExpandableListView listView = (ExpandableListView) findViewById(R.id.main_expand_list);
+                    createExpandableListSummary();
+                    ExpandableListAdapter listAdapter = new mainExpandableListAdapter(getApplicationContext(), hosts);
+                    listView.setAdapter(listAdapter);
+                } catch (JSONException e) {
+                    Toast.makeText(getApplicationContext(), "Unable to parse JSON", Toast.LENGTH_LONG).show();
+                    logOut();
+                }
+            }
+            swipeContainer.setRefreshing(false);
+        }
+
     }
 
 }

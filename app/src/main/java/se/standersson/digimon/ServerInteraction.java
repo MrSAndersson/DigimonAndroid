@@ -2,6 +2,9 @@ package se.standersson.digimon;
 
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -21,20 +24,23 @@ import javax.net.ssl.HttpsURLConnection;
 
 class ServerInteraction {
 
-
-    static String fetchData(final HashMap<String, String> prefs){
+    static String fetchData(final String[] prefs){
 
         /*
         * Try Catch to catch all errors in network communication
         * */
+        String serverString = prefs[0];
+        String username = prefs[1];
+        String password = prefs[2];
 
         try {
-
             /*
             * Create a connection with input/output with a plaintext body
             * */
-            URL url = new URL(prefs.get("serverString"));
-            String credentials = prefs.get("username") + ":" + prefs.get("password");
+            //URL url = new URL(prefs.get("serverString"));
+            //String credentials = prefs.get("username") + ":" + prefs.get("password");
+            URL url = new URL(serverString);
+            String credentials = username + ":" + password;
 
             HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
             connection.setRequestProperty("Content-Type", "text/plain");

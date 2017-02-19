@@ -8,7 +8,8 @@ import java.util.HashMap;
 class LoginStorage {
    static private SharedPreferences loginDetails;
     LoginStorage(Activity activity){
-        loginDetails = activity.getPreferences(Activity.MODE_PRIVATE);
+        //loginDetails = activity.getPreferences(Activity.MODE_PRIVATE);
+        loginDetails = activity.getSharedPreferences("Login", 0);
     }
 
     // Save Login details
@@ -22,9 +23,9 @@ class LoginStorage {
     // Serve Login details
     HashMap<String, String> getLoginDetails(){
         HashMap<String, String> prefs = new HashMap<>();
-        prefs.put("serverString", loginDetails.getString("serverString", "test"));
-        prefs.put("username", loginDetails.getString("username", "weee"));
-        prefs.put("password", loginDetails.getString("password", "woo"));
+        prefs.put("serverString", loginDetails.getString("serverString", ""));
+        prefs.put("username", loginDetails.getString("username", ""));
+        prefs.put("password", loginDetails.getString("password", ""));
         return prefs;
     }
 }
