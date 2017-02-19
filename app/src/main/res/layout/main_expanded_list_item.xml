@@ -1,26 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/expandedListItem"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"/>
+        android:id="@+id/critical_state_bar"
+        android:layout_width="20dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/critical_bar"
+        android:visibility="gone"/>
 
     <TextView
-        android:id="@+id/exp_service_details"
+        android:id="@+id/warning_state_bar"
+        android:layout_width="20dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/warning_bar"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/unknown_state_bar"
+        android:layout_width="20dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/unknown_bar"
+        android:visibility="gone"/>
+
+    <LinearLayout
+        android:id="@+id/child_info_group"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"/>
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/expandedListItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="20dp"/>
+
+        <TextView
+            android:id="@+id/exp_service_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="20dp"/>
+
+    </LinearLayout>
+
+
+
+
 </LinearLayout>

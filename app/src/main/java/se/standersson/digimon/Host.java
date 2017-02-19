@@ -47,16 +47,20 @@ class Host {
         stateCounter.put(state, current+1);
     }
 
-    int getServicePosition(int childNumber) {
-        return services.get(childNumber);
+    int getServicePosition(int childPosition) {
+        return services.get(childPosition);
     }
 
-    String getServiceName(int childNumber) {
-        return serviceNames.get(services.get(childNumber));
+    String getServiceName(int childPosition) {
+        return serviceNames.get(services.get(childPosition));
     }
 
-    String getServiceDetails(int childNumber) {
-        return serviceDetails.get(services.get(childNumber));
+    String getServiceDetails(int childPosition) {
+        return serviceDetails.get(services.get(childPosition));
+    }
+
+    int getServiceState(int childPosition) {
+        return serviceState.get(services.get(childPosition));
     }
 
     int getServiceCount(){
