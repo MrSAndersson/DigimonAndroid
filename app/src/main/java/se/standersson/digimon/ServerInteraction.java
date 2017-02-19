@@ -1,7 +1,9 @@
 package se.standersson.digimon;
 
 
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -17,7 +19,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 
 
-class IcingaInteraction {
+class ServerInteraction {
 
 
     static String fetchData(final HashMap<String, String> prefs){
@@ -73,6 +75,29 @@ class IcingaInteraction {
         }
     }
 
-
+    static boolean checkReply(Context context, String reply){
+        switch (reply) {
+            case "Wrong credentials\n":
+                Toast.makeText(context, "Wrong Credentials", Toast.LENGTH_LONG).show();
+                return false;
+            case "Connection Timed Out":
+                Toast.makeText(context, reply, Toast.LENGTH_LONG).show();
+                return false;
+            case "Invalid URL":
+                Toast.makeText(context, reply, Toast.LENGTH_LONG).show();
+                return false;
+            case "Resolve Failed":
+                Toast.makeText(context, reply, Toast.LENGTH_LONG).show();
+                return false;
+            case "FileNotFoundException":
+                Toast.makeText(context, reply, Toast.LENGTH_LONG).show();
+                return false;
+            case "Unknown Exception":
+                Toast.makeText(context, reply, Toast.LENGTH_LONG).show();
+                return false;
+            default:
+                return true;
+        }
+    }
 
 }

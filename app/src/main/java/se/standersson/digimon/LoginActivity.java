@@ -58,7 +58,7 @@ public class LoginActivity extends Activity {
         Store the settings, get data and start the MainActivity
          */
         new LoginStorage(this).setLoginDetails(prefs);
-        updateData(this, prefs);
+        updateData(this, prefs, false);
     }
 
     void savedLogin(View view){
@@ -73,12 +73,12 @@ public class LoginActivity extends Activity {
         if (prefs.get("serverString").equals("") && prefs.get("username").equals("") && prefs.get("password").equals("")) {
             Toast.makeText(this, "No Saved Credentials", Toast.LENGTH_LONG).show();
         } else {
-            updateData(this, prefs);
+            updateData(this, prefs, false);
         }
 
     }
 
-    void updateData(final Context context, final HashMap<String, String> prefs) {
+    void updateData(final Context context, final HashMap<String, String> prefs, final boolean refresh) {
 
         /*
         * Check Network Connectivity and then request data from Icinga
@@ -97,35 +97,16 @@ public class LoginActivity extends Activity {
             new Thread() {
                 public void run() {
 
-                    final String reply = IcingaInteraction.fetchData(prefs);
+                    final String reply = ServerInteraction.fetchData(prefs);
                     handler.post(new Runnable() {
                         public void run() {
+                            if (ServerInteraction.checkReply(context, reply)) {
+                                Intent intent = new Intent(context, MainActivity.class);
+                                intent.putExtra("reply", reply);
+                                startActivity(intent);
 
-                            switch (reply) {
-                                case "Wrong credentials\n":
-                                    Toast.makeText(context, "Wrong Credentials", Toast.LENGTH_LONG).show();
-                                    return;
-                                case "Connection Timed Out":
-                                    Toast.makeText(context, reply, Toast.LENGTH_LONG).show();
-                                    return;
-                                case "Invalid URL":
-                                    Toast.makeText(context, reply, Toast.LENGTH_LONG).show();
-                                    return;
-                                case "Resolve Failed":
-                                    Toast.makeText(context, reply, Toast.LENGTH_LONG).show();
-                                    return;
-                                case "FileNotFoundException":
-                                    Toast.makeText(context, reply, Toast.LENGTH_LONG).show();
-                                    return;
-                                case "Unknown Exception":
-                                    Toast.makeText(context, reply, Toast.LENGTH_LONG).show();
-                                    return;
+                                finish();
                             }
-                            Intent intent = new Intent(context, MainActivity.class);
-                            intent.putExtra("reply", reply);
-                            startActivity(intent);
-
-                            finish();
                         }
                     });
 
@@ -142,6 +123,10 @@ public class LoginActivity extends Activity {
         }
 
     }
+
+
+
+
 
 }
 
