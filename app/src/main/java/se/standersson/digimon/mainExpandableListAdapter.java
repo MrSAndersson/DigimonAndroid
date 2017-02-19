@@ -1,6 +1,7 @@
 package se.standersson.digimon;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,19 +66,45 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
 
         TextView main_exp_list_header = (TextView)convertView.findViewById(R.id.main_exp_list_hostname);
         //main_exp_list_header.setText(headerTitle);
-        TextView main_exp_list_service_count = (TextView) convertView.findViewById(R.id.main_exp_list_service_count);
+        TextView main_exp_list_critical_count = (TextView) convertView.findViewById(R.id.main_exp_list_critical_count);
+        TextView main_exp_list_warning_count = (TextView) convertView.findViewById(R.id.main_exp_list_warning_count);
+        TextView main_exp_list_unknown_count = (TextView) convertView.findViewById(R.id.main_exp_list_unknown_count);
+
 
             /*
             * Show what hosts are down and how many services are down
              */
 
         main_exp_list_header.setText(hosts.get(groupPosition).getHostName());
-        if (hosts.get(groupPosition).isDown()){
-            main_exp_list_service_count.setText(R.string.host_down);
+
+        Integer stateCount = hosts.get(groupPosition).getStateCount(1);
+        String stateCountString;
+
+        if (stateCount == 0) {
+            main_exp_list_critical_count.setVisibility(View.GONE);
         } else {
-            String count = Integer.toString(hosts.get(groupPosition).getServiceCount());
-            main_exp_list_service_count.setText(count);
+            stateCountString = stateCount.toString();
+            main_exp_list_critical_count.setText(stateCountString);
+            main_exp_list_critical_count.setVisibility(View.VISIBLE);
         }
+        stateCount = hosts.get(groupPosition).getStateCount(2);
+        if (stateCount == 0) {
+            main_exp_list_warning_count.setVisibility(View.GONE);
+        } else {
+            stateCountString = stateCount.toString();
+            main_exp_list_warning_count.setText(stateCountString);
+            main_exp_list_warning_count.setVisibility(View.VISIBLE);
+        }
+        stateCount = hosts.get(groupPosition).getStateCount(3);
+        if (stateCount == 0) {
+            main_exp_list_unknown_count.setVisibility(View.GONE);
+        } else {
+            stateCountString = stateCount.toString();
+            main_exp_list_unknown_count.setText(stateCountString);
+            main_exp_list_unknown_count.setVisibility(View.VISIBLE);
+        }
+
+
         return convertView;
     }
 

@@ -1,15 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:elevation="2dp">
-    <!--android:background="@drawable/host_ripple"-->
+    android:elevation="2dp"
+    android:background="@drawable/group_ripple">
 
+
+    <LinearLayout
+        android:id="@+id/status_view_group"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:orientation="horizontal"
+        android:layout_centerVertical="true">
+
+
+        <TextView
+            android:id="@+id/main_exp_list_critical_count"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:layout_width="25dp"
+            android:textAlignment="center"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/critical_box"
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:id="@+id/main_exp_list_warning_count"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:layout_width="25dp"
+            android:textAlignment="center"
+            android:layout_marginEnd="5dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/warning_box"
+            android:textColor="@android:color/white" />
+        <TextView
+            android:id="@+id/main_exp_list_unknown_count"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:layout_width="25dp"
+            android:textAlignment="center"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/unknown_box"
+            android:textColor="@android:color/white"/>
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/main_exp_list_hostname"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@id/status_view_group"
         android:textStyle="bold"
         android:textSize="15sp"
         android:paddingTop="@dimen/activity_vertical_margin"
@@ -17,15 +63,5 @@
         android:paddingStart="?android:attr/expandableListPreferredItemPaddingLeft"
         android:paddingEnd="?android:attr/expandableListPreferredItemPaddingLeft"/>
 
-    <TextView
-        android:id="@+id/main_exp_list_service_count"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignEnd="@+id/main_exp_list_hostname"
-        android:paddingEnd="30dp"
-        android:paddingStart="30dp" />
 
 </RelativeLayout>
