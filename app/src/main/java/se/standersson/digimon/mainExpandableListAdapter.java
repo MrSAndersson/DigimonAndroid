@@ -88,19 +88,19 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         String stateCountString;
 
         if (stateCount == 0) {
-            groupViewHolder.criticalCount.setVisibility(View.GONE);
-        } else {
-            stateCountString = stateCount.toString();
-            groupViewHolder.criticalCount.setText(stateCountString);
-            groupViewHolder.criticalCount.setVisibility(View.VISIBLE);
-        }
-        stateCount = hosts.get(groupPosition).getStateCount(2);
-        if (stateCount == 0) {
             groupViewHolder.warningCount.setVisibility(View.GONE);
         } else {
             stateCountString = stateCount.toString();
             groupViewHolder.warningCount.setText(stateCountString);
             groupViewHolder.warningCount.setVisibility(View.VISIBLE);
+        }
+        stateCount = hosts.get(groupPosition).getStateCount(2);
+        if (stateCount == 0) {
+            groupViewHolder.criticalCount.setVisibility(View.GONE);
+        } else {
+            stateCountString = stateCount.toString();
+            groupViewHolder.criticalCount.setText(stateCountString);
+            groupViewHolder.criticalCount.setVisibility(View.VISIBLE);
         }
         stateCount = hosts.get(groupPosition).getStateCount(3);
         if (stateCount == 0) {
@@ -132,13 +132,13 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
 
         switch (hosts.get(groupPosition).getServiceState(childPosition)){
             case 1:
-                viewHolder.criticalBar.setVisibility(View.VISIBLE);
-                viewHolder.warningBar.setVisibility(View.GONE);
+                viewHolder.criticalBar.setVisibility(View.GONE);
+                viewHolder.warningBar.setVisibility(View.VISIBLE);
                 viewHolder.unknownBar.setVisibility(View.GONE);
                 break;
             case 2:
-                viewHolder.criticalBar.setVisibility(View.GONE);
-                viewHolder.warningBar.setVisibility(View.VISIBLE);
+                viewHolder.criticalBar.setVisibility(View.VISIBLE);
+                viewHolder.warningBar.setVisibility(View.GONE);
                 viewHolder.unknownBar.setVisibility(View.GONE);
                 break;
             case 3:

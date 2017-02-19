@@ -3,6 +3,7 @@ package se.standersson.digimon;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,13 +21,10 @@ import java.util.List;
 
 
 public class MainActivity extends Activity {
-
-    private List<String> expandableListGroup;
-    private HashMap<String, HashMap<String, List<Integer>>> hostServiceCounter;
-    private List<String> hostsDowned;
     static JSONObject data;
     private List<Host> hosts;
     private HashMap<String, Integer> hostPositions;
+    private SwipeRefreshLayout swipeContainer;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -51,9 +49,22 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar mainToolbar = (Toolbar) findViewById(R.id.main_toolbar);
+
         setActionBar(mainToolbar);
 
         Intent intent = getIntent();
+
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.exp_swipe);
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to refresh the list here.
+                // Make sure you call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                ///////fetchTimelineAsync(0);
+            }
+        });
+
 
         /* Suppress the warning about Unchecked Cast since we know what we're doing
             Then, get the data from the indent.
@@ -75,9 +86,6 @@ public class MainActivity extends Activity {
     }
 
     private void createExpandableListSummary() {
-        expandableListGroup = new ArrayList<>();
-        hostServiceCounter = new HashMap<>();
-        hostsDowned = new ArrayList<>();
         hosts = new ArrayList<>();
         hostPositions = new HashMap<>();
 

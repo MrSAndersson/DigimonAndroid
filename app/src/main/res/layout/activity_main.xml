@@ -14,9 +14,16 @@
         android:elevation="5dp"
         android:background="@color/colorPrimary"
         />
-
-    <ExpandableListView
-        android:id="@+id/main_expand_list"
+    <android.support.v4.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:id="@+id/exp_swipe">
+
+
+        <ExpandableListView
+            android:id="@+id/main_expand_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>
