@@ -37,8 +37,6 @@ class ServerInteraction {
             /*
             * Create a connection with input/output with a plaintext body
             * */
-            //URL url = new URL(prefs.get("serverString"));
-            //String credentials = prefs.get("username") + ":" + prefs.get("password");
             URL url = new URL(serverString);
             String credentials = username + ":" + password;
 
@@ -67,6 +65,8 @@ class ServerInteraction {
             connection.disconnect();
             return json;
 
+            // Handle all known exceptions
+
         }catch (SocketTimeoutException e) {
             return "Connection Timed Out";
         } catch (MalformedURLException e) {
@@ -82,6 +82,9 @@ class ServerInteraction {
     }
 
     static boolean checkReply(Context context, String reply){
+        /*
+        * Check reply for exceptions caught in communication
+         */
         switch (reply) {
             case "Wrong credentials\n":
                 Toast.makeText(context, "Wrong Credentials", Toast.LENGTH_LONG).show();
@@ -104,6 +107,19 @@ class ServerInteraction {
             default:
                 return true;
         }
+    }
+
+    static boolean isConnected(Context context){
+        /*
+        * Check Network Connectivity and then request data from Icinga
+        * */
+
+        ConnectivityManager cm =
+                (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
     }
 
 }

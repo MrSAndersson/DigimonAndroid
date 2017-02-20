@@ -62,6 +62,7 @@
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
 
+        android:textColor="@android:color/primary_text_light"
         android:textStyle="bold"
         android:textSize="15sp" />
 
@@ -78,6 +79,7 @@
         android:paddingEnd="10dp"
 
         android:textStyle="bold"
+        android:textColor="@android:color/primary_text_light"
         android:textSize="15sp"
         android:background="@drawable/critical_box"
         android:visibility="gone"/>

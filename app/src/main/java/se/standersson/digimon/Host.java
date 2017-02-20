@@ -19,8 +19,7 @@ class Host {
     private boolean isDown = false;
     private SparseIntArray stateCounter = new SparseIntArray();
 
-
-
+    //Constructor for hosts that aren't down currently
     Host(String hostName){
         this.hostName = hostName;
         this.jsonHostPosition = null;
@@ -29,6 +28,7 @@ class Host {
         stateCounter.put(3,0);
     }
 
+    //Constructor for hosts that are down currently
     Host(String hostName, int jsonHostPosition) {
         this.hostName = hostName;
         this.jsonHostPosition = jsonHostPosition;
@@ -38,6 +38,7 @@ class Host {
         stateCounter.put(3,0);
     }
 
+    //Add a service with name, details and state. Also increment the state counters
     void addService(int jsonPosition, String serviceName, String serviceDetails, int state){
         services.add(jsonPosition);
         this.serviceNames.put(jsonPosition, serviceName);
@@ -47,9 +48,11 @@ class Host {
         stateCounter.put(state, current+1);
     }
 
+    // Get the JSON position of a service
     int getServicePosition(int childPosition) {
         return services.get(childPosition);
     }
+
 
     String getServiceName(int childPosition) {
         return serviceNames.get(services.get(childPosition));
@@ -75,6 +78,7 @@ class Host {
         return stateCounter.get(state);
     }
 
+    // Check if the host has a particular service (JSON position)
     boolean hasService(int service){
         return services.contains(service);
     }

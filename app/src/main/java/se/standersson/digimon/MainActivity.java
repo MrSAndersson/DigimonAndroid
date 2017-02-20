@@ -60,39 +60,32 @@ public class MainActivity extends Activity {
 
         Intent intent = getIntent();
 
+        /*
+         * Set up a callback for refresh PullDown
+         */
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.exp_swipe);
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
 
+                //Get login credentials and make a call to get status data
                 prefsString = new String[3];
                 SharedPreferences prefStorage = getSharedPreferences("Login", 0);
                 prefsString[0] = prefStorage.getString("serverString", "");
                 prefsString[1] = prefStorage.getString("username", "");
                 prefsString[2] = prefStorage.getString("password", "");
 
-
-
-
-                    if (isConnected()){
-
+                    if (ServerInteraction.isConnected(getApplicationContext())){
                         new refreshFetch().execute(prefsString);
                     }
 
-                //HashMap<String, String> prefs = new LoginStorage(getApplicationContext()).getLoginDetails();
-
-                // Your code to refresh the list here.
-                // Make sure you call swipeContainer.setRefreshing(false)
-                // once the network request has completed successfully.
-
-                ///////fetchTimelineAsync(0);
                 swipeContainer.setRefreshing(false);
             }
         });
 
 
         /* Suppress the warning about Unchecked Cast since we know what we're doing
-            Then, get the data from the indent.
+            Then, get the data from the intent.
          */
         @SuppressWarnings("unchecked")
         String reply = intent.getStringExtra("reply");
@@ -103,6 +96,7 @@ public class MainActivity extends Activity {
             logOut();
         }
 
+        //Create expandableListView and fill with data
         ExpandableListView listView = (ExpandableListView) findViewById(R.id.main_expand_list);
         createExpandableListSummary();
         ExpandableListAdapter listAdapter = new mainExpandableListAdapter(this, hosts);
@@ -124,7 +118,6 @@ public class MainActivity extends Activity {
             logOut();
         }
 
-
         try {
             String hostName, serviceName;
             String serviceDetails;
@@ -132,7 +125,7 @@ public class MainActivity extends Activity {
 
 
             /*
-            * Add all downed hosts to the list first
+            * Add all downed hosts to the list first in order to sort them to the top
              */
             for (int x=0 ; x < hostsDown ; x++) {
                 hostName = data.getJSONArray("hosts").getJSONObject(x).getJSONObject("attrs").getString("name");
@@ -163,6 +156,7 @@ public class MainActivity extends Activity {
     }
 
     private void logOut () {
+        // Clear credentials and go back to login page
         SharedPreferences prefStorage = getSharedPreferences("Login", 0);
         prefStorage.edit().putString("serverString", "").apply();
         prefStorage.edit().putString("username", "").apply();
@@ -173,20 +167,11 @@ public class MainActivity extends Activity {
     }
 
 
-    boolean isConnected(){
-        /*
-        * Check Network Connectivity and then request data from Icinga
-        * */
-
-        ConnectivityManager cm =
-                (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        return activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting();
-    }
-
     private class refreshFetch extends AsyncTask<String[], Integer, String> {
+        /*
+         * AsyncTask that does fetches the data outside of the UI thread and then resets the
+         * expandableListView
+         */
         @Override
         protected String doInBackground(String[]... data) {
 

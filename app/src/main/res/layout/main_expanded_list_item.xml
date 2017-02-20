@@ -37,6 +37,7 @@
             android:layout_height="wrap_content"
             android:textSize="15sp"
             android:textStyle="bold"
+            android:textColor="@android:color/primary_text_light"
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="20dp"/>
@@ -46,6 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="12sp"
+            android:textColor="@android:color/primary_text_light"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="20dp"/>

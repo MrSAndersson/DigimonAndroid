@@ -19,7 +19,6 @@
         android:layout_height="match_parent"
         android:id="@+id/exp_swipe">
 
-
         <ExpandableListView
             android:id="@+id/main_expand_list"
             android:layout_width="match_parent"
