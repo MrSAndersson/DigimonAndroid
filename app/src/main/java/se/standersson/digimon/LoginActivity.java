@@ -1,23 +1,22 @@
 package se.standersson.digimon;
 
+import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.icu.util.ICUUncheckedIOException;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
-import java.util.HashMap;
 
 
 public class LoginActivity extends Activity {
+    private static final int MY_PERMISSIONS_REQUEST_INTERNET = 1;
+    private static final int MY_PERMISSIONS_REQUEST_ACCESS_NETWORK_STATE = 2;
     String[] prefsString = new String[3];
     View serverView;
     View usernameView;
@@ -34,11 +33,12 @@ public class LoginActivity extends Activity {
         passwordView = findViewById(R.id.login_password);
         loginButton = findViewById(R.id.login_button);
         progressBar = findViewById(R.id.login_progressbar);
-        savedLogin();
+        checkConnectivityPermissions();
+        //savedLogin();
     }
 
 
-    void logIn(View view){
+    public void logIn(View view){
         EditText editTextServer = (EditText) findViewById(R.id.login_server);
         EditText editTextUsername = (EditText) findViewById(R.id.login_username);
         EditText editTextPassword = (EditText) findViewById(R.id.login_password);
@@ -108,5 +108,51 @@ public class LoginActivity extends Activity {
 
         finish();
     }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_ACCESS_NETWORK_STATE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    checkInternetPermissions();
+                }
+            }
+            case MY_PERMISSIONS_REQUEST_INTERNET: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    savedLogin();
+                }
+            }
+        }
+    }
+
+    void checkInternetPermissions(){
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.INTERNET)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.INTERNET},
+                    MY_PERMISSIONS_REQUEST_INTERNET);
+        }
+        savedLogin();
+    }
+    void checkConnectivityPermissions(){
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_NETWORK_STATE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_NETWORK_STATE},
+                    MY_PERMISSIONS_REQUEST_ACCESS_NETWORK_STATE);
+        }
+        checkInternetPermissions();
+    }
+
 }
 

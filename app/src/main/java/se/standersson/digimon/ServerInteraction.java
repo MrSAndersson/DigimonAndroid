@@ -1,10 +1,15 @@
 package se.standersson.digimon;
 
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -23,6 +28,8 @@ import javax.net.ssl.HttpsURLConnection;
 
 
 class ServerInteraction {
+
+
 
     static String fetchData(final String[] prefs){
 
