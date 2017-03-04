@@ -1,4 +1,4 @@
-package se.standersson.digimon;
+package se.standersson.icingalert;
 
 import android.Manifest;
 import android.app.Activity;
@@ -7,11 +7,11 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 
 public class LoginActivity extends Activity {
@@ -112,7 +112,7 @@ public class LoginActivity extends Activity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+                                           @NonNull String permissions[],@NonNull int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_ACCESS_NETWORK_STATE: {
                 // If request is cancelled, the result arrays are empty.

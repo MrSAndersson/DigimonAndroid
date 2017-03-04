@@ -1,4 +1,4 @@
-package se.standersson.digimon;
+package se.standersson.icingalert;
 
 import org.junit.Test;
 

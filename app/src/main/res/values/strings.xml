@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Digimon</string>
+    <string name="app_name">IcingAlert</string>
 
     <!-- Strings related to login -->
     <string name="login_server">Server String</string>

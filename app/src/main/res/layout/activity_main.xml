@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="se.standersson.digimon.MainActivity">
+    tools:context="se.standersson.icingalert.MainActivity">
 
     <android.widget.Toolbar
         android:id="@+id/main_toolbar"
