@@ -174,6 +174,7 @@ public class MainActivity extends Activity {
          */
         @Override
         protected String doInBackground(String[]... data) {
+            Log.d("Startup", "LoginActivity");
 
             return ServerInteraction.fetchData(data[0]);
         }
