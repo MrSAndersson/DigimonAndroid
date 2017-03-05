@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "737260460901",
+    "firebase_url": "https://icingalert-a0612.firebaseio.com",
+    "project_id": "icingalert-a0612",
+    "storage_bucket": "icingalert-a0612.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:737260460901:android:8cd457c9bea94d30",
+        "android_client_info": {
+          "package_name": "se.standersson.icingalert"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "737260460901-lbb5t0q7rgu70i1duu4vo38ah39ejfp6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "se.standersson.icingalert",
+            "certificate_hash": "8cb4168e18e586c385150eb974f88cfd07ba3ad0"
+          }
+        },
+        {
+          "client_id": "737260460901-8epdlh8g5atjkbokg0c4r66rhmbpspsq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3jagUs_w9QG8Vc3koiTvPol4g7cJ4A68"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "737260460901-8epdlh8g5atjkbokg0c4r66rhmbpspsq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,19 +1,14 @@
 package se.standersson.icingalert;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
@@ -174,7 +169,6 @@ public class MainActivity extends Activity {
          */
         @Override
         protected String doInBackground(String[]... data) {
-            Log.d("Startup", "LoginActivity");
 
             return ServerInteraction.fetchData(data[0]);
         }

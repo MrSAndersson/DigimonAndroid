@@ -1,7 +1,6 @@
 package se.standersson.icingalert;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -15,6 +14,5 @@ public class FirebaseCommunication extends FirebaseMessagingService {
         // message, here is where that should be initiated.
         Log.d("FCM", "From: " + remoteMessage.getFrom());
         Log.d("FCM", "Notification Message Body: " + remoteMessage.getNotification().getBody());
-        Toast.makeText(this, remoteMessage.getNotification().getTitle(), Toast.LENGTH_LONG).show();
     }
 }
