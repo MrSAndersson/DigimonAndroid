@@ -81,7 +81,6 @@
         android:textStyle="bold"
         android:textColor="@android:color/primary_text_light"
         android:textSize="15sp"
-        android:background="@drawable/critical_box"
         android:visibility="gone"/>
 
 

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -175,16 +176,12 @@ public class MainActivity extends Activity {
 
         protected void onPostExecute(String reply){
             if (ServerInteraction.checkReply(getApplicationContext(), reply)) {
-                try {
-                    data = new JSONObject(reply);
-                    ExpandableListView listView = (ExpandableListView) findViewById(R.id.main_expand_list);
-                    createExpandableListSummary();
-                    ExpandableListAdapter listAdapter = new mainExpandableListAdapter(getApplicationContext(), hosts);
-                    listView.setAdapter(listAdapter);
-                } catch (JSONException e) {
-                    Toast.makeText(getApplicationContext(), "Unable to parse JSON", Toast.LENGTH_LONG).show();
-                    logOut();
-                }
+
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    intent.putExtra("reply", reply);
+                    startActivity(intent);
+
+                    finish();
             }
             swipeContainer.setRefreshing(false);
         }
