@@ -11,7 +11,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <service android:name=".FirebaseCommunication">
+        <service android:name=".FirebaseCommunication"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
@@ -23,7 +24,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="se.standersson.icingalert.MainActivity" />
+        <activity android:name="se.standersson.icingalert.MainActivity"
+            android:launchMode="singleInstance">
+        </activity>
     </application>
 
 </manifest>

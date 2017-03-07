@@ -14,6 +14,9 @@ import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 import android.widget.Toolbar;
+
+import com.google.firebase.messaging.FirebaseMessaging;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
@@ -53,6 +56,8 @@ public class MainActivity extends Activity {
         Toolbar mainToolbar = (Toolbar) findViewById(R.id.main_toolbar);
 
         setActionBar(mainToolbar);
+
+        FirebaseMessaging.getInstance().subscribeToTopic("hosts");
 
         Intent intent = getIntent();
 
