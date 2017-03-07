@@ -186,7 +186,7 @@ public class MainActivity extends Activity {
                     intent.putExtra("reply", reply);
                     startActivity(intent);
 
-                    finish();
+                    //finish();
             }
             swipeContainer.setRefreshing(false);
         }
