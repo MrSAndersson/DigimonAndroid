@@ -38,11 +38,13 @@ public class FirebaseCommunication extends FirebaseMessagingService {
         //notification.notify();
 
 // Sets an ID for the notification
-       // Integer mNotificationId = 1;
+       int mNotificationId = 1;
 // Gets an instance of the NotificationManager service
         NotificationManager mNotifyMgr =
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 // Builds the notification and issues it.
-        mNotifyMgr.notify(1, notification.build());
+        synchronized (mNotifyMgr) {
+            mNotifyMgr.notify(mNotificationId, notification.build());
+        }
     }
 }
