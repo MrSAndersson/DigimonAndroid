@@ -80,6 +80,7 @@
 
         android:textStyle="bold"
         android:textColor="@android:color/primary_text_light"
+        android:background="@drawable/critical_box"
         android:textSize="15sp"
         android:visibility="gone"/>
 

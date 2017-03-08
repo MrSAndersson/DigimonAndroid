@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,11 +24,18 @@ import java.util.List;
 
 
 public class MainActivity extends Activity {
+    String reply;
     static JSONObject data;
     private List<Host> hosts;
     private HashMap<String, Integer> hostPositions;
     private SwipeRefreshLayout swipeContainer;
     private String[] prefsString;
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString("reply", reply);
+        super.onSaveInstanceState(outState);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -53,13 +59,13 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar mainToolbar = (Toolbar) findViewById(R.id.main_toolbar);
 
+        Toolbar mainToolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setActionBar(mainToolbar);
 
         FirebaseMessaging.getInstance().subscribeToTopic("hosts");
+        FirebaseMessaging.getInstance().subscribeToTopic("services");
 
-        Intent intent = getIntent();
 
         /*
          * Set up a callback for refresh PullDown
@@ -76,20 +82,26 @@ public class MainActivity extends Activity {
                 prefsString[1] = prefStorage.getString("username", "");
                 prefsString[2] = prefStorage.getString("password", "");
 
-                    if (ServerInteraction.isConnected(getApplicationContext())){
-                        new refreshFetch().execute(prefsString);
-                    }
+                if (ServerInteraction.isConnected(getApplicationContext())){
+                    new refreshFetch().execute(prefsString);
+                }
 
                 swipeContainer.setRefreshing(false);
             }
         });
 
+        Intent intent = getIntent();
 
-        /* Suppress the warning about Unchecked Cast since we know what we're doing
+        if (savedInstanceState != null) {
+            reply = savedInstanceState.getString("reply");
+        } else {
+            /* Suppress the warning about Unchecked Cast since we know what we're doing
             Then, get the data from the intent.
-         */
-        @SuppressWarnings("unchecked")
-        String reply = intent.getStringExtra("reply");
+
+            @SuppressWarnings("unchecked")*/
+            reply = intent.getStringExtra("reply");
+        }
+
         try {
             data = new JSONObject(reply);
         } catch (JSONException e) {
@@ -175,18 +187,30 @@ public class MainActivity extends Activity {
          */
         @Override
         protected String doInBackground(String[]... data) {
-
-            return ServerInteraction.fetchData(data[0]);
+            reply = ServerInteraction.fetchData(data[0]);
+            return reply;
         }
 
         protected void onPostExecute(String reply){
             if (ServerInteraction.checkReply(getApplicationContext(), reply)) {
 
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+
+                    /*Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     intent.putExtra("reply", reply);
                     startActivity(intent);
 
-                    //finish();
+                    finish();*/
+
+                try {
+                    data = new JSONObject(reply);
+                    ExpandableListView listView = (ExpandableListView) findViewById(R.id.main_expand_list);
+                    createExpandableListSummary();
+                    ExpandableListAdapter listAdapter = new mainExpandableListAdapter(getApplicationContext(), hosts);
+                    listView.setAdapter(listAdapter);
+                } catch (JSONException e) {
+                    Toast.makeText(getApplicationContext(), "Unable to parse JSON", Toast.LENGTH_LONG).show();
+                    logOut();
+                }
             }
             swipeContainer.setRefreshing(false);
         }
