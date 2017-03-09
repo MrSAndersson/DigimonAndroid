@@ -29,6 +29,8 @@
         <activity android:name="se.standersson.icingalert.MainActivity"
             android:launchMode="singleTask">
         </activity>
+        <activity android:name="se.standersson.icingalert.Preferences">
+        </activity>
     </application>
 
 </manifest>

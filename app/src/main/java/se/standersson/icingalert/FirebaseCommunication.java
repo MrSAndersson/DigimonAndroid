@@ -13,6 +13,7 @@ public class FirebaseCommunication extends FirebaseMessagingService {
 
         //Create the intent
         Intent resultIntent = new Intent(this, LoginActivity.class);
+        resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         //Create a pending intent from the intent since it's not starting now
         PendingIntent resultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent, 0);

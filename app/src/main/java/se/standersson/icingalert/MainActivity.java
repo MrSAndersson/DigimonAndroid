@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -50,6 +51,9 @@ public class MainActivity extends Activity {
             case R.id.logout:
                 logOut();
                 return true;
+            case R.id.preferences:
+                Intent prefIntent = new Intent(this, Preferences.class);
+                startActivity(prefIntent);
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -63,8 +67,13 @@ public class MainActivity extends Activity {
         Toolbar mainToolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setActionBar(mainToolbar);
 
-        FirebaseMessaging.getInstance().subscribeToTopic("hosts");
-        FirebaseMessaging.getInstance().subscribeToTopic("services");
+        SharedPreferences notificationPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        if (notificationPrefs.getBoolean("host_push", false)){
+            FirebaseMessaging.getInstance().subscribeToTopic("hosts");
+        }
+        if (notificationPrefs.getBoolean("service_push", false)){
+            FirebaseMessaging.getInstance().subscribeToTopic("services");
+        }
 
 
         /*
