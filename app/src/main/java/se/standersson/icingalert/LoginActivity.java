@@ -60,7 +60,7 @@ public class LoginActivity extends Activity {
 
         if (ServerInteraction.isConnected(getApplicationContext())){
             progressBar.setVisibility(View.VISIBLE);
-            new loginFetch().execute(prefsString);
+            new sendRequest().execute(prefsString);
         }
     }
 
@@ -80,12 +80,12 @@ public class LoginActivity extends Activity {
             if (ServerInteraction.isConnected(getApplicationContext())){
                 progressBar.setVisibility(View.VISIBLE);
 
-                new loginFetch().execute(prefsString);
+                new sendRequest().execute(prefsString);
             }
         }
     }
 
-    private class loginFetch extends AsyncTask<String[], Integer, String> {
+    private class sendRequest extends AsyncTask<String[], Integer, String> {
         @Override
         protected String doInBackground(String[]... data) {
 
@@ -110,49 +110,43 @@ public class LoginActivity extends Activity {
     }
 
 
+    // Callback for Internet permisison checks
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String permissions[],@NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[],@NonNull int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_ACCESS_NETWORK_STATE: {
                 // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     checkInternetPermissions();
                 }
             }
             case MY_PERMISSIONS_REQUEST_INTERNET: {
                 // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     savedLogin();
                 }
             }
         }
     }
 
-    void checkInternetPermissions(){
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.INTERNET)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.INTERNET},
-                    MY_PERMISSIONS_REQUEST_INTERNET);
-        }
-        savedLogin();
-    }
+   /*
+    *  Checks for Internet Permissions
+    */
     void checkConnectivityPermissions(){
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_NETWORK_STATE)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_NETWORK_STATE},
-                    MY_PERMISSIONS_REQUEST_ACCESS_NETWORK_STATE);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_NETWORK_STATE}, MY_PERMISSIONS_REQUEST_ACCESS_NETWORK_STATE);
+        } else {
+            checkInternetPermissions();
         }
-        checkInternetPermissions();
     }
 
+    void checkInternetPermissions(){
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, MY_PERMISSIONS_REQUEST_INTERNET);
+        } else {
+            savedLogin();
+        }
+    }
 }
 
