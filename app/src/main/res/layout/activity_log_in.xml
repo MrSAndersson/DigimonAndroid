@@ -15,14 +15,16 @@
         android:layout_height="wrap_content"
         android:hint="@string/login_server"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:visibility="gone"/>
 
     <EditText android:id="@+id/login_username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/login_username"
         android:layout_below="@+id/login_server"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:visibility="gone"/>
 
     <EditText android:id="@+id/login_password"
         android:inputType="textPassword"
@@ -30,14 +32,16 @@
         android:layout_height="wrap_content"
         android:hint="@string/login_password"
         android:layout_below="@+id/login_username"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:visibility="gone"/>
 
     <Button android:id="@+id/login_button"
         android:layout_below="@+id/login_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/login_button"
-        android:onClick="logInButton" />
+        android:onClick="logInButton"
+        android:visibility="gone"/>
 
     <ProgressBar android:id="@+id/login_progressbar"
         android:layout_width="70dp"

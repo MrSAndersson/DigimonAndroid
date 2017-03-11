@@ -45,9 +45,12 @@ public class LoginActivity extends Activity {
         if (ServerInteraction.isConnected(getApplicationContext())){
             if (!(prefsString[0].equals("") && prefsString[1].equals("") && prefsString[2].equals(""))) {
                 progressBar.setVisibility(View.VISIBLE);
-                showLoginUI(false);
                 startLogin();
+            } else {
+                showLoginUI(true);
             }
+        } else {
+            showLoginUI(true);
         }
     }
 
@@ -132,9 +135,10 @@ public class LoginActivity extends Activity {
         protected void onPostExecute(String reply){
             if (ServerInteraction.checkReply(getApplicationContext(), reply)) {
                 startMainActivity(reply);
+            } else {
+                progressBar.setVisibility(View.GONE);
+                showLoginUI(true);
             }
-            progressBar.setVisibility(View.GONE);
-            showLoginUI(true);
         }
     }
 
