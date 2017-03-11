@@ -107,7 +107,7 @@ public class LoginActivity extends Activity {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     checkInternetPermissions();
                 } else {
-                    Toast.makeText(this, "No Network State access given", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "No Network State access given", Toast.LENGTH_LONG).show();
                     showLoginUI(true);
                 }
             }
@@ -116,7 +116,7 @@ public class LoginActivity extends Activity {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     new sendRequest().execute(prefsString);
                 } else {
-                    Toast.makeText(this, "No Internet Permissions given", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "No Internet Permissions given", Toast.LENGTH_LONG).show();
                     showLoginUI(true);
                 }
             }

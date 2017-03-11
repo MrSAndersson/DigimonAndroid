@@ -14,9 +14,7 @@ import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 import android.widget.Toolbar;
-
 import com.google.firebase.messaging.FirebaseMessaging;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
@@ -25,12 +23,10 @@ import java.util.List;
 
 
 public class MainActivity extends Activity {
-    String reply;
-    static JSONObject data;
+    private String reply;
+    private static JSONObject data;
     private List<Host> hosts;
-    private HashMap<String, Integer> hostPositions;
     private SwipeRefreshLayout swipeContainer;
-    private String[] prefsString;
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -67,6 +63,7 @@ public class MainActivity extends Activity {
         Toolbar mainToolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setActionBar(mainToolbar);
 
+        // Subscribe to notifications according to saved settings
         SharedPreferences notificationPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         if (notificationPrefs.getBoolean("host_push", false)){
             FirebaseMessaging.getInstance().subscribeToTopic("hosts");
@@ -82,52 +79,43 @@ public class MainActivity extends Activity {
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.exp_swipe);
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onRefresh() {
-
-                //Get login credentials and make a call to get status data
-                prefsString = new String[3];
-                SharedPreferences prefStorage = getSharedPreferences("Login", 0);
-                prefsString[0] = prefStorage.getString("serverString", "");
-                prefsString[1] = prefStorage.getString("username", "");
-                prefsString[2] = prefStorage.getString("password", "");
-
-                if (ServerInteraction.isConnected(getApplicationContext())){
-                    new refreshFetch().execute(prefsString);
-                }
-
-                swipeContainer.setRefreshing(false);
-            }
+            public void onRefresh() { refresh();}
         });
 
         Intent intent = getIntent();
 
-        if (savedInstanceState != null) {
-            reply = savedInstanceState.getString("reply");
+        if (intent.getBooleanExtra("Notification", false)) {
+            refresh();
         } else {
-            /* Suppress the warning about Unchecked Cast since we know what we're doing
-            Then, get the data from the intent.
 
-            @SuppressWarnings("unchecked")*/
-            reply = intent.getStringExtra("reply");
+            // If we have a saved state, use that to create the list, otherwise, get from the intent
+            if (savedInstanceState != null) {
+                reply = savedInstanceState.getString("reply");
+            } else {
+                reply = intent.getStringExtra("reply");
+            }
+
+            try {
+                data = new JSONObject(reply);
+            } catch (JSONException e) {
+                Toast.makeText(this, "Unable to parse JSON", Toast.LENGTH_LONG).show();
+                logOut();
+            }
+
+            //Create expandableListView and fill with data
+            ExpandableListView listView = (ExpandableListView) findViewById(R.id.main_expand_list);
+            createExpandableListSummary();
+            ExpandableListAdapter listAdapter = new mainExpandableListAdapter(this, hosts);
+            listView.setAdapter(listAdapter);
         }
-
-        try {
-            data = new JSONObject(reply);
-        } catch (JSONException e) {
-            Toast.makeText(this, "Unable to parse JSON", Toast.LENGTH_LONG).show();
-            logOut();
-        }
-
-        //Create expandableListView and fill with data
-        ExpandableListView listView = (ExpandableListView) findViewById(R.id.main_expand_list);
-        createExpandableListSummary();
-        ExpandableListAdapter listAdapter = new mainExpandableListAdapter(this, hosts);
-        listView.setAdapter(listAdapter);
     }
 
     private void createExpandableListSummary() {
+        /*
+         * Prepare status info into
+         */
         hosts = new ArrayList<>();
-        hostPositions = new HashMap<>();
+        HashMap<String, Integer> hostPositions = new HashMap<>();
 
         int services = 0, hostsDown = 0;
 
@@ -188,6 +176,23 @@ public class MainActivity extends Activity {
         finish();
     }
 
+    private void refresh() {
+
+        //Get login credentials and make a call to get status data
+        String[] prefsString = new String[3];
+        SharedPreferences prefStorage = getSharedPreferences("Login", 0);
+        prefsString[0] = prefStorage.getString("serverString", "");
+        prefsString[1] = prefStorage.getString("username", "");
+        prefsString[2] = prefStorage.getString("password", "");
+
+        if (ServerInteraction.isConnected(getApplicationContext())){
+            new refreshFetch().execute(prefsString);
+        } else {
+            Toast.makeText(getApplicationContext(), "No Network Connectivity", Toast.LENGTH_LONG).show();
+        }
+
+        swipeContainer.setRefreshing(false);
+    }
 
     private class refreshFetch extends AsyncTask<String[], Integer, String> {
         /*
@@ -202,14 +207,6 @@ public class MainActivity extends Activity {
 
         protected void onPostExecute(String reply){
             if (ServerInteraction.checkReply(getApplicationContext(), reply)) {
-
-
-                    /*Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                    intent.putExtra("reply", reply);
-                    startActivity(intent);
-
-                    finish();*/
-
                 try {
                     data = new JSONObject(reply);
                     ExpandableListView listView = (ExpandableListView) findViewById(R.id.main_expand_list);
