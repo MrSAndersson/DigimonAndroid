@@ -12,6 +12,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 
 public class LoginActivity extends Activity {
@@ -33,12 +34,27 @@ public class LoginActivity extends Activity {
         passwordView = findViewById(R.id.login_password);
         loginButton = findViewById(R.id.login_button);
         progressBar = findViewById(R.id.login_progressbar);
-        checkConnectivityPermissions();
-        //savedLogin();
+
+        // Get stored credentials
+
+        SharedPreferences prefStorage = getSharedPreferences("Login", 0);
+        prefsString[0] = prefStorage.getString("serverString", "");
+        prefsString[1] = prefStorage.getString("username", "");
+        prefsString[2] = prefStorage.getString("password", "");
+
+        if (ServerInteraction.isConnected(getApplicationContext())){
+            if (!(prefsString[0].equals("") && prefsString[1].equals("") && prefsString[2].equals(""))) {
+                progressBar.setVisibility(View.VISIBLE);
+                showLoginUI(false);
+                startLogin();
+            }
+        }
     }
 
 
-    public void logIn(View view){
+    public void logInButton(View view){
+
+        // Get the settings from the text boxes
         EditText editTextServer = (EditText) findViewById(R.id.login_server);
         EditText editTextUsername = (EditText) findViewById(R.id.login_username);
         EditText editTextPassword = (EditText) findViewById(R.id.login_password);
@@ -56,31 +72,53 @@ public class LoginActivity extends Activity {
         prefStorage.edit().putString("username", prefsString[1]).apply();
         prefStorage.edit().putString("password", prefsString[2]).apply();
 
-
-
+        // If we have internet connectivity, start the connection to the server
         if (ServerInteraction.isConnected(getApplicationContext())){
             progressBar.setVisibility(View.VISIBLE);
+            startLogin();
+        }
+    }
+
+   /*
+    *  Checks for Internet Permissions
+    */
+    void startLogin(){
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_NETWORK_STATE}, MY_PERMISSIONS_REQUEST_ACCESS_NETWORK_STATE);
+        } else {
+            checkInternetPermissions();
+        }
+    }
+
+    void checkInternetPermissions(){
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, MY_PERMISSIONS_REQUEST_INTERNET);
+        } else {
             new sendRequest().execute(prefsString);
         }
     }
 
-    void savedLogin(){
-        /*
-        A method for logging in with saved credentials
-         */
-        SharedPreferences prefStorage = getSharedPreferences("Login", 0);
-        prefsString[0] = prefStorage.getString("serverString", "");
-        prefsString[1] = prefStorage.getString("username", "");
-        prefsString[2] = prefStorage.getString("password", "");
-
-        /*
-        Login with the saved credentials if some are saved
-         */
-        if (!(prefsString[0].equals("") && prefsString[1].equals("") && prefsString[2].equals(""))) {
-            if (ServerInteraction.isConnected(getApplicationContext())){
-                progressBar.setVisibility(View.VISIBLE);
-
-                new sendRequest().execute(prefsString);
+    // Callback for Internet permission checks
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[],@NonNull int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_ACCESS_NETWORK_STATE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    checkInternetPermissions();
+                } else {
+                    Toast.makeText(this, "No Network State access given", Toast.LENGTH_SHORT).show();
+                    showLoginUI(true);
+                }
+            }
+            case MY_PERMISSIONS_REQUEST_INTERNET: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    new sendRequest().execute(prefsString);
+                } else {
+                    Toast.makeText(this, "No Internet Permissions given", Toast.LENGTH_SHORT).show();
+                    showLoginUI(true);
+                }
             }
         }
     }
@@ -88,7 +126,6 @@ public class LoginActivity extends Activity {
     private class sendRequest extends AsyncTask<String[], Integer, String> {
         @Override
         protected String doInBackground(String[]... data) {
-
             return ServerInteraction.fetchData(data[0]);
         }
 
@@ -97,8 +134,8 @@ public class LoginActivity extends Activity {
                 startMainActivity(reply);
             }
             progressBar.setVisibility(View.GONE);
+            showLoginUI(true);
         }
-
     }
 
     void startMainActivity(String reply){
@@ -109,43 +146,17 @@ public class LoginActivity extends Activity {
         finish();
     }
 
-
-    // Callback for Internet permisison checks
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[],@NonNull int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_ACCESS_NETWORK_STATE: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    checkInternetPermissions();
-                }
-            }
-            case MY_PERMISSIONS_REQUEST_INTERNET: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    savedLogin();
-                }
-            }
-        }
-    }
-
-   /*
-    *  Checks for Internet Permissions
-    */
-    void checkConnectivityPermissions(){
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_NETWORK_STATE}, MY_PERMISSIONS_REQUEST_ACCESS_NETWORK_STATE);
+    void showLoginUI(boolean show) {
+        if (show) {
+            serverView.setVisibility(View.VISIBLE);
+            usernameView.setVisibility(View.VISIBLE);
+            passwordView.setVisibility(View.VISIBLE);
+            loginButton.setVisibility(View.VISIBLE);
         } else {
-            checkInternetPermissions();
-        }
-    }
-
-    void checkInternetPermissions(){
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, MY_PERMISSIONS_REQUEST_INTERNET);
-        } else {
-            savedLogin();
+            serverView.setVisibility(View.GONE);
+            usernameView.setVisibility(View.GONE);
+            passwordView.setVisibility(View.GONE);
+            loginButton.setVisibility(View.GONE);
         }
     }
 }
