@@ -56,6 +56,14 @@ public class MainActivity extends Activity {
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        // Replace the current Intent with this one
+        setIntent(intent);
+        refresh();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -84,30 +92,27 @@ public class MainActivity extends Activity {
 
         Intent intent = getIntent();
 
-        if (intent.getBooleanExtra("Notification", false)) {
-            refresh();
+
+        // If we have a saved state, use that to create the list, otherwise, get from the intent
+        if (savedInstanceState != null) {
+            reply = savedInstanceState.getString("reply");
         } else {
-
-            // If we have a saved state, use that to create the list, otherwise, get from the intent
-            if (savedInstanceState != null) {
-                reply = savedInstanceState.getString("reply");
-            } else {
-                reply = intent.getStringExtra("reply");
-            }
-
-            try {
-                data = new JSONObject(reply);
-            } catch (JSONException e) {
-                Toast.makeText(this, "Unable to parse JSON", Toast.LENGTH_LONG).show();
-                logOut();
-            }
-
-            //Create expandableListView and fill with data
-            ExpandableListView listView = (ExpandableListView) findViewById(R.id.main_expand_list);
-            createExpandableListSummary();
-            ExpandableListAdapter listAdapter = new mainExpandableListAdapter(this, hosts);
-            listView.setAdapter(listAdapter);
+            reply = intent.getStringExtra("reply");
         }
+
+        try {
+            data = new JSONObject(reply);
+        } catch (JSONException e) {
+            Toast.makeText(this, "Unable to parse JSON", Toast.LENGTH_LONG).show();
+            logOut();
+        }
+
+        //Create expandableListView and fill with data
+        ExpandableListView listView = (ExpandableListView) findViewById(R.id.main_expand_list);
+        createExpandableListSummary();
+        ExpandableListAdapter listAdapter = new mainExpandableListAdapter(this, hosts);
+        listView.setAdapter(listAdapter);
+
     }
 
     private void createExpandableListSummary() {
