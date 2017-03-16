@@ -4,6 +4,7 @@ package se.standersson.icingalert;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 import java.io.BufferedReader;
@@ -37,19 +38,21 @@ class ServerInteraction {
             * */
             URL url = new URL(serverString);
             String credentials = username + ":" + password;
+            String basic = "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP);
 
             HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+            connection.setRequestProperty("Authorization", basic);
             connection.setRequestProperty("Content-Type", "text/plain");
-            connection.setDoOutput(true);
+            //connection.setDoOutput(true);
             connection.setConnectTimeout(5000);
             connection.setDoInput(true);
             connection.setUseCaches(false);
 
             // Create an OutputStream and write the credentials to the server
-            OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
-            writer.write(credentials);
-            writer.flush();
-            writer.close();
+            //OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+            //writer.write(credentials);
+            //writer.flush();
+            //writer.close();
 
             // Create the BufferedReader and add all batches together
             BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
