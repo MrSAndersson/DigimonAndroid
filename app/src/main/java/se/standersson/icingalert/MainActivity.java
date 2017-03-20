@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -17,6 +18,11 @@ import android.widget.Toolbar;
 import com.google.firebase.messaging.FirebaseMessaging;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.FileNotFoundException;
+import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -206,8 +212,20 @@ public class MainActivity extends Activity {
          */
         @Override
         protected String doInBackground(String[]... data) {
-            reply = ServerInteraction.fetchData(data[0]);
-            return reply;
+            try {
+                return ServerInteraction.fetchData(data[0]);
+            }catch (SocketTimeoutException e) {
+                return "Connection Timed Out";
+            } catch (MalformedURLException e) {
+                return "Invalid URL";
+            } catch (UnknownHostException e) {
+                return "Resolve Failed";
+            } catch (FileNotFoundException e) {
+                return "FileNotFoundException";
+            } catch (Exception e) {
+                Log.e("NetworkException", e.toString());
+                return "Unknown Exception";
+            }
         }
 
         protected void onPostExecute(String reply){

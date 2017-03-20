@@ -7,6 +7,10 @@ import android.net.NetworkInfo;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
@@ -23,22 +27,33 @@ class ServerInteraction {
 
 
 
-    static String fetchData(final String[] prefs){
+    static String fetchData(final String[] prefs) throws Exception{
 
         /*
         * Try Catch to catch all errors in network communication
         * */
+        JSONObject replyGroup = new JSONObject();
         String serverString = prefs[0];
         String username = prefs[1];
         String password = prefs[2];
+        String statusURL = serverString + "/v1/status/CIB";
+        String hostURL = serverString + "/v1/objects/hosts?attrs=last_check_result&attrs=state&attrs=name";
+        String serviceURL = serverString + "/v1/objects/services?attrs=last_check_result&attrs=state&attrs=name&attrs=host_name";
+
 
         try {
             /*
             * Create a connection with input/output with a plaintext body
             * */
-            URL url = new URL(serverString);
+            String credentials = "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP);
+            replyGroup = sendRequest(replyGroup, "status", statusURL, credentials);
+            replyGroup = sendRequest(replyGroup, "hosts", hostURL, credentials);
+            replyGroup = sendRequest(replyGroup, "services", serviceURL, credentials);
+
+            return replyGroup.toString();
+            /*URL url = new URL("https://digiapi.nepa.com:5664/v1/objects/hosts?attrs=last_check_result&attrs=state&attrs=name");
             String credentials = username + ":" + password;
-            String basic = "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP);
+            String basic = "Basic " + Base64.encodeToString((credentials).getBytes(), Base64.NO_WRAP);
 
             HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
             connection.setRequestProperty("Authorization", basic);
@@ -64,7 +79,8 @@ class ServerInteraction {
             }
             reader.close();
             connection.disconnect();
-            return json;
+            replyGroup.put("hosts", new JSONObject(json).getJSONArray("results"));
+            return json;*/
 
             // Handle all known exceptions
 
@@ -80,6 +96,30 @@ class ServerInteraction {
             Log.e("NetworkException", e.toString());
             return "Unknown Exception";
         }
+    }
+
+    static JSONObject sendRequest(JSONObject completeObject, String part, String serverString, String credentials) throws Exception {
+        URL url = new URL(serverString);
+        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+        connection.setRequestProperty("Authorization", credentials);
+        connection.setRequestProperty("Content-Type", "text/plain");
+        connection.setConnectTimeout(5000);
+        connection.setDoInput(true);
+        connection.setUseCaches(false);
+
+
+        // Create the BufferedReader and add all batches together
+        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        String json = "";
+        String tmp;
+
+        while ((tmp = reader.readLine()) != null) {
+            json += tmp + "\n";
+        }
+        reader.close();
+        connection.disconnect();
+        completeObject.put(part, new JSONObject(json).getJSONArray("results"));
+        return completeObject;
     }
 
     static boolean checkReply(Context context, String reply){

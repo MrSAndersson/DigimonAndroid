@@ -10,9 +10,17 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import org.json.JSONObject;
+
+import java.io.FileNotFoundException;
+import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 
 
 public class LoginActivity extends Activity {
@@ -129,7 +137,20 @@ public class LoginActivity extends Activity {
     private class sendRequest extends AsyncTask<String[], Integer, String> {
         @Override
         protected String doInBackground(String[]... data) {
+            try {
             return ServerInteraction.fetchData(data[0]);
+            }catch (SocketTimeoutException e) {
+                return "Connection Timed Out";
+            } catch (MalformedURLException e) {
+                return "Invalid URL";
+            } catch (UnknownHostException e) {
+                return "Resolve Failed";
+            } catch (FileNotFoundException e) {
+                return "FileNotFoundException";
+            } catch (Exception e) {
+                Log.e("NetworkException", e.toString());
+                return "Unknown Exception";
+            }
         }
 
         protected void onPostExecute(String reply){
