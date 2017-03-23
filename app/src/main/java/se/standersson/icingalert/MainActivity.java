@@ -1,12 +1,16 @@
 package se.standersson.icingalert;
 
 import android.app.Activity;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,6 +23,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
@@ -28,11 +33,12 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
     private String reply;
     private static JSONObject data;
-    private List<Host> hosts;
+    public static List<Host> hosts;
     private SwipeRefreshLayout swipeContainer;
+    FragmentPagerAdapter adapterViewPager;
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -74,8 +80,9 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar mainToolbar = (Toolbar) findViewById(R.id.main_toolbar);
-        setActionBar(mainToolbar);
+
+        //Toolbar mainToolbar = (Toolbar) findViewById(R.id.main_toolbar);
+       // setActionBar(mainToolbar);
 
         // Subscribe to notifications according to saved settings
         SharedPreferences notificationPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
@@ -90,11 +97,11 @@ public class MainActivity extends Activity {
         /*
          * Set up a callback for refresh PullDown
          */
-        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.exp_swipe);
+        /*swipeContainer = (SwipeRefreshLayout) findViewById(R.id.exp_swipe);
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() { refresh();}
-        });
+        });*/
 
         Intent intent = getIntent();
 
@@ -114,11 +121,11 @@ public class MainActivity extends Activity {
         }
 
         //Create expandableListView and fill with data
-        ExpandableListView listView = (ExpandableListView) findViewById(R.id.main_expand_list);
         createExpandableListSummary();
-        ExpandableListAdapter listAdapter = new mainExpandableListAdapter(this, hosts);
-        listView.setAdapter(listAdapter);
 
+        ViewPager mainViewPager = (ViewPager) findViewById(R.id.main_view_pager);
+        adapterViewPager = new MyPagerAdapter(getSupportFragmentManager());
+        mainViewPager.setAdapter(adapterViewPager);
     }
 
     private void createExpandableListSummary() {
@@ -187,7 +194,7 @@ public class MainActivity extends Activity {
         finish();
     }
 
-    private void refresh() {
+    public void refresh() {
 
         //Get login credentials and make a call to get status data
         String[] prefsString = new String[3];
@@ -242,6 +249,47 @@ public class MainActivity extends Activity {
                 }
             }
             swipeContainer.setRefreshing(false);
+        }
+
+    }
+
+    private static class MyPagerAdapter extends FragmentPagerAdapter {
+	    private static int NUM_ITEMS = 2;
+
+        MyPagerAdapter(android.support.v4.app.FragmentManager fragmentManager) {
+            super(fragmentManager);
+        }
+
+        // Returns total number of pages
+        @Override
+        public int getCount() {
+            return NUM_ITEMS;
+        }
+
+        // Returns the fragment to display for that page
+        @Override
+        public android.support.v4.app.Fragment getItem(int position) {
+            switch (position) {
+                case 0: // Fragment # 0 - This will show FirstFragment
+                    return ProblemFragment.newInstance(position);
+                case 1: // Fragment # 0 - This will show FirstFragment different title
+                    return ProblemFragment.newInstance(position);
+                default:
+                    return null;
+            }
+        }
+
+        // Returns the page title for the top indicator
+        @Override
+        public CharSequence getPageTitle(int position) {
+            switch (position) {
+                case 0:
+                    return "Trouble";
+                case 1:
+                    return "All";
+                default:
+                    return "Placeholder";
+            }
         }
 
     }

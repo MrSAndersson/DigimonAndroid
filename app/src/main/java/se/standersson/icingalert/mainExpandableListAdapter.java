@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import java.util.List;
 
@@ -146,6 +147,12 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
                 viewHolder.warningBar.setVisibility(View.GONE);
                 viewHolder.unknownBar.setVisibility(View.VISIBLE);
                 break;
+            default:
+                viewHolder.criticalBar.setVisibility(View.GONE);
+                viewHolder.warningBar.setVisibility(View.GONE);
+                viewHolder.unknownBar.setVisibility(View.INVISIBLE);
+                break;
+
         }
         return convertView;
     }

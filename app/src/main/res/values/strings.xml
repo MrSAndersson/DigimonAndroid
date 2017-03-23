@@ -19,5 +19,6 @@
     <!-- String related to the Preferences menu -->
     <string name="host_notification_pref">Subscribe to Host Notifications</string>
     <string name="service_notification_pref">Subscribe to Service Notifications</string>
+
 </resources>
 

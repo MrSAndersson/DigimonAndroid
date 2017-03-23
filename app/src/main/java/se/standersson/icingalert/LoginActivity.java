@@ -1,7 +1,6 @@
 package se.standersson.icingalert;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -10,20 +9,18 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import org.json.JSONObject;
-
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
 
-public class LoginActivity extends Activity {
+public class LoginActivity extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_INTERNET = 1;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_NETWORK_STATE = 2;
     String[] prefsString = new String[3];
