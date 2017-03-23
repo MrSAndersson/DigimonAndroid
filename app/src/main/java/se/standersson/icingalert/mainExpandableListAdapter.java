@@ -13,16 +13,18 @@ import java.util.List;
 class mainExpandableListAdapter extends BaseExpandableListAdapter {
     private Context context;
     private List<Host> hosts;
+    private int hostsCount;
 
 
-    mainExpandableListAdapter(Context context, List<Host> hosts) {
+    mainExpandableListAdapter(Context context, List<Host> hosts, int hostsCount) {
         this.context = context;
         this.hosts = hosts;
+        this.hostsCount = hostsCount;
     }
 
     @Override
     public int getGroupCount() {
-        return hosts.size();
+        return hostsCount;
     }
 
     @Override

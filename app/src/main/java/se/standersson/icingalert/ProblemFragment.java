@@ -15,9 +15,14 @@ import android.widget.ExpandableListView;
 public class ProblemFragment extends Fragment {
     private SwipeRefreshLayout swipeContainer;
     View view;
+    int hostsNr;
 
-    static ProblemFragment newInstance(int num) {
-        return new ProblemFragment();
+    static ProblemFragment newInstance(int hostsNr) {
+        ProblemFragment fragment = new ProblemFragment();
+        Bundle args = new Bundle();
+        args.putInt("hostsNr", hostsNr);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -33,6 +38,7 @@ public class ProblemFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        hostsNr = getArguments().getInt("hostsNr", 0);
 
     }
 
@@ -51,7 +57,7 @@ public class ProblemFragment extends Fragment {
         });*/
 
         ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.main_expand_list);
-        ExpandableListAdapter listAdapter = new mainExpandableListAdapter(view.getContext(), MainActivity.hosts);
+        ExpandableListAdapter listAdapter = new mainExpandableListAdapter(view.getContext(), MainActivity.hosts, hostsNr);
         listView.setAdapter(listAdapter);
 
         return view;

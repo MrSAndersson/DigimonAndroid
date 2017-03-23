@@ -2,8 +2,8 @@
 <resources>
     <color name="colorPrimary">#005bac</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorLight">#0095BF</color>
-    <color name="colorAccent">#FF6633</color>
+    <color name="colorOrangeHighlight">#FF6633</color>
+    <color name="colorAccent">#0095BF</color>
     <color name="colorHostDown">#ff735e</color>
     <color name="colorCritical">#FF5566</color>
     <color name="colorWarning">#FFAA44</color>

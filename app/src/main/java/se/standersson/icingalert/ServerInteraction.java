@@ -51,36 +51,6 @@ class ServerInteraction {
             replyGroup = sendRequest(replyGroup, "services", serviceURL, credentials);
 
             return replyGroup.toString();
-            /*URL url = new URL("https://digiapi.nepa.com:5664/v1/objects/hosts?attrs=last_check_result&attrs=state&attrs=name");
-            String credentials = username + ":" + password;
-            String basic = "Basic " + Base64.encodeToString((credentials).getBytes(), Base64.NO_WRAP);
-
-            HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-            connection.setRequestProperty("Authorization", basic);
-            connection.setRequestProperty("Content-Type", "text/plain");
-            //connection.setDoOutput(true);
-            connection.setConnectTimeout(5000);
-            connection.setDoInput(true);
-            connection.setUseCaches(false);
-
-            // Create an OutputStream and write the credentials to the server
-            //OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
-            //writer.write(credentials);
-            //writer.flush();
-            //writer.close();
-
-            // Create the BufferedReader and add all batches together
-            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String json = "";
-            String tmp;
-
-            while ((tmp = reader.readLine()) != null) {
-                json += tmp + "\n";
-            }
-            reader.close();
-            connection.disconnect();
-            replyGroup.put("hosts", new JSONObject(json).getJSONArray("results"));
-            return json;*/
 
             // Handle all known exceptions
 
@@ -98,7 +68,7 @@ class ServerInteraction {
         }
     }
 
-    static JSONObject sendRequest(JSONObject completeObject, String part, String serverString, String credentials) throws Exception {
+    private static JSONObject sendRequest(JSONObject completeObject, String part, String serverString, String credentials) throws Exception {
         URL url = new URL(serverString);
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
         connection.setRequestProperty("Authorization", credentials);
@@ -118,7 +88,11 @@ class ServerInteraction {
         }
         reader.close();
         connection.disconnect();
-        completeObject.put(part, new JSONObject(json).getJSONArray("results"));
+        if (part.equals("status")) {
+            completeObject.put(part, new JSONObject(json).getJSONArray("results").getJSONObject(0).getJSONObject("status"));
+        } else {
+            completeObject.put(part, new JSONObject(json).getJSONArray("results"));
+        }
         return completeObject;
     }
 

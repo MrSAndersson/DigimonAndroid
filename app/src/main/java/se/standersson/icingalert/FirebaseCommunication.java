@@ -25,7 +25,7 @@ public class FirebaseCommunication extends FirebaseMessagingService {
                         .setContentTitle(remoteMessage.getNotification().getTitle())
                         .setContentText(remoteMessage.getNotification().getBody())
                         .setAutoCancel(true)
-                        .setColor(getColor(R.color.colorLight))
+                        .setColor(getColor(R.color.colorAccent))
                         .setContentIntent(resultPendingIntent);
 
 

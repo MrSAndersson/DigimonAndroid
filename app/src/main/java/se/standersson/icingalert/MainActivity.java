@@ -1,7 +1,5 @@
 package se.standersson.icingalert;
 
-import android.app.Activity;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -15,10 +13,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.ExpandableListAdapter;
-import android.widget.ExpandableListView;
 import android.widget.Toast;
-import android.widget.Toolbar;
+
 import com.google.firebase.messaging.FirebaseMessaging;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     public static List<Host> hosts;
     private SwipeRefreshLayout swipeContainer;
     FragmentPagerAdapter adapterViewPager;
+    private int hostListCount;
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -124,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
         createExpandableListSummary();
 
         ViewPager mainViewPager = (ViewPager) findViewById(R.id.main_view_pager);
-        adapterViewPager = new MyPagerAdapter(getSupportFragmentManager());
+        adapterViewPager = new MyPagerAdapter(getSupportFragmentManager(), hostListCount);
         mainViewPager.setAdapter(adapterViewPager);
     }
 
@@ -135,12 +132,14 @@ public class MainActivity extends AppCompatActivity {
         hosts = new ArrayList<>();
         HashMap<String, Integer> hostPositions = new HashMap<>();
 
-        int services = 0, hostsDown = 0;
+        int servicesCount = 0, hostsDownCount = 0, hostsCount = 0;
 
         // Check how many Hosts and Services are having trouble
         try {
-            services = data.getJSONArray("services").length();
-            hostsDown = data.getJSONArray("hosts").length();
+            servicesCount = data.getJSONArray("services").length();
+            hostsCount = data.getJSONArray("hosts").length();
+            hostsDownCount = data.getJSONObject("status").getInt("num_hosts_down");
+            hostListCount = hostsDownCount;
         } catch (JSONException e) {
             Toast.makeText(this, "Couldn't find a Host/Services Array", Toast.LENGTH_LONG).show();
             logOut();
@@ -155,16 +154,34 @@ public class MainActivity extends AppCompatActivity {
             /*
             * Add all downed hosts to the list first in order to sort them to the top
              */
-            for (int x=0 ; x < hostsDown ; x++) {
-                hostName = data.getJSONArray("hosts").getJSONObject(x).getJSONObject("attrs").getString("name");
-                hosts.add(new Host(hostName, x));
-                hostPositions.put(hostName, x);
+            for (int x = 0, y = 0; x < hostsCount; x++) {
+                if (data.getJSONArray("hosts").getJSONObject(x).getJSONObject("attrs").getInt("state") == 1) {
+                    hostName = data.getJSONArray("hosts").getJSONObject(x).getJSONObject("attrs").getString("name");
+                    hostPositions.put(hostName, hosts.size());
+                    hosts.add(new Host(hostName, x));
+                   // hostPositions.put(hostName, x);
+                    y++;
+                    if (y == hostsDownCount) {
+                        break;
+                    }
+                }
+            }
+
+            for (int x=0 ; x < servicesCount ; x++) {
+                hostName = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getString("host_name");
+                state = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getInt("state");
+                if (state != 0 && !hostPositions.containsKey(hostName)){
+                    hostPositions.put(hostName, hosts.size());
+                    hosts.add(new Host(hostName));
+                    //hostPositions.put(hostName, x);
+                    hostListCount++;
+                }
             }
 
             /*
             * Loop through all services and store the hostname and the location of their respective failing services
              */
-            for (int x=0 ; x < services ; x++) {
+            for (int x=0 ; x < servicesCount ; x++) {
                 hostName = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getString("host_name");
                 serviceName = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getString("name");
                 serviceDetails = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getJSONObject("last_check_result").getString("output");
@@ -239,10 +256,10 @@ public class MainActivity extends AppCompatActivity {
             if (ServerInteraction.checkReply(getApplicationContext(), reply)) {
                 try {
                     data = new JSONObject(reply);
-                    ExpandableListView listView = (ExpandableListView) findViewById(R.id.main_expand_list);
-                    createExpandableListSummary();
-                    ExpandableListAdapter listAdapter = new mainExpandableListAdapter(getApplicationContext(), hosts);
-                    listView.setAdapter(listAdapter);
+                    //ExpandableListView listView = (ExpandableListView) findViewById(R.id.main_expand_list);
+                    //createExpandableListSummary();
+                    //ExpandableListAdapter listAdapter = new mainExpandableListAdapter(getApplicationContext(), hosts);
+                    //listView.setAdapter(listAdapter);
                 } catch (JSONException e) {
                     Toast.makeText(getApplicationContext(), "Unable to parse JSON", Toast.LENGTH_LONG).show();
                     logOut();
@@ -255,9 +272,11 @@ public class MainActivity extends AppCompatActivity {
 
     private static class MyPagerAdapter extends FragmentPagerAdapter {
 	    private static int NUM_ITEMS = 2;
+        private int hostsDownNr;
 
-        MyPagerAdapter(android.support.v4.app.FragmentManager fragmentManager) {
+        MyPagerAdapter(android.support.v4.app.FragmentManager fragmentManager, Integer hostsCount) {
             super(fragmentManager);
+            this.hostsDownNr = hostsCount;
         }
 
         // Returns total number of pages
@@ -271,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
         public android.support.v4.app.Fragment getItem(int position) {
             switch (position) {
                 case 0: // Fragment # 0 - This will show FirstFragment
-                    return ProblemFragment.newInstance(position);
+                    return ProblemFragment.newInstance(hostsDownNr);
                 case 1: // Fragment # 0 - This will show FirstFragment different title
                     return ProblemFragment.newInstance(position);
                 default:
