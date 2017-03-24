@@ -5,11 +5,12 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -33,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
     private String reply;
     private static JSONObject data;
     public static List<Host> hosts;
-    private SwipeRefreshLayout swipeContainer;
     FragmentPagerAdapter adapterViewPager;
     private int hostListCount;
 
@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
         createExpandableListSummary();
 
         ViewPager mainViewPager = (ViewPager) findViewById(R.id.main_view_pager);
-        adapterViewPager = new MyPagerAdapter(getSupportFragmentManager(), hostListCount);
+        adapterViewPager = new MainPagerAdapter(getSupportFragmentManager(), hostListCount);
         mainViewPager.setAdapter(adapterViewPager);
     }
 
@@ -159,7 +159,6 @@ public class MainActivity extends AppCompatActivity {
                     hostName = data.getJSONArray("hosts").getJSONObject(x).getJSONObject("attrs").getString("name");
                     hostPositions.put(hostName, hosts.size());
                     hosts.add(new Host(hostName, x));
-                   // hostPositions.put(hostName, x);
                     y++;
                     if (y == hostsDownCount) {
                         break;
@@ -173,7 +172,6 @@ public class MainActivity extends AppCompatActivity {
                 if (state != 0 && !hostPositions.containsKey(hostName)){
                     hostPositions.put(hostName, hosts.size());
                     hosts.add(new Host(hostName));
-                    //hostPositions.put(hostName, x);
                     hostListCount++;
                 }
             }
@@ -226,7 +224,8 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "No Network Connectivity", Toast.LENGTH_LONG).show();
         }
 
-        swipeContainer.setRefreshing(false);
+        ((MainPagerAdapter)adapterViewPager).getFragment(0).stopRefreshSpinner(true);
+        //swipeContainer.setRefreshing(false);
     }
 
     private class refreshFetch extends AsyncTask<String[], Integer, String> {
@@ -265,16 +264,17 @@ public class MainActivity extends AppCompatActivity {
                     logOut();
                 }
             }
-            swipeContainer.setRefreshing(false);
+            ((MainPagerAdapter)adapterViewPager).getFragment(0).stopRefreshSpinner(true);   //swipeContainer.setRefreshing(false);
         }
 
     }
 
-    private static class MyPagerAdapter extends FragmentPagerAdapter {
+    private static class MainPagerAdapter extends FragmentPagerAdapter {
 	    private static int NUM_ITEMS = 2;
         private int hostsDownNr;
+        private SparseArray<ProblemFragment> fragmentArray = new SparseArray<>();
 
-        MyPagerAdapter(android.support.v4.app.FragmentManager fragmentManager, Integer hostsCount) {
+        MainPagerAdapter(android.support.v4.app.FragmentManager fragmentManager, Integer hostsCount) {
             super(fragmentManager);
             this.hostsDownNr = hostsCount;
         }
@@ -290,9 +290,13 @@ public class MainActivity extends AppCompatActivity {
         public android.support.v4.app.Fragment getItem(int position) {
             switch (position) {
                 case 0: // Fragment # 0 - This will show FirstFragment
-                    return ProblemFragment.newInstance(hostsDownNr);
+                    ProblemFragment troubleFragment = ProblemFragment.newInstance(hostsDownNr);
+                    fragmentArray.put(position, troubleFragment);
+                    return troubleFragment;
                 case 1: // Fragment # 0 - This will show FirstFragment different title
-                    return ProblemFragment.newInstance(position);
+                    ProblemFragment allFragment = ProblemFragment.newInstance(hosts.size());
+                    fragmentArray.put(position, allFragment);
+                    return allFragment;
                 default:
                     return null;
             }
@@ -307,10 +311,13 @@ public class MainActivity extends AppCompatActivity {
                 case 1:
                     return "All";
                 default:
-                    return "Placeholder";
+                    return "Wrong";
             }
         }
 
+        private ProblemFragment getFragment(int position){
+            return fragmentArray.get(position);
+        }
     }
 
 }
