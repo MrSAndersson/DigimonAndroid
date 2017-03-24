@@ -13,6 +13,7 @@ import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -270,7 +271,8 @@ public class MainActivity extends AppCompatActivity {
     private static class MainPagerAdapter extends FragmentPagerAdapter {
 	    private static int NUM_ITEMS = 2;
         private int hostsDownNr;
-        private SparseArray<ProblemFragment> fragmentArray = new SparseArray<>();
+        //private SparseArray<ProblemFragment> fragmentArray = new SparseArray<>();
+        private ProblemFragment[] fragmentArray = new ProblemFragment[2];
 
         MainPagerAdapter(android.support.v4.app.FragmentManager fragmentManager, Integer hostsCount) {
             super(fragmentManager);
@@ -289,16 +291,23 @@ public class MainActivity extends AppCompatActivity {
             switch (position) {
                 case 0: // Trouble List
                     ProblemFragment troubleFragment = ProblemFragment.newInstance(position, hostsDownNr);
-                    fragmentArray.put(position, troubleFragment);
+                    fragmentArray[0] = troubleFragment;
                     return troubleFragment;
                 case 1: // All-things-list
                     ProblemFragment allFragment = ProblemFragment.newInstance(position, hosts.size());
-                    fragmentArray.put(position, allFragment);
+                    fragmentArray[1] = allFragment;
                     return allFragment;
                 default:
                     return null;
             }
         }
+
+        @Override
+ public Object instantiateItem(ViewGroup container, int position) {
+     ProblemFragment fragment = (ProblemFragment) super.instantiateItem(container, position);
+     fragmentArray[position] = fragment;
+     return fragment;
+ }
 
         // Returns the page title for the top indicator
         @Override
@@ -314,7 +323,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         private ProblemFragment getFragment(int position){
-            return fragmentArray.get(position);
+            return fragmentArray[position];
         }
     }
 
