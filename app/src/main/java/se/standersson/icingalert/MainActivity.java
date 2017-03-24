@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -69,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         super.onNewIntent(intent);
         // Replace the current Intent with this one
         setIntent(intent);
-        refresh();
+        refresh(0);
     }
 
     @Override
@@ -89,16 +88,6 @@ public class MainActivity extends AppCompatActivity {
         if (notificationPrefs.getBoolean("service_push", false)){
             FirebaseMessaging.getInstance().subscribeToTopic("services");
         }
-
-
-        /*
-         * Set up a callback for refresh PullDown
-         */
-        /*swipeContainer = (SwipeRefreshLayout) findViewById(R.id.exp_swipe);
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() { refresh();}
-        });*/
 
         Intent intent = getIntent();
 
@@ -209,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
-    public void refresh() {
+    public void refresh(int position) {
 
         //Get login credentials and make a call to get status data
         String[] prefsString = new String[3];
@@ -218,14 +207,22 @@ public class MainActivity extends AppCompatActivity {
         prefsString[1] = prefStorage.getString("username", "");
         prefsString[2] = prefStorage.getString("password", "");
 
+        switch (position){
+            case 0:
+                ((MainPagerAdapter)adapterViewPager).getFragment(1).setRefreshSpinner(true);
+                break;
+            case 1:
+                ((MainPagerAdapter)adapterViewPager).getFragment(0).setRefreshSpinner(true);
+                break;
+        }
+
         if (ServerInteraction.isConnected(getApplicationContext())){
             new refreshFetch().execute(prefsString);
         } else {
             Toast.makeText(getApplicationContext(), "No Network Connectivity", Toast.LENGTH_LONG).show();
+            ((MainPagerAdapter)adapterViewPager).getFragment(0).setRefreshSpinner(false);
+            ((MainPagerAdapter)adapterViewPager).getFragment(1).setRefreshSpinner(false);
         }
-
-        ((MainPagerAdapter)adapterViewPager).getFragment(0).stopRefreshSpinner(true);
-        //swipeContainer.setRefreshing(false);
     }
 
     private class refreshFetch extends AsyncTask<String[], Integer, String> {
@@ -255,16 +252,17 @@ public class MainActivity extends AppCompatActivity {
             if (ServerInteraction.checkReply(getApplicationContext(), reply)) {
                 try {
                     data = new JSONObject(reply);
-                    //ExpandableListView listView = (ExpandableListView) findViewById(R.id.main_expand_list);
-                    //createExpandableListSummary();
-                    //ExpandableListAdapter listAdapter = new mainExpandableListAdapter(getApplicationContext(), hosts);
-                    //listView.setAdapter(listAdapter);
+                    createExpandableListSummary();
+                    ((MainPagerAdapter) adapterViewPager).getFragment(0).update(hostListCount);
+                    ((MainPagerAdapter) adapterViewPager).getFragment(1).update(hosts.size());
                 } catch (JSONException e) {
                     Toast.makeText(getApplicationContext(), "Unable to parse JSON", Toast.LENGTH_LONG).show();
                     logOut();
                 }
             }
-            ((MainPagerAdapter)adapterViewPager).getFragment(0).stopRefreshSpinner(true);   //swipeContainer.setRefreshing(false);
+            ((MainPagerAdapter)adapterViewPager).getFragment(0).setRefreshSpinner(false);
+            ((MainPagerAdapter)adapterViewPager).getFragment(1).setRefreshSpinner(false);
+
         }
 
     }
@@ -289,12 +287,12 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public android.support.v4.app.Fragment getItem(int position) {
             switch (position) {
-                case 0: // Fragment # 0 - This will show FirstFragment
-                    ProblemFragment troubleFragment = ProblemFragment.newInstance(hostsDownNr);
+                case 0: // Trouble List
+                    ProblemFragment troubleFragment = ProblemFragment.newInstance(position, hostsDownNr);
                     fragmentArray.put(position, troubleFragment);
                     return troubleFragment;
-                case 1: // Fragment # 0 - This will show FirstFragment different title
-                    ProblemFragment allFragment = ProblemFragment.newInstance(hosts.size());
+                case 1: // All-things-list
+                    ProblemFragment allFragment = ProblemFragment.newInstance(position, hosts.size());
                     fragmentArray.put(position, allFragment);
                     return allFragment;
                 default:

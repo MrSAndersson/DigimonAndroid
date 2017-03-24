@@ -17,30 +17,28 @@ public class ProblemFragment extends Fragment {
     private SwipeRefreshLayout swipeContainer;
     View view;
     int hostsNr;
+    int position;
     private Context parentActivity;
 
-    static ProblemFragment newInstance(int hostsNr) {
+    static ProblemFragment newInstance(int position, int hostsNr) {
         ProblemFragment fragment = new ProblemFragment();
         Bundle args = new Bundle();
         args.putInt("hostsNr", hostsNr);
+        args.putInt("position", position);
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-       // outState.putString("reply", reply);
         super.onSaveInstanceState(outState);
     }
-
-    /*public ProblemFragment() {
-
-    }*/
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         hostsNr = getArguments().getInt("hostsNr", 0);
+        position = getArguments().getInt("position", 0);
         parentActivity = getActivity();
     }
 
@@ -56,7 +54,7 @@ public class ProblemFragment extends Fragment {
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                ((MainActivity)parentActivity).refresh();
+                ((MainActivity)parentActivity).refresh(position);
             }
         });
 
@@ -68,10 +66,18 @@ public class ProblemFragment extends Fragment {
     }
 
 
-    public void stopRefreshSpinner(boolean stop){
-        if (stop) {
+    public void setRefreshSpinner(boolean run){
+        if (run) {
+            swipeContainer.setRefreshing(true);
+        } else {
             swipeContainer.setRefreshing(false);
         }
+    }
+
+    public void update(int hostsNr){
+        ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.main_expand_list);
+        ExpandableListAdapter listAdapter = new mainExpandableListAdapter(view.getContext(), MainActivity.hosts, hostsNr);
+        listView.setAdapter(listAdapter);
     }
 
 }
