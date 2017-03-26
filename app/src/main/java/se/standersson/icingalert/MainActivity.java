@@ -1,5 +1,6 @@
 package se.standersson.icingalert;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -13,6 +14,7 @@ import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
@@ -31,7 +33,7 @@ import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
-    private String reply;
+    String reply;
     private static JSONObject data;
     public static List<Host> hosts;
     FragmentPagerAdapter adapterViewPager;
@@ -92,15 +94,17 @@ public class MainActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
+       // Log.d("CrashIntent", intent.getStringExtra("reply"));
 
         // If we have a saved state, use that to create the list, otherwise, get from the intent
-        if (savedInstanceState != null) {
-            reply = savedInstanceState.getString("reply");
-        } else {
+        if (savedInstanceState == null){
+            Log.d("CrashIntent", "It's null");
             reply = intent.getStringExtra("reply");
+        } else {
+            Log.d("CrashIntent", "Not null");
+            reply = savedInstanceState.getString("reply");
         }
-
-        try {
+        /*try {
             data = new JSONObject(reply);
         } catch (JSONException e) {
             Toast.makeText(this, "Unable to parse JSON", Toast.LENGTH_LONG).show();
@@ -108,14 +112,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //Create expandableListView and fill with data
-        createExpandableListSummary();
+        createExpandableListSummary(reply);
 
         ViewPager mainViewPager = (ViewPager) findViewById(R.id.main_view_pager);
         adapterViewPager = new MainPagerAdapter(getSupportFragmentManager(), hostListCount);
-        mainViewPager.setAdapter(adapterViewPager);
+        mainViewPager.setAdapter(adapterViewPager);*/
     }
 
-    private void createExpandableListSummary() {
+    private void createExpandableListSummary(String reply) {
         /*
          * Prepare status info into
          */
@@ -253,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
             if (ServerInteraction.checkReply(getApplicationContext(), reply)) {
                 try {
                     data = new JSONObject(reply);
-                    createExpandableListSummary();
+                    createExpandableListSummary(reply);
                     ((MainPagerAdapter) adapterViewPager).getFragment(0).update(hostListCount);
                     ((MainPagerAdapter) adapterViewPager).getFragment(1).update(hosts.size());
                 } catch (JSONException e) {
