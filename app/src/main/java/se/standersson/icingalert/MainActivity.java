@@ -41,8 +41,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putString("reply", reply);
         super.onSaveInstanceState(outState);
+        outState.putString("reply", reply);
     }
 
     @Override
@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
 
         // If we have a saved state, use that to create the list, otherwise, get from the intent
         if (savedInstanceState == null){
-            Log.d("CrashIntent", "It's null");
+            Log.d("CrashIntent", intent.getStringExtra("reply"));
             reply = intent.getStringExtra("reply");
         } else {
             Log.d("CrashIntent", "Not null");
@@ -253,11 +253,12 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        protected void onPostExecute(String reply){
-            if (ServerInteraction.checkReply(getApplicationContext(), reply)) {
+        protected void onPostExecute(String replyString){
+            if (ServerInteraction.checkReply(getApplicationContext(), replyString)) {
                 try {
-                    data = new JSONObject(reply);
-                    createExpandableListSummary(reply);
+                    reply = replyString;
+                    data = new JSONObject(replyString);
+                    createExpandableListSummary(replyString);
                     ((MainPagerAdapter) adapterViewPager).getFragment(0).update(hostListCount);
                     ((MainPagerAdapter) adapterViewPager).getFragment(1).update(hosts.size());
                 } catch (JSONException e) {
@@ -275,7 +276,6 @@ public class MainActivity extends AppCompatActivity {
     private static class MainPagerAdapter extends FragmentPagerAdapter {
 	    private static int NUM_ITEMS = 2;
         private int hostsDownNr;
-        //private SparseArray<ProblemFragment> fragmentArray = new SparseArray<>();
         private ProblemFragment[] fragmentArray = new ProblemFragment[2];
 
         MainPagerAdapter(android.support.v4.app.FragmentManager fragmentManager, Integer hostsCount) {
