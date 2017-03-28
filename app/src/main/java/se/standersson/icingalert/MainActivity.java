@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 
 import java.io.FileNotFoundException;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
@@ -33,7 +34,6 @@ import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
-    String reply;
     private static JSONObject data;
     public static List<Host> hosts;
     FragmentPagerAdapter adapterViewPager;
@@ -42,7 +42,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString("reply", reply);
+        // Save hosts list and hostListCount for when activity recreates
+        outState.putSerializable("hosts", (Serializable) hosts);
+        outState.putInt("hostListCount", hostListCount);
     }
 
     @Override
@@ -97,29 +99,30 @@ public class MainActivity extends AppCompatActivity {
        // Log.d("CrashIntent", intent.getStringExtra("reply"));
 
         // If we have a saved state, use that to create the list, otherwise, get from the intent
-        if (savedInstanceState == null){
-            Log.d("CrashIntent", intent.getStringExtra("reply"));
-            reply = intent.getStringExtra("reply");
+        if (savedInstanceState != null){
+            hosts = (List<Host>) savedInstanceState.getSerializable("hosts");
+            hostListCount = savedInstanceState.getInt("hostListCount");
         } else {
-            Log.d("CrashIntent", "Not null");
-            reply = savedInstanceState.getString("reply");
-        }
-        /*try {
-            data = new JSONObject(reply);
-        } catch (JSONException e) {
-            Toast.makeText(this, "Unable to parse JSON", Toast.LENGTH_LONG).show();
-            logOut();
-        }
+            String reply = intent.getStringExtra("reply");
 
-        //Create expandableListView and fill with data
-        createExpandableListSummary(reply);
+            try {
+                data = new JSONObject(reply);
+            } catch (JSONException e) {
+                Toast.makeText(this, "Unable to parse JSON", Toast.LENGTH_LONG).show();
+                logOut();
+            }
+
+            //Create expandableListView and fill with data
+            createExpandableListSummary();
+        }
 
         ViewPager mainViewPager = (ViewPager) findViewById(R.id.main_view_pager);
         adapterViewPager = new MainPagerAdapter(getSupportFragmentManager(), hostListCount);
-        mainViewPager.setAdapter(adapterViewPager);*/
+        mainViewPager.setAdapter(adapterViewPager);
+
     }
 
-    private void createExpandableListSummary(String reply) {
+    private void createExpandableListSummary() {
         /*
          * Prepare status info into
          */
@@ -256,9 +259,8 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(String replyString){
             if (ServerInteraction.checkReply(getApplicationContext(), replyString)) {
                 try {
-                    reply = replyString;
                     data = new JSONObject(replyString);
-                    createExpandableListSummary(replyString);
+                    createExpandableListSummary();
                     ((MainPagerAdapter) adapterViewPager).getFragment(0).update(hostListCount);
                     ((MainPagerAdapter) adapterViewPager).getFragment(1).update(hosts.size());
                 } catch (JSONException e) {

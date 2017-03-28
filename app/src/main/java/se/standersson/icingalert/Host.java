@@ -1,28 +1,30 @@
 package se.standersson.icingalert;
 
-import android.util.SparseArray;
-import android.util.SparseIntArray;
-
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-class Host {
+class Host implements Serializable{
     /*
     * Declaration of host details
      */
     private String hostName;
     private List<Integer> services = new ArrayList<>();
-    private SparseArray<String> serviceNames = new SparseArray<>();
-    private SparseArray<String> serviceDetails = new SparseArray<>();
-    private SparseIntArray serviceState = new SparseIntArray();
+    private HashMap<Integer, String> serviceNames = new HashMap<>();
+    private HashMap<Integer, String> serviceDetails = new HashMap<>();
+    private HashMap<Integer, Integer> serviceState = new HashMap<>();
+    private HashMap<Integer, Integer> stateCounter = new HashMap<>();
     private Integer jsonHostPosition;
     private boolean isDown = false;
-    private SparseIntArray stateCounter = new SparseIntArray();
+
+
 
     //Constructor for hosts that aren't down currently
     Host(String hostName){
         this.hostName = hostName;
         this.jsonHostPosition = null;
+        stateCounter.put(0,0);
         stateCounter.put(1,0);
         stateCounter.put(2,0);
         stateCounter.put(3,0);
@@ -33,6 +35,7 @@ class Host {
         this.hostName = hostName;
         this.jsonHostPosition = jsonHostPosition;
         this.isDown = true;
+        stateCounter.put(0,0);
         stateCounter.put(1,0);
         stateCounter.put(2,0);
         stateCounter.put(3,0);
