@@ -23,12 +23,12 @@ import java.net.UnknownHostException;
 public class LoginActivity extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_INTERNET = 1;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_NETWORK_STATE = 2;
-    String[] prefsString = new String[3];
-    View serverView;
-    View usernameView;
-    View passwordView;
-    View loginButton;
-    View progressBar;
+    private final String[] prefsString = new String[3];
+    private View serverView;
+    private View usernameView;
+    private View passwordView;
+    private View loginButton;
+    private View progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,10 +52,10 @@ public class LoginActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.VISIBLE);
                 startLogin();
             } else {
-                showLoginUI(true);
+                showLoginUI();
             }
         } else {
-            showLoginUI(true);
+            showLoginUI();
         }
     }
 
@@ -90,7 +90,7 @@ public class LoginActivity extends AppCompatActivity {
    /*
     *  Checks for Internet Permissions
     */
-    void startLogin(){
+    private void startLogin(){
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_NETWORK_STATE}, MY_PERMISSIONS_REQUEST_ACCESS_NETWORK_STATE);
         } else {
@@ -98,7 +98,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    void checkInternetPermissions(){
+    private void checkInternetPermissions(){
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, MY_PERMISSIONS_REQUEST_INTERNET);
         } else {
@@ -116,7 +116,7 @@ public class LoginActivity extends AppCompatActivity {
                     checkInternetPermissions();
                 } else {
                     Toast.makeText(this, "No Network State access given", Toast.LENGTH_LONG).show();
-                    showLoginUI(true);
+                    showLoginUI();
                 }
             }
             case MY_PERMISSIONS_REQUEST_INTERNET: {
@@ -125,7 +125,7 @@ public class LoginActivity extends AppCompatActivity {
                     new sendRequest().execute(prefsString);
                 } else {
                     Toast.makeText(this, "No Internet Permissions given", Toast.LENGTH_LONG).show();
-                    showLoginUI(true);
+                    showLoginUI();
                 }
             }
         }
@@ -155,12 +155,12 @@ public class LoginActivity extends AppCompatActivity {
                 startMainActivity(reply);
             } else {
                 progressBar.setVisibility(View.GONE);
-                showLoginUI(true);
+                showLoginUI();
             }
         }
     }
 
-    void startMainActivity(String reply){
+    private void startMainActivity(String reply){
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("reply", reply);
         startActivity(intent);
@@ -168,18 +168,12 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
-    void showLoginUI(boolean show) {
-        if (show) {
-            serverView.setVisibility(View.VISIBLE);
-            usernameView.setVisibility(View.VISIBLE);
-            passwordView.setVisibility(View.VISIBLE);
-            loginButton.setVisibility(View.VISIBLE);
-        } else {
-            serverView.setVisibility(View.GONE);
-            usernameView.setVisibility(View.GONE);
-            passwordView.setVisibility(View.GONE);
-            loginButton.setVisibility(View.GONE);
-        }
+    private void showLoginUI() {
+        serverView.setVisibility(View.VISIBLE);
+        usernameView.setVisibility(View.VISIBLE);
+        passwordView.setVisibility(View.VISIBLE);
+        loginButton.setVisibility(View.VISIBLE);
+
     }
 }
 

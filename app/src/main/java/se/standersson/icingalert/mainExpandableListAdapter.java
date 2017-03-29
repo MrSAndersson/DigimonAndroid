@@ -11,10 +11,10 @@ import java.util.List;
 
 
 class mainExpandableListAdapter extends BaseExpandableListAdapter {
-    private Context context;
-    private List<Host> hosts;
-    private int hostsCount;
-    private boolean isTroubleList;
+    private final Context context;
+    private final List<Host> hosts;
+    private final int hostsCount;
+    private final boolean isTroubleList;
 
 
     mainExpandableListAdapter(Context context, List<Host> hosts, int hostsCount, boolean isTroubleList) {

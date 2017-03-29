@@ -11,40 +11,28 @@ class Host implements Serializable{
     /*
     * Declaration of host details
      */
-    private String hostName;
-    private List<Integer> services = new ArrayList<>();
-    private List<Integer> critList = new ArrayList<>();
-    private List<Integer> warnList = new ArrayList<>();
-    private List<Integer> unknownList = new ArrayList<>();
+    private final String hostName;
+    private final List<Integer> services = new ArrayList<>();
+    private final List<Integer> critList = new ArrayList<>();
+    private final List<Integer> warnList = new ArrayList<>();
+    private final List<Integer> unknownList = new ArrayList<>();
     @SuppressLint("UseSparseArrays")
-    private HashMap<Integer, String> serviceNames = new HashMap<>();
+    private final HashMap<Integer, String> serviceNames = new HashMap<>();
     @SuppressLint("UseSparseArrays")
-    private HashMap<Integer, String> serviceDetails = new HashMap<>();
+    private final HashMap<Integer, String> serviceDetails = new HashMap<>();
     @SuppressLint("UseSparseArrays")
-    private HashMap<Integer, Integer> serviceState = new HashMap<>();
+    private final HashMap<Integer, Integer> serviceState = new HashMap<>();
     @SuppressLint("UseSparseArrays")
-    private HashMap<Integer, Integer> stateCounter = new HashMap<>();
-    @SuppressLint("UseSparseArrays")
-    private Integer jsonHostPosition;
+    private final HashMap<Integer, Integer> stateCounter = new HashMap<>();
     private boolean isDown = false;
 
 
-
-    //Constructor for hosts that aren't down currently
-    Host(String hostName){
-        this.hostName = hostName;
-        this.jsonHostPosition = null;
-        stateCounter.put(0,0);
-        stateCounter.put(1,0);
-        stateCounter.put(2,0);
-        stateCounter.put(3,0);
-    }
-
     //Constructor for hosts that are down currently
-    Host(String hostName, int jsonHostPosition) {
+    Host(String hostName, boolean isDown) {
         this.hostName = hostName;
-        this.jsonHostPosition = jsonHostPosition;
-        this.isDown = true;
+        if (isDown) {
+            this.isDown = true;
+        }
         stateCounter.put(0,0);
         stateCounter.put(1,0);
         stateCounter.put(2,0);
@@ -118,15 +106,7 @@ class Host implements Serializable{
         return stateCounter.get(state);
     }
 
-    // Check if the host has a particular service (JSON position)
-    boolean hasService(int service){
-        return services.contains(service);
-    }
-
     boolean isDown(){
         return isDown;
-    }
-    int jsonHostPosition(){
-        return jsonHostPosition;
     }
 }

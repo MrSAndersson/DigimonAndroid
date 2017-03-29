@@ -33,7 +33,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private static JSONObject data;
     public static List<Host> hosts;
-    FragmentPagerAdapter adapterViewPager;
+    private FragmentPagerAdapter adapterViewPager;
     private int hostListCount;
 
     @Override
@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
                 if (data.getJSONArray("hosts").getJSONObject(x).getJSONObject("attrs").getInt("state") == 1) {
                     hostName = data.getJSONArray("hosts").getJSONObject(x).getJSONObject("attrs").getString("name");
                     hostPositions.put(hostName, hosts.size());
-                    hosts.add(new Host(hostName, x));
+                    hosts.add(new Host(hostName, true));
                     y++;
                     if (y == hostsDownCount) {
                         break;
@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
                 state = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getInt("state");
                 if (state != 0 && !hostPositions.containsKey(hostName)){
                     hostPositions.put(hostName, hosts.size());
-                    hosts.add(new Host(hostName));
+                    hosts.add(new Host(hostName, false));
                     hostListCount++;
                 }
             }
@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
                     hosts.get(hostPositions.get(hostName)).addService(x, serviceName, serviceDetails, state);
                 } else {
                     hostPositions.put(hostName, hosts.size());
-                    hosts.add(new Host(hostName));
+                    hosts.add(new Host(hostName, false));
                     hosts.get(hostPositions.get(hostName)).addService(x, serviceName, serviceDetails, state);
                 }
             }
@@ -274,9 +274,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private static class MainPagerAdapter extends FragmentPagerAdapter {
-	    private static int NUM_ITEMS = 2;
-        private int hostsDownNr;
-        private ProblemFragment[] fragmentArray = new ProblemFragment[2];
+	    private static final int NUM_ITEMS = 2;
+        private final int hostsDownNr;
+        private final ProblemFragment[] fragmentArray = new ProblemFragment[2];
 
         MainPagerAdapter(android.support.v4.app.FragmentManager fragmentManager, Integer hostsCount) {
             super(fragmentManager);

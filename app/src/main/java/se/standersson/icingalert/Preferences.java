@@ -10,7 +10,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 public class Preferences extends PreferenceActivity {
 
-    SharedPreferences.OnSharedPreferenceChangeListener spChanged = new
+    private final SharedPreferences.OnSharedPreferenceChangeListener spChanged = new
             SharedPreferences.OnSharedPreferenceChangeListener() {
                 @Override
                 public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,

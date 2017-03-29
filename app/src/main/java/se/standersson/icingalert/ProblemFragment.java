@@ -15,9 +15,9 @@ import android.widget.ExpandableListView;
 
 public class ProblemFragment extends Fragment {
     private SwipeRefreshLayout swipeContainer;
-    View view;
-    int hostsNr;
-    int position;
+    private View view;
+    private int hostsNr;
+    private int position;
     private boolean isTroubleList;
     private Context parentActivity;
 
@@ -29,11 +29,6 @@ public class ProblemFragment extends Fragment {
         args.putBoolean("isTroubleList", isTroubleList);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
     }
 
     @Override
