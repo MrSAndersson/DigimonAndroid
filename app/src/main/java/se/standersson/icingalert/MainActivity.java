@@ -8,6 +8,8 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -79,8 +81,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        //Toolbar mainToolbar = (Toolbar) findViewById(R.id.main_toolbar);
-       // setActionBar(mainToolbar);
+        Toolbar mainToolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        setSupportActionBar(mainToolbar);
 
         // Subscribe to notifications according to saved settings
         SharedPreferences notificationPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());

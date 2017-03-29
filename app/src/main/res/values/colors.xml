@@ -7,7 +7,7 @@
     <color name="colorCritical">#FF5566</color>
     <color name="colorWarning">#FFAA44</color>
     <color name="colorUnknown">#AA44FF</color>
-    <color name="colorGroup">#EEEEEE</color>
+    <color name="colorGroup">#eeeeee</color>
 
 
 </resources>
