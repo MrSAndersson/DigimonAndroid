@@ -18,13 +18,15 @@ public class ProblemFragment extends Fragment {
     View view;
     int hostsNr;
     int position;
+    private boolean isTroubleList;
     private Context parentActivity;
 
-    static ProblemFragment newInstance(int position, int hostsNr) {
+    static ProblemFragment newInstance(int position, int hostsNr, boolean isTroubleList) {
         ProblemFragment fragment = new ProblemFragment();
         Bundle args = new Bundle();
         args.putInt("hostsNr", hostsNr);
         args.putInt("position", position);
+        args.putBoolean("isTroubleList", isTroubleList);
         fragment.setArguments(args);
         return fragment;
     }
@@ -39,6 +41,7 @@ public class ProblemFragment extends Fragment {
         super.onCreate(savedInstanceState);
         hostsNr = getArguments().getInt("hostsNr", 0);
         position = getArguments().getInt("position", 0);
+        isTroubleList = getArguments().getBoolean("isTroubleList", false);
         parentActivity = getActivity();
     }
 
@@ -59,7 +62,7 @@ public class ProblemFragment extends Fragment {
         });
 
         ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.main_expand_list);
-        ExpandableListAdapter listAdapter = new mainExpandableListAdapter(view.getContext(), MainActivity.hosts, hostsNr);
+        ExpandableListAdapter listAdapter = new mainExpandableListAdapter(view.getContext(), MainActivity.hosts, hostsNr, isTroubleList);
         listView.setAdapter(listAdapter);
 
         return view;
@@ -76,7 +79,7 @@ public class ProblemFragment extends Fragment {
 
     public void update(int hostsNr){
         ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.main_expand_list);
-        ExpandableListAdapter listAdapter = new mainExpandableListAdapter(view.getContext(), MainActivity.hosts, hostsNr);
+        ExpandableListAdapter listAdapter = new mainExpandableListAdapter(view.getContext(), MainActivity.hosts, hostsNr, isTroubleList);
         listView.setAdapter(listAdapter);
     }
 

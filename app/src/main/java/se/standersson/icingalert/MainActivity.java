@@ -1,6 +1,5 @@
 package se.standersson.icingalert;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -10,18 +9,16 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessaging;
+
 import org.json.JSONException;
 import org.json.JSONObject;
-
 
 import java.io.FileNotFoundException;
 import java.io.Serializable;
@@ -100,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
         // If we have a saved state, use that to create the list, otherwise, get from the intent
         if (savedInstanceState != null){
+            // noinspection unchecked
             hosts = (List<Host>) savedInstanceState.getSerializable("hosts");
             hostListCount = savedInstanceState.getInt("hostListCount");
         } else {
@@ -296,11 +294,11 @@ public class MainActivity extends AppCompatActivity {
         public android.support.v4.app.Fragment getItem(int position) {
             switch (position) {
                 case 0: // Trouble List
-                    ProblemFragment troubleFragment = ProblemFragment.newInstance(position, hostsDownNr);
+                    ProblemFragment troubleFragment = ProblemFragment.newInstance(position, hostsDownNr, true);
                     fragmentArray[0] = troubleFragment;
                     return troubleFragment;
                 case 1: // All-things-list
-                    ProblemFragment allFragment = ProblemFragment.newInstance(position, hosts.size());
+                    ProblemFragment allFragment = ProblemFragment.newInstance(position, hosts.size(), false);
                     fragmentArray[1] = allFragment;
                     return allFragment;
                 default:

@@ -6,10 +6,7 @@
     <string name="login_username">Username</string>
     <string name="login_password">Password</string>
     <string name="login_button">Log In</string>
-    <string name="show_prefs">Use Stored Login</string>
 
-    <!-- Strings related to the MainActivity -->
-    <string name="host_down">Down</string>
 
     <!-- Strings related to the Main Menu -->
     <string name="settings_item">Settings</string>

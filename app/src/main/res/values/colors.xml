@@ -4,7 +4,6 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorOrangeHighlight">#FF6633</color>
     <color name="colorAccent">#0095BF</color>
-    <color name="colorHostDown">#ff735e</color>
     <color name="colorCritical">#FF5566</color>
     <color name="colorWarning">#FFAA44</color>
     <color name="colorUnknown">#AA44FF</color>

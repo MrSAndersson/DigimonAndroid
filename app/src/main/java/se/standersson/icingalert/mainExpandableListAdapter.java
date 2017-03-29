@@ -5,8 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import java.util.List;
 
 
@@ -14,12 +14,14 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
     private Context context;
     private List<Host> hosts;
     private int hostsCount;
+    private boolean isTroubleList;
 
 
-    mainExpandableListAdapter(Context context, List<Host> hosts, int hostsCount) {
+    mainExpandableListAdapter(Context context, List<Host> hosts, int hostsCount, boolean isTroubleList) {
         this.context = context;
         this.hosts = hosts;
         this.hostsCount = hostsCount;
+        this.isTroubleList = isTroubleList;
     }
 
     @Override
@@ -29,7 +31,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return hosts.get(groupPosition).getServiceCount();
+        return hosts.get(groupPosition).getServiceCount(isTroubleList);
     }
 
     @Override
@@ -39,7 +41,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        return hosts.get(groupPosition).getServiceName(childPosition);
+        return hosts.get(groupPosition).getServiceName(hosts.get(groupPosition).getServicePosition(childPosition, isTroubleList));
     }
 
     @Override
@@ -121,6 +123,12 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         ChildViewHolder viewHolder;
+        int servicePosition = hosts.get(groupPosition).getServicePosition(childPosition, isTroubleList);
+
+        /*
+        * If it's the first time the child is created, create the view and store the view
+        * so that we don't need to find it every time we re-create it.
+        */
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.main_expanded_list_item, parent, false);
@@ -129,11 +137,11 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         } else {
             viewHolder = (ChildViewHolder) convertView.getTag();
         }
+            viewHolder.serviceName.setText(hosts.get(groupPosition).getServiceName(servicePosition));
+            viewHolder.serviceDetails.setText(hosts.get(groupPosition).getServiceDetails(servicePosition));
 
-        viewHolder.serviceName.setText(hosts.get(groupPosition).getServiceName(childPosition));
-        viewHolder.serviceDetails.setText(hosts.get(groupPosition).getServiceDetails(childPosition));
-
-        switch (hosts.get(groupPosition).getServiceState(childPosition)){
+        // Show the right color of bar to the left of the service name
+        switch (hosts.get(groupPosition).getServiceState(servicePosition)){
             case 1:
                 viewHolder.criticalBar.setVisibility(View.GONE);
                 viewHolder.warningBar.setVisibility(View.VISIBLE);

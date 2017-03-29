@@ -1,5 +1,7 @@
 package se.standersson.icingalert;
 
+import android.annotation.SuppressLint;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,10 +13,18 @@ class Host implements Serializable{
      */
     private String hostName;
     private List<Integer> services = new ArrayList<>();
+    private List<Integer> critList = new ArrayList<>();
+    private List<Integer> warnList = new ArrayList<>();
+    private List<Integer> unknownList = new ArrayList<>();
+    @SuppressLint("UseSparseArrays")
     private HashMap<Integer, String> serviceNames = new HashMap<>();
+    @SuppressLint("UseSparseArrays")
     private HashMap<Integer, String> serviceDetails = new HashMap<>();
+    @SuppressLint("UseSparseArrays")
     private HashMap<Integer, Integer> serviceState = new HashMap<>();
+    @SuppressLint("UseSparseArrays")
     private HashMap<Integer, Integer> stateCounter = new HashMap<>();
+    @SuppressLint("UseSparseArrays")
     private Integer jsonHostPosition;
     private boolean isDown = false;
 
@@ -48,29 +58,56 @@ class Host implements Serializable{
         this.serviceDetails.put(jsonPosition, serviceDetails);
         this.serviceState.put(jsonPosition, state);
         int current = stateCounter.get(state);
+        switch (state){
+            case 1:
+                warnList.add(jsonPosition);
+                break;
+            case 2:
+                critList.add(jsonPosition);
+                break;
+            case 3:
+                unknownList.add(jsonPosition);
+                break;
+        }
         stateCounter.put(state, current+1);
     }
 
     // Get the JSON position of a service
-    int getServicePosition(int childPosition) {
-        return services.get(childPosition);
+    int getServicePosition(int childPosition, boolean isTroubleList) {
+        if (isTroubleList){
+            if (childPosition < stateCounter.get(2)){
+                return critList.get(childPosition);
+            } else if (childPosition - stateCounter.get(2) < stateCounter.get(1)){
+                return warnList.get(childPosition - stateCounter.get(2));
+            } else {
+                return unknownList.get(childPosition - stateCounter.get(2) -stateCounter.get(1));
+            }
+        } else {
+            return services.get(childPosition);
+        }
     }
 
 
-    String getServiceName(int childPosition) {
-        return serviceNames.get(services.get(childPosition));
+    String getServiceName(int servicePosition) {
+        return serviceNames.get(servicePosition);
     }
 
-    String getServiceDetails(int childPosition) {
-        return serviceDetails.get(services.get(childPosition));
+    String getServiceDetails(int servicePosition) {
+        return serviceDetails.get(servicePosition);
     }
 
-    int getServiceState(int childPosition) {
-        return serviceState.get(services.get(childPosition));
+    int getServiceState(int servicePosition) {
+        return serviceState.get(servicePosition);
     }
 
-    int getServiceCount(){
-        return services.size();
+    int getServiceCount(boolean notOk){
+        int counter;
+        if (notOk){
+            counter = stateCounter.get(1) + stateCounter.get(2) + stateCounter.get(3);
+        } else {
+            counter = stateCounter.get(0) + stateCounter.get(1) + stateCounter.get(2) + stateCounter.get(3);
+        }
+        return counter;
     }
 
     String getHostName(){
