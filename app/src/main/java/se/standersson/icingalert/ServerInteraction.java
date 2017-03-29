@@ -72,7 +72,7 @@ class ServerInteraction {
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
         connection.setRequestProperty("Authorization", credentials);
         connection.setRequestProperty("Content-Type", "text/plain");
-        connection.setConnectTimeout(5000);
+        connection.setConnectTimeout(10000);
         connection.setDoInput(true);
         connection.setUseCaches(false);
 
