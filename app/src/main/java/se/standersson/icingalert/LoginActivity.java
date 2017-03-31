@@ -14,6 +14,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+import org.json.JSONException;
+import org.json.JSONObject;
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
@@ -161,11 +163,19 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void startMainActivity(String reply){
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("reply", reply);
-        startActivity(intent);
+        try{
+            JSONObject json = new JSONObject(reply);
+            Bundle bundle = Tools.createExpandableListSummary(json);
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("hosts", bundle.getSerializable("hosts"));
+            intent.putExtra("hostListCount", bundle.getInt("hostListCount"));
+            startActivity(intent);
 
-        finish();
+            finish();
+        } catch (JSONException e){
+            Toast.makeText(this, "Unable to parse reply", Toast.LENGTH_LONG).show();
+        }
+
     }
 
     private void showLoginUI() {
