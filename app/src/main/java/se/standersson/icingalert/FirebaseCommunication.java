@@ -12,8 +12,7 @@ public class FirebaseCommunication extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
         //Create the intent
-        Intent resultIntent = new Intent(this, MainActivity.class);
-        resultIntent.putExtra("Notification", true);
+        Intent resultIntent = new Intent(this, LoginActivity.class);
 
         //Create a pending intent from the intent since it's not starting now
         PendingIntent resultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent, 0);

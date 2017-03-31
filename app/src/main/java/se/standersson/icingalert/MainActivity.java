@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -61,14 +62,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        // Replace the current Intent with this one
-        setIntent(intent);
-        refresh(0);
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -78,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(mainToolbar);
 
         // Subscribe to notifications according to saved settings
+        FirebaseMessaging.getInstance().subscribeToTopic("Testing");
         SharedPreferences notificationPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         if (notificationPrefs.getBoolean("host_push", false)){
             FirebaseMessaging.getInstance().subscribeToTopic("hosts");
@@ -119,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
-    public void refresh(int position) {
+    public void refresh() {
 
         //Get login credentials and make a call to get status data
         String[] prefsString = new String[3];
@@ -128,21 +122,15 @@ public class MainActivity extends AppCompatActivity {
         prefsString[1] = prefStorage.getString("username", "");
         prefsString[2] = prefStorage.getString("password", "");
 
-        switch (position){
-            case 0:
-                ((MainPagerAdapter)adapterViewPager).getFragment(1).setRefreshSpinner(true);
-                break;
-            case 1:
-                ((MainPagerAdapter)adapterViewPager).getFragment(0).setRefreshSpinner(true);
-                break;
-        }
+        ((MainPagerAdapter) adapterViewPager).getFragment(1).setRefreshSpinner(true);
+        ((MainPagerAdapter) adapterViewPager).getFragment(0).setRefreshSpinner(true);
 
         if (ServerInteraction.isConnected(getApplicationContext())){
             new refreshFetch().execute(prefsString);
         } else {
             Toast.makeText(getApplicationContext(), "No Network Connectivity", Toast.LENGTH_LONG).show();
-            ((MainPagerAdapter)adapterViewPager).getFragment(0).setRefreshSpinner(false);
-            ((MainPagerAdapter)adapterViewPager).getFragment(1).setRefreshSpinner(false);
+            ((MainPagerAdapter) adapterViewPager).getFragment(0).setRefreshSpinner(false);
+            ((MainPagerAdapter) adapterViewPager).getFragment(1).setRefreshSpinner(false);
         }
     }
 
@@ -178,7 +166,6 @@ public class MainActivity extends AppCompatActivity {
                     ((MainPagerAdapter) adapterViewPager).getFragment(1).update(hosts.size());
                 } catch (JSONException e) {
                     Toast.makeText(getApplicationContext(), "Unable to parse response", Toast.LENGTH_LONG).show();
-                    //logOut();
                 }
             }
             ((MainPagerAdapter)adapterViewPager).getFragment(0).setRefreshSpinner(false);

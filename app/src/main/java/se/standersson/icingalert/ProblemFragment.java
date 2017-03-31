@@ -52,7 +52,7 @@ public class ProblemFragment extends Fragment {
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                ((MainActivity)parentActivity).refresh(position);
+                ((MainActivity)parentActivity).refresh();
             }
         });
 
