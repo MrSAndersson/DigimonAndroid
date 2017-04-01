@@ -160,7 +160,10 @@ public class MainActivity extends AppCompatActivity {
             if (ServerInteraction.checkReply(getApplicationContext(), replyString)) {
                 try {
                     JSONObject data = new JSONObject(replyString);
-                    Tools.createExpandableListSummary(data);
+                    Bundle bundle = Tools.createExpandableListSummary(data);
+                    // noinspection unchecked
+                    hosts = (List<Host>) bundle.getSerializable("hosts");
+                    hostListCount = bundle.getInt("hostListCount");
                     ((MainPagerAdapter) adapterViewPager).getFragment(0).update(hostListCount);
                     ((MainPagerAdapter) adapterViewPager).getFragment(1).update(hosts.size());
                 } catch (JSONException e) {

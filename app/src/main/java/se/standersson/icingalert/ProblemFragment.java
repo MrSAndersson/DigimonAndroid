@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 
-
 public class ProblemFragment extends Fragment {
     private SwipeRefreshLayout swipeContainer;
     private View view;
