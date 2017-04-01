@@ -17,7 +17,6 @@ public class ProblemFragment extends Fragment {
     private SwipeRefreshLayout swipeContainer;
     private View view;
     private int hostsNr;
-    private int position;
     private boolean isTroubleList;
     private Context parentActivity;
 
@@ -35,7 +34,6 @@ public class ProblemFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         hostsNr = getArguments().getInt("hostsNr", 0);
-        position = getArguments().getInt("position", 0);
         isTroubleList = getArguments().getBoolean("isTroubleList", false);
         parentActivity = getActivity();
     }

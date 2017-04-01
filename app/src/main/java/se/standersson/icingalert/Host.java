@@ -1,13 +1,14 @@
 package se.standersson.icingalert;
 
 import android.annotation.SuppressLint;
+import android.support.annotation.NonNull;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-class Host implements Serializable{
+class Host implements Serializable, Comparable<Host>{
     /*
     * Declaration of host details
      */
@@ -108,5 +109,24 @@ class Host implements Serializable{
 
     boolean isDown(){
         return isDown;
+    }
+
+    /*
+    * Sort hosts that are down first, then trouble services and everything else in alphabetical order
+     */
+
+    @Override
+    public int compareTo(@NonNull Host other) {
+        if(this.isDown() && !other.isDown()){
+            return -1;
+        } else if (!this.isDown() && other.isDown()){
+            return 1;
+        } else if(this.getServiceCount(true) != 0 && other.getServiceCount(true) == 0 ) {
+            return -1;
+        } else if(this.getServiceCount(true) == 0 && other.getServiceCount(true) != 0) {
+            return 1;
+        }else {
+            return this.getHostName().compareToIgnoreCase(other.getHostName());
+        }
     }
 }

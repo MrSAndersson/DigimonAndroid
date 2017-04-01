@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -79,6 +80,8 @@ final class Tools {
                 }
             }
 
+        // Resort into alphabetical order with Downed and trouble hosts at the top
+        Collections.sort(hosts);
 
         Bundle bundle = new Bundle();
         bundle.putSerializable("hosts", (Serializable) hosts);

@@ -71,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(mainToolbar);
 
         // Subscribe to notifications according to saved settings
-        FirebaseMessaging.getInstance().subscribeToTopic("Testing");
         SharedPreferences notificationPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         if (notificationPrefs.getBoolean("host_push", false)){
             FirebaseMessaging.getInstance().subscribeToTopic("hosts");
