@@ -11,6 +11,8 @@
     <!-- Strings related to the Main Menu -->
     <string name="settings_item">Settings</string>
     <string name="logout_item">Logout</string>
+    <string name="search">Search</string>
+    <string name="main_search_hint">Name, Service or Result</string>
 
 
     <!-- String related to the Preferences menu -->
