@@ -6,14 +6,15 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -27,7 +28,7 @@ import java.net.UnknownHostException;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
     public static List<Host> hosts;
     private FragmentPagerAdapter adapterViewPager;
     private int hostListCount;
@@ -44,7 +45,20 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
+        final MenuItem searchItem = menu.findItem(R.id.main_search);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setOnQueryTextListener(this);
         return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String query){
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query){
+        return false;
     }
 
     @Override
