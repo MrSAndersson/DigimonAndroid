@@ -4,19 +4,26 @@ package se.standersson.icingalert;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -26,7 +33,7 @@ class ServerInteraction {
 
 
 
-    static String fetchData(final String[] prefs) throws Exception{
+    static String fetchData(Context context, final String[] prefs){
 
         /*
         * Try Catch to catch all errors in network communication
@@ -39,32 +46,35 @@ class ServerInteraction {
         String hostURL = serverString + "/v1/objects/hosts?attrs=last_check_result&attrs=state&attrs=name";
         String serviceURL = serverString + "/v1/objects/services?attrs=last_check_result&attrs=state&attrs=name&attrs=host_name";
 
-
-        try {
             /*
             * Create a connection with input/output with a plaintext body
             * */
-            String credentials = "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP);
+        String credentials = "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP);
+
+        try {
             replyGroup = sendRequest(replyGroup, "status", statusURL, credentials);
             replyGroup = sendRequest(replyGroup, "hosts", hostURL, credentials);
             replyGroup = sendRequest(replyGroup, "services", serviceURL, credentials);
 
-            return replyGroup.toString();
-
-            // Handle all known exceptions
-
         }catch (SocketTimeoutException e) {
-            return "Connection Timed Out";
+            Toast.makeText(context, "Connection Timed Out", Toast.LENGTH_LONG).show();
+            return null;
         } catch (MalformedURLException e) {
-            return "Invalid URL";
+            Toast.makeText(context, "Invalid URL", Toast.LENGTH_LONG).show();
+            return null;
         } catch (UnknownHostException e) {
-            return "Resolve Failed";
+            Toast.makeText(context, "Resolve Failed", Toast.LENGTH_LONG).show();
+            return null;
         } catch (FileNotFoundException e) {
-            return "FileNotFoundException";
+            Toast.makeText(context, "FileNotFoundException", Toast.LENGTH_LONG).show();
+            return null;
         } catch (Exception e) {
             Log.e("NetworkException", e.toString());
-            return "Unknown Exception";
+            Toast.makeText(context, "Unknown Exception", Toast.LENGTH_LONG).show();
+            return null;
         }
+        return replyGroup.toString();
+
     }
 
     private static JSONObject sendRequest(JSONObject completeObject, String part, String serverString, String credentials) throws Exception {
@@ -95,33 +105,6 @@ class ServerInteraction {
         return completeObject;
     }
 
-    static boolean checkReply(Context context, String reply){
-        /*
-        * Check reply for exceptions caught in communication
-         */
-        switch (reply) {
-            case "Wrong credentials\n":
-                Toast.makeText(context, "Wrong Credentials", Toast.LENGTH_LONG).show();
-                return false;
-            case "Connection Timed Out":
-                Toast.makeText(context, reply, Toast.LENGTH_LONG).show();
-                return false;
-            case "Invalid URL":
-                Toast.makeText(context, reply, Toast.LENGTH_LONG).show();
-                return false;
-            case "Resolve Failed":
-                Toast.makeText(context, reply, Toast.LENGTH_LONG).show();
-                return false;
-            case "FileNotFoundException":
-                Toast.makeText(context, reply, Toast.LENGTH_LONG).show();
-                return false;
-            case "Unknown Exception":
-                Toast.makeText(context, reply, Toast.LENGTH_LONG).show();
-                return false;
-            default:
-                return true;
-        }
-    }
 
     static boolean isConnected(Context context){
         /*
@@ -134,6 +117,63 @@ class ServerInteraction {
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
+    }
+
+    static List<Host> createExpandableListSummary(String reply) throws JSONException {
+        /*
+         * Prepare status info into the hosts list
+         */
+        JSONObject data = new JSONObject(reply);
+        List<Host> hosts = new ArrayList<>();
+        HashMap<String, Integer> hostPositions = new HashMap<>();
+
+
+        // Check how many Hosts and Services are having trouble
+        int servicesCount = data.getJSONArray("services").length();
+        int hostsCount = data.getJSONArray("hosts").length();
+        int hostsDownCount = data.getJSONObject("status").getInt("num_hosts_down");
+
+        String hostName, serviceName;
+        String serviceDetails;
+        int state;
+
+        /*
+            * Add all downed hosts to the list first in order to sort them to the top
+             */
+        for (int x = 0, y = 0; x < hostsCount; x++) {
+            if (data.getJSONArray("hosts").getJSONObject(x).getJSONObject("attrs").getInt("state") == 1) {
+                hostName = data.getJSONArray("hosts").getJSONObject(x).getJSONObject("attrs").getString("name");
+                hostPositions.put(hostName, hosts.size());
+                hosts.add(new Host(hostName, true));
+                y++;
+                if (y == hostsDownCount) {
+                    break;
+                }
+            }
+        }
+
+            /*
+            * Loop through all services and store the hostname and the location of their respective services
+             */
+        for (int x=0 ; x < servicesCount ; x++) {
+            hostName = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getString("host_name");
+            serviceName = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getString("name");
+            serviceDetails = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getJSONObject("last_check_result").getString("output");
+            state = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getInt("state");
+
+            if (hostPositions.containsKey(hostName)) {
+                hosts.get(hostPositions.get(hostName)).addService(x, serviceName, serviceDetails, state);
+            } else {
+                hostPositions.put(hostName, hosts.size());
+                hosts.add(new Host(hostName, false));
+                hosts.get(hostPositions.get(hostName)).addService(x, serviceName, serviceDetails, state);
+            }
+        }
+
+        // Resort into alphabetical order with Downed and trouble hosts at the top
+        Collections.sort(hosts);
+
+        return hosts;
     }
 
 }

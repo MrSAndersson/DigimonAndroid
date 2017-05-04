@@ -15,16 +15,12 @@ import android.widget.ExpandableListView;
 public class ProblemFragment extends Fragment {
     private SwipeRefreshLayout swipeContainer;
     private View view;
-    private int hostsNr;
-    private boolean isTroubleList;
     private Context parentActivity;
 
-    static ProblemFragment newInstance(int position, int hostsNr, boolean isTroubleList) {
+    static ProblemFragment newInstance(int position) {
         ProblemFragment fragment = new ProblemFragment();
         Bundle args = new Bundle();
-        args.putInt("hostsNr", hostsNr);
         args.putInt("position", position);
-        args.putBoolean("isTroubleList", isTroubleList);
         fragment.setArguments(args);
         return fragment;
     }
@@ -32,8 +28,6 @@ public class ProblemFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        hostsNr = getArguments().getInt("hostsNr", 0);
-        isTroubleList = getArguments().getBoolean("isTroubleList", false);
         parentActivity = getActivity();
     }
 
@@ -54,7 +48,7 @@ public class ProblemFragment extends Fragment {
         });
 
         ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.main_expand_list);
-        ExpandableListAdapter listAdapter = new mainExpandableListAdapter(view.getContext(), MainActivity.hosts, hostsNr, isTroubleList);
+        ExpandableListAdapter listAdapter = new mainExpandableListAdapter(view.getContext(), MainActivity.hosts);
         listView.setAdapter(listAdapter);
 
         return view;
@@ -69,9 +63,9 @@ public class ProblemFragment extends Fragment {
         }
     }
 
-    public void update(int hostsNr){
+    public void update(){
         ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.main_expand_list);
-        ExpandableListAdapter listAdapter = new mainExpandableListAdapter(view.getContext(), MainActivity.hosts, hostsNr, isTroubleList);
+        ExpandableListAdapter listAdapter = new mainExpandableListAdapter(view.getContext(), MainActivity.hosts);
         listView.setAdapter(listAdapter);
     }
 

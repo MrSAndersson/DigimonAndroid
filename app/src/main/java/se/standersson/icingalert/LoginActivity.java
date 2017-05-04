@@ -10,16 +10,12 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 import org.json.JSONException;
-import org.json.JSONObject;
-import java.io.FileNotFoundException;
-import java.net.MalformedURLException;
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
+import java.io.Serializable;
+import java.util.List;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -136,24 +132,11 @@ public class LoginActivity extends AppCompatActivity {
     private class sendRequest extends AsyncTask<String[], Integer, String> {
         @Override
         protected String doInBackground(String[]... data) {
-            try {
-            return ServerInteraction.fetchData(data[0]);
-            }catch (SocketTimeoutException e) {
-                return "Connection Timed Out";
-            } catch (MalformedURLException e) {
-                return "Invalid URL";
-            } catch (UnknownHostException e) {
-                return "Resolve Failed";
-            } catch (FileNotFoundException e) {
-                return "FileNotFoundException";
-            } catch (Exception e) {
-                Log.e("NetworkException", e.toString());
-                return "Unknown Exception";
-            }
+            return ServerInteraction.fetchData(getApplicationContext(), data[0]);
         }
 
         protected void onPostExecute(String reply){
-            if (ServerInteraction.checkReply(getApplicationContext(), reply)) {
+            if (reply != null) {
                 startMainActivity(reply);
             } else {
                 progressBar.setVisibility(View.GONE);
@@ -164,11 +147,9 @@ public class LoginActivity extends AppCompatActivity {
 
     private void startMainActivity(String reply){
         try{
-            JSONObject json = new JSONObject(reply);
-            Bundle bundle = Tools.createExpandableListSummary(json);
+            List<Host> hosts = ServerInteraction.createExpandableListSummary(reply);
             Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra("hosts", bundle.getSerializable("hosts"));
-            intent.putExtra("hostListCount", bundle.getInt("hostListCount"));
+            intent.putExtra("hosts", (Serializable) hosts);
             startActivity(intent);
 
             finish();

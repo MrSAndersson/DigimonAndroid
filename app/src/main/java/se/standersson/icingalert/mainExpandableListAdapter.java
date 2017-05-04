@@ -12,25 +12,21 @@ import java.util.List;
 class mainExpandableListAdapter extends BaseExpandableListAdapter {
     private final Context context;
     private final List<Host> hosts;
-    private final int hostsCount;
-    private final boolean isTroubleList;
 
 
-    mainExpandableListAdapter(Context context, List<Host> hosts, int hostsCount, boolean isTroubleList) {
+    mainExpandableListAdapter(Context context, List<Host> hosts) {
         this.context = context;
         this.hosts = hosts;
-        this.hostsCount = hostsCount;
-        this.isTroubleList = isTroubleList;
     }
 
     @Override
     public int getGroupCount() {
-        return hostsCount;
+        return hosts.size();
     }
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return hosts.get(groupPosition).getServiceCount(isTroubleList);
+        return hosts.get(groupPosition).getServiceCount();
     }
 
     @Override
@@ -40,7 +36,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        return hosts.get(groupPosition).getServiceName(hosts.get(groupPosition).getServicePosition(childPosition, isTroubleList));
+        return hosts.get(groupPosition).getServiceName(hosts.get(groupPosition).getServicePosition(childPosition));
     }
 
     @Override
@@ -122,7 +118,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         ChildViewHolder viewHolder;
-        int servicePosition = hosts.get(groupPosition).getServicePosition(childPosition, isTroubleList);
+        int servicePosition = hosts.get(groupPosition).getServicePosition(childPosition);
 
         /*
         * If it's the first time the child is created, create the view and store the view

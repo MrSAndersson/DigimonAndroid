@@ -62,18 +62,8 @@ class Host implements Serializable, Comparable<Host>{
     }
 
     // Get the JSON position of a service
-    int getServicePosition(int childPosition, boolean isTroubleList) {
-        if (isTroubleList){
-            if (childPosition < stateCounter.get(2)){
-                return critList.get(childPosition);
-            } else if (childPosition - stateCounter.get(2) < stateCounter.get(1)){
-                return warnList.get(childPosition - stateCounter.get(2));
-            } else {
-                return unknownList.get(childPosition - stateCounter.get(2) -stateCounter.get(1));
-            }
-        } else {
+    int getServicePosition(int childPosition) {
             return services.get(childPosition);
-        }
     }
 
 
@@ -89,14 +79,8 @@ class Host implements Serializable, Comparable<Host>{
         return serviceState.get(servicePosition);
     }
 
-    int getServiceCount(boolean notOk){
-        int counter;
-        if (notOk){
-            counter = stateCounter.get(1) + stateCounter.get(2) + stateCounter.get(3);
-        } else {
-            counter = stateCounter.get(0) + stateCounter.get(1) + stateCounter.get(2) + stateCounter.get(3);
-        }
-        return counter;
+    int getServiceCount(){
+        return stateCounter.get(0) + stateCounter.get(1) + stateCounter.get(2) + stateCounter.get(3);
     }
 
     String getHostName(){
@@ -117,16 +101,16 @@ class Host implements Serializable, Comparable<Host>{
 
     @Override
     public int compareTo(@NonNull Host other) {
-        if(this.isDown() && !other.isDown()){
+        /*if(this.isDown() && !other.isDown()){
             return -1;
         } else if (!this.isDown() && other.isDown()){
             return 1;
-        } else if(this.getServiceCount(true) != 0 && other.getServiceCount(true) == 0 ) {
+        } else if(this.getServiceCount() != 0 && other.getServiceCount() == 0 ) {
             return -1;
-        } else if(this.getServiceCount(true) == 0 && other.getServiceCount(true) != 0) {
+        } else if(this.getServiceCount() == 0 && other.getServiceCount() != 0) {
             return 1;
-        }else {
+        }else {*/
             return this.getHostName().compareToIgnoreCase(other.getHostName());
-        }
+       // }
     }
 }

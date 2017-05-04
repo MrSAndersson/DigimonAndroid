@@ -11,7 +11,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,26 +18,19 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import com.google.firebase.messaging.FirebaseMessaging;
 import org.json.JSONException;
-import org.json.JSONObject;
-import java.io.FileNotFoundException;
 import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
 import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
     public static List<Host> hosts;
     private FragmentPagerAdapter adapterViewPager;
-    private int hostListCount;
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         // Save hosts list and hostListCount for when activity recreates
         outState.putSerializable("hosts", (Serializable) hosts);
-        outState.putInt("hostListCount", hostListCount);
     }
 
     @Override
@@ -100,15 +92,13 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         if (savedInstanceState != null){
             // noinspection unchecked
             hosts = (List<Host>) savedInstanceState.getSerializable("hosts");
-            hostListCount = savedInstanceState.getInt("hostListCount");
         } else {
             // noinspection unchecked
             hosts  = (List<Host>) intent.getSerializableExtra("hosts");
-            hostListCount = intent.getIntExtra("hostListCount", 0);
         }
 
         ViewPager mainViewPager = (ViewPager) findViewById(R.id.main_view_pager);
-        adapterViewPager = new MainPagerAdapter(getSupportFragmentManager(), hostListCount);
+        adapterViewPager = new MainPagerAdapter(getSupportFragmentManager());
         mainViewPager.setAdapter(adapterViewPager);
 
     }
@@ -154,51 +144,31 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
          */
         @Override
         protected String doInBackground(String[]... data) {
-            try {
-                return ServerInteraction.fetchData(data[0]);
-            }catch (SocketTimeoutException e) {
-                return "Connection Timed Out";
-            } catch (MalformedURLException e) {
-                return "Invalid URL";
-            } catch (UnknownHostException e) {
-                return "Resolve Failed";
-            } catch (FileNotFoundException e) {
-                return "FileNotFoundException";
-            } catch (Exception e) {
-                Log.e("NetworkException", e.toString());
-                return "Unknown Exception";
-            }
+            return ServerInteraction.fetchData(getApplicationContext(), data[0]);
         }
 
-        protected void onPostExecute(String replyString){
-            if (ServerInteraction.checkReply(getApplicationContext(), replyString)) {
+        protected void onPostExecute(String reply){
+            if (reply != null) {
                 try {
-                    JSONObject data = new JSONObject(replyString);
-                    Bundle bundle = Tools.createExpandableListSummary(data);
-                    // noinspection unchecked
-                    hosts = (List<Host>) bundle.getSerializable("hosts");
-                    hostListCount = bundle.getInt("hostListCount");
-                    ((MainPagerAdapter) adapterViewPager).getFragment(0).update(hostListCount);
-                    ((MainPagerAdapter) adapterViewPager).getFragment(1).update(hosts.size());
+                    hosts = ServerInteraction.createExpandableListSummary(reply);
+                    ((MainPagerAdapter) adapterViewPager).getFragment(0).update();
+                    ((MainPagerAdapter) adapterViewPager).getFragment(1).update();
                 } catch (JSONException e) {
                     Toast.makeText(getApplicationContext(), "Unable to parse response", Toast.LENGTH_LONG).show();
                 }
             }
             ((MainPagerAdapter)adapterViewPager).getFragment(0).setRefreshSpinner(false);
             ((MainPagerAdapter)adapterViewPager).getFragment(1).setRefreshSpinner(false);
-
         }
 
     }
 
     private static class MainPagerAdapter extends FragmentPagerAdapter {
 	    private static final int NUM_ITEMS = 2;
-        private final int hostsDownNr;
         private final ProblemFragment[] fragmentArray = new ProblemFragment[2];
 
-        MainPagerAdapter(android.support.v4.app.FragmentManager fragmentManager, Integer hostsCount) {
+        MainPagerAdapter(android.support.v4.app.FragmentManager fragmentManager) {
             super(fragmentManager);
-            this.hostsDownNr = hostsCount;
         }
 
         // Returns total number of pages
@@ -212,11 +182,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         public android.support.v4.app.Fragment getItem(int position) {
             switch (position) {
                 case 0: // Trouble List
-                    ProblemFragment troubleFragment = ProblemFragment.newInstance(position, hostsDownNr, true);
+                    ProblemFragment troubleFragment = ProblemFragment.newInstance(position);
                     fragmentArray[0] = troubleFragment;
                     return troubleFragment;
                 case 1: // All-things-list
-                    ProblemFragment allFragment = ProblemFragment.newInstance(position, hosts.size(), false);
+                    ProblemFragment allFragment = ProblemFragment.newInstance(position);
                     fragmentArray[1] = allFragment;
                     return allFragment;
                 default:
