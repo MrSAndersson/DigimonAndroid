@@ -33,7 +33,7 @@ class ServerInteraction {
 
 
 
-    static String fetchData(Context context, final String[] prefs){
+    static String fetchData(final String[] prefs)throws  Exception{
 
         /*
         * Try Catch to catch all errors in network communication
@@ -51,28 +51,9 @@ class ServerInteraction {
             * */
         String credentials = "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP);
 
-        try {
             replyGroup = sendRequest(replyGroup, "status", statusURL, credentials);
             replyGroup = sendRequest(replyGroup, "hosts", hostURL, credentials);
             replyGroup = sendRequest(replyGroup, "services", serviceURL, credentials);
-
-        }catch (SocketTimeoutException e) {
-            Toast.makeText(context, "Connection Timed Out", Toast.LENGTH_LONG).show();
-            return null;
-        } catch (MalformedURLException e) {
-            Toast.makeText(context, "Invalid URL", Toast.LENGTH_LONG).show();
-            return null;
-        } catch (UnknownHostException e) {
-            Toast.makeText(context, "Resolve Failed", Toast.LENGTH_LONG).show();
-            return null;
-        } catch (FileNotFoundException e) {
-            Toast.makeText(context, "FileNotFoundException", Toast.LENGTH_LONG).show();
-            return null;
-        } catch (Exception e) {
-            Log.e("NetworkException", e.toString());
-            Toast.makeText(context, "Unknown Exception", Toast.LENGTH_LONG).show();
-            return null;
-        }
         return replyGroup.toString();
 
     }

@@ -10,11 +10,17 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 import org.json.JSONException;
+
+import java.io.FileNotFoundException;
 import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.List;
 
 
@@ -132,7 +138,47 @@ public class LoginActivity extends AppCompatActivity {
     private class sendRequest extends AsyncTask<String[], Integer, String> {
         @Override
         protected String doInBackground(String[]... data) {
-            return ServerInteraction.fetchData(getApplicationContext(), data[0]);
+            try{
+                return ServerInteraction.fetchData(data[0]);
+            }catch (SocketTimeoutException e) {
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "Connection Timed Out", Toast.LENGTH_LONG).show();
+                    }
+                });
+                return null;
+            } catch (MalformedURLException e) {
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "Invalid URL", Toast.LENGTH_LONG).show();
+                    }
+                });
+                return null;
+            } catch (UnknownHostException e) {
+                runOnUiThread(new Runnable() {
+                    public void run() {
+
+                        Toast.makeText(getApplicationContext(), "Resolve Failed", Toast.LENGTH_LONG).show();
+                    }
+                });
+                return null;
+            } catch (FileNotFoundException e) {
+                runOnUiThread(new Runnable() {
+                    public void run() {
+
+                        Toast.makeText(getApplicationContext(), "FileNotFoundException", Toast.LENGTH_LONG).show();
+                    }
+                });
+                return null;
+            } catch (Exception e) {
+                Log.e("NetworkException", e.toString());
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "Unable to Connect", Toast.LENGTH_LONG).show();
+                    }
+                });
+                return null;
+            }
         }
 
         protected void onPostExecute(String reply){
