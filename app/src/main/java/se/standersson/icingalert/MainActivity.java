@@ -211,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     private static class MainPagerAdapter extends FragmentPagerAdapter {
 	    private static final int NUM_ITEMS = 2;
-        private final ProblemFragment[] fragmentArray = new ProblemFragment[2];
+        private final HostListFragment[] fragmentArray = new HostListFragment[2];
 
         MainPagerAdapter(android.support.v4.app.FragmentManager fragmentManager) {
             super(fragmentManager);
@@ -228,11 +228,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         public android.support.v4.app.Fragment getItem(int position) {
             switch (position) {
                 case 0: // Trouble List
-                    ProblemFragment troubleFragment = ProblemFragment.newInstance(position);
+                    HostListFragment troubleFragment = HostListFragment.newInstance(position);
                     fragmentArray[0] = troubleFragment;
                     return troubleFragment;
                 case 1: // All-things-list
-                    ProblemFragment allFragment = ProblemFragment.newInstance(position);
+                    HostListFragment allFragment = HostListFragment.newInstance(position);
                     fragmentArray[1] = allFragment;
                     return allFragment;
                 default:
@@ -242,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         @Override
  public Object instantiateItem(ViewGroup container, int position) {
-     ProblemFragment fragment = (ProblemFragment) super.instantiateItem(container, position);
+     HostListFragment fragment = (HostListFragment) super.instantiateItem(container, position);
      fragmentArray[position] = fragment;
      return fragment;
  }
@@ -260,7 +260,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             }
         }
 
-        private ProblemFragment getFragment(int position){
+        private HostListFragment getFragment(int position){
             return fragmentArray[position];
         }
     }

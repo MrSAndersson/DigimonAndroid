@@ -12,13 +12,13 @@ import android.view.ViewGroup;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 
-public class ProblemFragment extends Fragment {
+public class HostListFragment extends Fragment {
     private SwipeRefreshLayout swipeContainer;
     private View view;
     private Context parentActivity;
 
-    static ProblemFragment newInstance(int position) {
-        ProblemFragment fragment = new ProblemFragment();
+    static HostListFragment newInstance(int position) {
+        HostListFragment fragment = new HostListFragment();
         Bundle args = new Bundle();
         args.putInt("position", position);
         fragment.setArguments(args);
