@@ -41,21 +41,21 @@ class Host implements Serializable, Comparable<Host>{
     }
 
     //Add a service with name, details and state. Also increment the state counters
-    void addService(int jsonPosition, String serviceName, String serviceDetails, int state){
-        services.add(jsonPosition);
-        this.serviceNames.put(jsonPosition, serviceName);
-        this.serviceDetails.put(jsonPosition, serviceDetails);
-        this.serviceState.put(jsonPosition, state);
+    void addService(int serviceID, String serviceName, String serviceDetails, int state){
+        services.add(serviceID);
+        this.serviceNames.put(serviceID, serviceName);
+        this.serviceDetails.put(serviceID, serviceDetails);
+        this.serviceState.put(serviceID, state);
         int current = stateCounter.get(state);
         switch (state){
             case 1:
-                warnList.add(jsonPosition);
+                warnList.add(serviceID);
                 break;
             case 2:
-                critList.add(jsonPosition);
+                critList.add(serviceID);
                 break;
             case 3:
-                unknownList.add(jsonPosition);
+                unknownList.add(serviceID);
                 break;
         }
         stateCounter.put(state, current+1);
@@ -101,16 +101,6 @@ class Host implements Serializable, Comparable<Host>{
 
     @Override
     public int compareTo(@NonNull Host other) {
-        /*if(this.isDown() && !other.isDown()){
-            return -1;
-        } else if (!this.isDown() && other.isDown()){
-            return 1;
-        } else if(this.getServiceCount() != 0 && other.getServiceCount() == 0 ) {
-            return -1;
-        } else if(this.getServiceCount() == 0 && other.getServiceCount() != 0) {
-            return 1;
-        }else {*/
             return this.getHostName().compareToIgnoreCase(other.getHostName());
-       // }
     }
 }

@@ -25,6 +25,7 @@ import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -197,8 +198,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             if (reply != null) {
                 try {
                     hosts = ServerInteraction.createExpandableListSummary(reply);
-                    ((MainPagerAdapter) adapterViewPager).getFragment(0).update();
-                    ((MainPagerAdapter) adapterViewPager).getFragment(1).update();
+                    ((MainPagerAdapter) adapterViewPager).getFragment(0).update(Tools.filterProblems(hosts));
+                    ((MainPagerAdapter) adapterViewPager).getFragment(1).update(hosts);
                 } catch (JSONException e) {
                     Toast.makeText(getApplicationContext(), "Unable to parse response", Toast.LENGTH_LONG).show();
                 }
@@ -210,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     private static class MainPagerAdapter extends FragmentPagerAdapter {
-	    private static final int NUM_ITEMS = 2;
+        private static final int NUM_ITEMS = 2;
         private final HostListFragment[] fragmentArray = new HostListFragment[2];
 
         MainPagerAdapter(android.support.v4.app.FragmentManager fragmentManager) {
@@ -228,11 +229,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         public android.support.v4.app.Fragment getItem(int position) {
             switch (position) {
                 case 0: // Trouble List
-                    HostListFragment troubleFragment = HostListFragment.newInstance(position);
+                    HostListFragment troubleFragment = HostListFragment.newInstance(position, Tools.filterProblems(MainActivity.hosts));
                     fragmentArray[0] = troubleFragment;
                     return troubleFragment;
                 case 1: // All-things-list
-                    HostListFragment allFragment = HostListFragment.newInstance(position);
+                    HostListFragment allFragment = HostListFragment.newInstance(position, MainActivity.hosts);
                     fragmentArray[1] = allFragment;
                     return allFragment;
                 default:
@@ -241,11 +242,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
 
         @Override
- public Object instantiateItem(ViewGroup container, int position) {
-     HostListFragment fragment = (HostListFragment) super.instantiateItem(container, position);
-     fragmentArray[position] = fragment;
-     return fragment;
- }
+        public Object instantiateItem(ViewGroup container, int position) {
+            HostListFragment fragment = (HostListFragment) super.instantiateItem(container, position);
+            fragmentArray[position] = fragment;
+            return fragment;
+        }
 
         // Returns the page title for the top indicator
         @Override

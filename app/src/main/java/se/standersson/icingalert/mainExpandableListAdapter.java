@@ -69,7 +69,6 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         }
 
 
-
             /*
             * Show what hosts are down and how many services are down
              */

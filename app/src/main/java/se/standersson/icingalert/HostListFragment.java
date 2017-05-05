@@ -12,15 +12,20 @@ import android.view.ViewGroup;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 
+import java.io.Serializable;
+import java.util.List;
+
 public class HostListFragment extends Fragment {
     private SwipeRefreshLayout swipeContainer;
     private View view;
     private Context parentActivity;
+    private List<Host> hosts;
 
-    static HostListFragment newInstance(int position) {
+    static HostListFragment newInstance(int position, List<Host> hosts) {
         HostListFragment fragment = new HostListFragment();
         Bundle args = new Bundle();
         args.putInt("position", position);
+        args.putSerializable("hosts", (Serializable) hosts);
         fragment.setArguments(args);
         return fragment;
     }
@@ -29,6 +34,8 @@ public class HostListFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         parentActivity = getActivity();
+        // noinspection unchecked
+        hosts = (List<Host>) getArguments().getSerializable("hosts");
     }
 
     @Override
@@ -48,7 +55,7 @@ public class HostListFragment extends Fragment {
         });
 
         ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.main_expand_list);
-        ExpandableListAdapter listAdapter = new mainExpandableListAdapter(view.getContext(), MainActivity.hosts);
+        ExpandableListAdapter listAdapter = new mainExpandableListAdapter(view.getContext(), hosts);
         listView.setAdapter(listAdapter);
 
         return view;
@@ -63,9 +70,9 @@ public class HostListFragment extends Fragment {
         }
     }
 
-    public void update(){
+    public void update(List<Host> hosts){
         ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.main_expand_list);
-        ExpandableListAdapter listAdapter = new mainExpandableListAdapter(view.getContext(), MainActivity.hosts);
+        ExpandableListAdapter listAdapter = new mainExpandableListAdapter(view.getContext(), hosts);
         listView.setAdapter(listAdapter);
     }
 
