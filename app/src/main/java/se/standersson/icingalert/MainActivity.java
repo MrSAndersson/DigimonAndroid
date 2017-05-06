@@ -51,13 +51,17 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     @Override
-    public boolean onQueryTextChange(String query){
-        return false;
+    public boolean onQueryTextChange(String query) {
+        ((MainPagerAdapter) adapterViewPager).getFragment(0).update(Tools.filterTextMatch(Tools.filterProblems(hosts), query));
+        ((MainPagerAdapter) adapterViewPager).getFragment(1).update(Tools.filterTextMatch(hosts, query));
+        return true;
     }
 
     @Override
     public boolean onQueryTextSubmit(String query){
-        return false;
+        ((MainPagerAdapter) adapterViewPager).getFragment(0).update(Tools.filterTextMatch(Tools.filterProblems(hosts), query));
+        ((MainPagerAdapter) adapterViewPager).getFragment(1).update(Tools.filterTextMatch(hosts, query));
+        return true;
     }
 
     @Override
