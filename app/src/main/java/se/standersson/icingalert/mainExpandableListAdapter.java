@@ -36,7 +36,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        return hosts.get(groupPosition).getServiceName(hosts.get(groupPosition).getServicePosition(childPosition));
+        return hosts.get(groupPosition).getServiceName(hosts.get(groupPosition).getServiceID(childPosition));
     }
 
     @Override
@@ -117,7 +117,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         ChildViewHolder viewHolder;
-        int servicePosition = hosts.get(groupPosition).getServicePosition(childPosition);
+        int servicePosition = hosts.get(groupPosition).getServiceID(childPosition);
 
         /*
         * If it's the first time the child is created, create the view and store the view

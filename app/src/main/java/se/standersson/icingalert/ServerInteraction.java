@@ -151,7 +151,7 @@ class ServerInteraction {
             }
         }
 
-        // Resort into alphabetical order with Downed and trouble hosts at the top
+        // Sort all hosts in name order
         Collections.sort(hosts);
 
         return hosts;

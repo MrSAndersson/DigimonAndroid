@@ -28,7 +28,7 @@ class Host implements Serializable, Comparable<Host>{
     private boolean isDown = false;
 
 
-    //Constructor for hosts that are down currently
+    //Constructor for hosts
     Host(String hostName, boolean isDown) {
         this.hostName = hostName;
         if (isDown) {
@@ -61,8 +61,8 @@ class Host implements Serializable, Comparable<Host>{
         stateCounter.put(state, current+1);
     }
 
-    // Get the JSON position of a service
-    int getServicePosition(int childPosition) {
+    // Get the serviceID of a service
+    int getServiceID(int childPosition) {
             return services.get(childPosition);
     }
 
@@ -96,7 +96,7 @@ class Host implements Serializable, Comparable<Host>{
     }
 
     /*
-    * Sort hosts that are down first, then trouble services and everything else in alphabetical order
+    * Sorts hosts in alphabetical order
      */
 
     @Override
