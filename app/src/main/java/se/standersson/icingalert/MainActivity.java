@@ -25,12 +25,11 @@ import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
-    public static List<Host> hosts;
+    private static List<Host> hosts;
     private FragmentPagerAdapter adapterViewPager;
 
     @Override
