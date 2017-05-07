@@ -1,6 +1,7 @@
 package se.standersson.icingalert;
 
 import android.annotation.SuppressLint;
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 
 import java.io.Serializable;
@@ -15,11 +16,10 @@ class Host implements Serializable, Comparable<Host>{
      */
     private final String hostName;
     private final List<Service> services = new ArrayList<>();
+    private final List<Integer> okList = new ArrayList<>();
     private final List<Integer> critList = new ArrayList<>();
     private final List<Integer> warnList = new ArrayList<>();
     private final List<Integer> unknownList = new ArrayList<>();
-    @SuppressLint("UseSparseArrays")
-    private final HashMap<Integer, Integer> stateCounter = new HashMap<>();
     private boolean isDown = false;
 
 
@@ -29,28 +29,25 @@ class Host implements Serializable, Comparable<Host>{
         if (isDown) {
             this.isDown = true;
         }
-        stateCounter.put(0,0);
-        stateCounter.put(1,0);
-        stateCounter.put(2,0);
-        stateCounter.put(3,0);
     }
 
     //Add a service with name, details and state. Also increment the state counters
     void addService(String serviceName, String serviceDetails, int state){
-        int current = stateCounter.get(state);
+        services.add(new Service(serviceName, serviceDetails, state));
         switch (state){
+            case 0:
+                okList.add(services.size()-1);
+                break;
             case 1:
-                warnList.add(services.size());
+                warnList.add(services.size()-1);
                 break;
             case 2:
-                critList.add(services.size());
+                critList.add(services.size()-1);
                 break;
             case 3:
-                unknownList.add(services.size());
+                unknownList.add(services.size()-1);
                 break;
         }
-        stateCounter.put(state, current+1);
-        services.add(new Service(serviceName, serviceDetails, state));
     }
 
     String getServiceName(int servicePosition) {
@@ -66,7 +63,7 @@ class Host implements Serializable, Comparable<Host>{
     }
 
     int getServiceCount(){
-        return stateCounter.get(0) + stateCounter.get(1) + stateCounter.get(2) + stateCounter.get(3);
+        return services.size();
     }
 
     String getHostName(){
@@ -74,7 +71,19 @@ class Host implements Serializable, Comparable<Host>{
     }
 
     int getStateCount(int state){
-        return stateCounter.get(state);
+        switch (state) {
+            case 0:
+                return okList.size();
+            case 1:
+                return warnList.size();
+            case 2:
+                return critList.size();
+            case 3:
+                return unknownList.size();
+            default:
+                // Return 0 so we won't try to draw something we don't have
+                return 0;
+        }
     }
 
     boolean isDown(){
