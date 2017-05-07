@@ -23,20 +23,18 @@ final class Tools {
                 newList.add(new Host(hosts.get(x).getHostName(), true));
                 hasBeenAdded = true;
                 for (int y = 0 ; y < hosts.get(x).getServiceCount() ; y++) {
-                    int serviceID = hosts.get(x).getServiceID(y);
-                    newList.get(newList.size()-1).addService(y, hosts.get(x).getServiceName(serviceID), hosts.get(x).getServiceDetails(serviceID), hosts.get(x).getServiceState(serviceID));
+                    newList.get(newList.size()-1).addService(hosts.get(x).getServiceName(y), hosts.get(x).getServiceDetails(y), hosts.get(x).getServiceState(y));
                 }
             } else {
                 for (int y = 0 ; y < hosts.get(x).getServiceCount() ; y++) {
-                    int serviceID = hosts.get(x).getServiceID(y);
-                    if (hosts.get(x).getServiceState(serviceID) != 0){
+                    if (hosts.get(x).getServiceState(y) != 0){
                         try{
                             newList.get(addedCounter);
                         } catch (IndexOutOfBoundsException e) {
                             newList.add(new Host(hosts.get(x).getHostName(), false));
                             hasBeenAdded = true;
                         }
-                        newList.get(newList.size()-1).addService(y, hosts.get(x).getServiceName(serviceID), hosts.get(x).getServiceDetails(serviceID), hosts.get(x).getServiceState(serviceID));
+                        newList.get(newList.size()-1).addService(hosts.get(x).getServiceName(y), hosts.get(x).getServiceDetails(y), hosts.get(x).getServiceState(y));
                     }
                 }
             }
@@ -90,21 +88,19 @@ final class Tools {
                 newList.add(new Host(hosts.get(x).getHostName(), hosts.get(x).isDown()));
                 hasBeenAdded = true;
                 for (int y = 0 ; y < hosts.get(x).getServiceCount() ; y++) {
-                    int serviceID = hosts.get(x).getServiceID(y);
-                    newList.get(newList.size()-1).addService(y, hosts.get(x).getServiceName(serviceID), hosts.get(x).getServiceDetails(serviceID), hosts.get(x).getServiceState(serviceID));
+                    newList.get(newList.size()-1).addService(hosts.get(x).getServiceName(y), hosts.get(x).getServiceDetails(y), hosts.get(x).getServiceState(y));
                 }
             } else {
                 for (int y = 0 ; y < hosts.get(x).getServiceCount() ; y++) {
-                    int serviceID = hosts.get(x).getServiceID(y);
-                    if (hosts.get(x).getServiceName(serviceID).toLowerCase().contains(searchString.toLowerCase()) ||
-                            hosts.get(x).getServiceDetails(serviceID).toLowerCase().contains(searchString.toLowerCase())) {
+                    if (hosts.get(x).getServiceName(y).toLowerCase().contains(searchString.toLowerCase()) ||
+                            hosts.get(x).getServiceDetails(y).toLowerCase().contains(searchString.toLowerCase())) {
                         try{
                             newList.get(addedCounter);
                         } catch (IndexOutOfBoundsException e) {
                             newList.add(new Host(hosts.get(x).getHostName(), hosts.get(x).isDown()));
                             hasBeenAdded = true;
                         }
-                        newList.get(newList.size()-1).addService(y, hosts.get(x).getServiceName(serviceID), hosts.get(x).getServiceDetails(serviceID), hosts.get(x).getServiceState(serviceID));
+                        newList.get(newList.size()-1).addService(hosts.get(x).getServiceName(y), hosts.get(x).getServiceDetails(y), hosts.get(x).getServiceState(y));
                     }
                 }
             }

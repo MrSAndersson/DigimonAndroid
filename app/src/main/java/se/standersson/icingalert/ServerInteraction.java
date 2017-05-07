@@ -135,16 +135,19 @@ class ServerInteraction {
             state = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getInt("state");
 
             if (hostPositions.containsKey(hostName)) {
-                hosts.get(hostPositions.get(hostName)).addService(x, serviceName, serviceDetails, state);
+                hosts.get(hostPositions.get(hostName)).addService(serviceName, serviceDetails, state);
             } else {
                 hostPositions.put(hostName, hosts.size());
                 hosts.add(new Host(hostName, false));
-                hosts.get(hostPositions.get(hostName)).addService(x, serviceName, serviceDetails, state);
+                hosts.get(hostPositions.get(hostName)).addService(serviceName, serviceDetails, state);
             }
         }
 
-        // Sort all hosts in name order
+        // Sort all hosts and services in name order
         Collections.sort(hosts);
+        for (Host host : hosts){
+            host.sortServices();
+        }
 
         return hosts;
     }

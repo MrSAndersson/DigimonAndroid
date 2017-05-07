@@ -36,7 +36,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        return hosts.get(groupPosition).getServiceName(hosts.get(groupPosition).getServiceID(childPosition));
+        return hosts.get(groupPosition).getServiceName(childPosition);
     }
 
     @Override
@@ -117,7 +117,6 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         ChildViewHolder viewHolder;
-        int servicePosition = hosts.get(groupPosition).getServiceID(childPosition);
 
         /*
         * If it's the first time the child is created, create the view and store the view
@@ -131,11 +130,11 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         } else {
             viewHolder = (ChildViewHolder) convertView.getTag();
         }
-            viewHolder.serviceName.setText(hosts.get(groupPosition).getServiceName(servicePosition));
-            viewHolder.serviceDetails.setText(hosts.get(groupPosition).getServiceDetails(servicePosition));
+            viewHolder.serviceName.setText(hosts.get(groupPosition).getServiceName(childPosition));
+            viewHolder.serviceDetails.setText(hosts.get(groupPosition).getServiceDetails(childPosition));
 
         // Show the right color of bar to the left of the service name
-        switch (hosts.get(groupPosition).getServiceState(servicePosition)){
+        switch (hosts.get(groupPosition).getServiceState(childPosition)){
             case 1:
                 viewHolder.criticalBar.setVisibility(View.GONE);
                 viewHolder.warningBar.setVisibility(View.VISIBLE);

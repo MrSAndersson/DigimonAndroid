@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -13,16 +14,10 @@ class Host implements Serializable, Comparable<Host>{
     * Declaration of host details
      */
     private final String hostName;
-    private final List<Integer> services = new ArrayList<>();
+    private final List<Service> services = new ArrayList<>();
     private final List<Integer> critList = new ArrayList<>();
     private final List<Integer> warnList = new ArrayList<>();
     private final List<Integer> unknownList = new ArrayList<>();
-    @SuppressLint("UseSparseArrays")
-    private final HashMap<Integer, String> serviceNames = new HashMap<>();
-    @SuppressLint("UseSparseArrays")
-    private final HashMap<Integer, String> serviceDetails = new HashMap<>();
-    @SuppressLint("UseSparseArrays")
-    private final HashMap<Integer, Integer> serviceState = new HashMap<>();
     @SuppressLint("UseSparseArrays")
     private final HashMap<Integer, Integer> stateCounter = new HashMap<>();
     private boolean isDown = false;
@@ -41,42 +36,33 @@ class Host implements Serializable, Comparable<Host>{
     }
 
     //Add a service with name, details and state. Also increment the state counters
-    void addService(int serviceID, String serviceName, String serviceDetails, int state){
-        services.add(serviceID);
-        this.serviceNames.put(serviceID, serviceName);
-        this.serviceDetails.put(serviceID, serviceDetails);
-        this.serviceState.put(serviceID, state);
+    void addService(String serviceName, String serviceDetails, int state){
         int current = stateCounter.get(state);
         switch (state){
             case 1:
-                warnList.add(serviceID);
+                warnList.add(services.size());
                 break;
             case 2:
-                critList.add(serviceID);
+                critList.add(services.size());
                 break;
             case 3:
-                unknownList.add(serviceID);
+                unknownList.add(services.size());
                 break;
         }
         stateCounter.put(state, current+1);
+        services.add(new Service(serviceName, serviceDetails, state));
     }
-
-    // Get the serviceID of a service
-    int getServiceID(int childPosition) {
-            return services.get(childPosition);
-    }
-
 
     String getServiceName(int servicePosition) {
-        return serviceNames.get(servicePosition);
+        return services.get(servicePosition).getServiceName();
     }
 
     String getServiceDetails(int servicePosition) {
-        return serviceDetails.get(servicePosition);
+        return services.get(servicePosition).getDetails();
     }
 
     int getServiceState(int servicePosition) {
-        return serviceState.get(servicePosition);
+        return services.get(servicePosition).getState();
     }
 
     int getServiceCount(){
@@ -95,6 +81,10 @@ class Host implements Serializable, Comparable<Host>{
         return isDown;
     }
 
+    void sortServices(){
+        Collections.sort(services);
+    }
+
     /*
     * Sorts hosts in alphabetical order
      */
@@ -102,5 +92,35 @@ class Host implements Serializable, Comparable<Host>{
     @Override
     public int compareTo(@NonNull Host other) {
             return this.getHostName().compareToIgnoreCase(other.getHostName());
+    }
+
+    class Service implements Serializable, Comparable<Service> {
+        private final String name;
+        private final String details;
+        private final int state;
+
+
+        Service(String name, String details, int state) {
+            this.name = name;
+            this.details = details;
+            this.state = state;
+        }
+
+        String getServiceName() {
+            return name;
+        }
+
+        String getDetails() {
+            return details;
+        }
+
+        int getState() {
+            return state;
+        }
+
+        @Override
+        public int compareTo(@NonNull Service other) {
+            return this.getServiceName().compareToIgnoreCase(other.getServiceName());
+        }
     }
 }
