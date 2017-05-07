@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.Toast;
 
 import java.io.Serializable;
 import java.util.List;
@@ -55,8 +56,16 @@ public class HostListFragment extends Fragment {
         });
 
         ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.main_expand_list);
-        ExpandableListAdapter listAdapter = new mainExpandableListAdapter(view.getContext(), hosts);
+        final mainExpandableListAdapter listAdapter = new mainExpandableListAdapter(view.getContext(), hosts);
         listView.setAdapter(listAdapter);
+        listView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View view, int groupPosition, int childPosition, long id) {
+                listAdapter.childClick(groupPosition, childPosition, view);
+                return true;
+            }
+        });
 
         return view;
     }

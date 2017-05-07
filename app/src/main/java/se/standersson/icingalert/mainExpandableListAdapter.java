@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
+
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 
@@ -130,8 +132,27 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         } else {
             viewHolder = (ChildViewHolder) convertView.getTag();
         }
-            viewHolder.serviceName.setText(hosts.get(groupPosition).getServiceName(childPosition));
-            viewHolder.serviceDetails.setText(hosts.get(groupPosition).getServiceDetails(childPosition));
+        viewHolder.serviceName.setText(hosts.get(groupPosition).getServiceName(childPosition));
+        viewHolder.serviceDetails.setText(hosts.get(groupPosition).getServiceDetails(childPosition));
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm dd/MMM");
+        viewHolder.lastStateChange.setText(sdf.format(hosts.get(groupPosition).getServiceLastStateChange(childPosition)));
+        switch (hosts.get(groupPosition).getServiceLastState(childPosition)) {
+            case 0:
+                viewHolder.lastState.setText("OK");
+                break;
+            case 1:
+                viewHolder.lastState.setText("Warning");
+                break;
+            case 2:
+                viewHolder.lastState.setText("Critical");
+                break;
+            case 3:
+                viewHolder.lastState.setText("Unknown");
+                break;
+            default:
+                viewHolder.lastState.setText("Error");
+                break;
+        }
 
         // Show the right color of bar to the left of the service name
         switch (hosts.get(groupPosition).getServiceState(childPosition)){
@@ -155,8 +176,16 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
                 viewHolder.warningBar.setVisibility(View.GONE);
                 viewHolder.unknownBar.setVisibility(View.INVISIBLE);
                 break;
-
         }
+
+        if (hosts.get(groupPosition).isServiceExpanded(childPosition)) {
+            viewHolder.lastState.setVisibility(View.VISIBLE);
+            viewHolder.lastStateChange.setVisibility(View.VISIBLE);
+        } else {
+            viewHolder.lastState.setVisibility(View.GONE);
+            viewHolder.lastStateChange.setVisibility(View.GONE);
+        }
+
         return convertView;
     }
 
@@ -164,6 +193,20 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
     }
+
+    public void childClick(int groupPosition, int childPosition, View view) {
+        ChildViewHolder viewHolder = (ChildViewHolder) view.getTag();
+        if (hosts.get(groupPosition).isServiceExpanded(childPosition)) {
+            viewHolder.lastState.setVisibility(View.GONE);
+            viewHolder.lastStateChange.setVisibility(View.GONE);
+            hosts.get(groupPosition).setServiceExpanded(childPosition, false);
+        } else {
+            viewHolder.lastState.setVisibility(View.VISIBLE);
+            viewHolder.lastStateChange.setVisibility(View.VISIBLE);
+            hosts.get(groupPosition).setServiceExpanded(childPosition, true);
+        }
+    }
+
 
     private class GroupViewHolder{
         final TextView hostName;
@@ -188,6 +231,8 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         final TextView criticalBar;
         final TextView warningBar;
         final TextView unknownBar;
+        final TextView lastState;
+        final TextView lastStateChange;
 
 
         ChildViewHolder(View view){
@@ -196,6 +241,8 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
             criticalBar = (TextView) view.findViewById(R.id.critical_state_bar);
             warningBar = (TextView) view.findViewById(R.id.warning_state_bar);
             unknownBar = (TextView) view.findViewById(R.id.unknown_state_bar);
+            lastState = (TextView) view.findViewById(R.id.last_state);
+            lastStateChange = (TextView) view.findViewById(R.id.last_state_change);
         }
     }
 

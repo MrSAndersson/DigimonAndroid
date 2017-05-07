@@ -32,8 +32,8 @@ class Host implements Serializable, Comparable<Host>{
     }
 
     //Add a service with name, details and state. Also increment the state counters
-    void addService(String serviceName, String serviceDetails, int state){
-        services.add(new Service(serviceName, serviceDetails, state));
+    void addService(String serviceName, String serviceDetails, int state, int lastState, long lastStateChange){
+        services.add(new Service(serviceName, serviceDetails, state, lastState, lastStateChange));
         switch (state){
             case 0:
                 okList.add(services.size()-1);
@@ -69,6 +69,23 @@ class Host implements Serializable, Comparable<Host>{
     String getHostName(){
         return hostName;
     }
+
+    boolean isServiceExpanded(int position) {
+        return services.get(position).isExpanded();
+    }
+
+    void setServiceExpanded(int position, boolean expanded) {
+        services.get(position).setIsExpanded(expanded);
+    }
+
+    int getServiceLastState(int position) {
+        return services.get(position).getLastState();
+    }
+
+    long getServiceLastStateChange(int position) {
+        return services.get(position).getLastStateChange();
+    }
+
 
     int getStateCount(int state){
         switch (state) {
@@ -107,12 +124,17 @@ class Host implements Serializable, Comparable<Host>{
         private final String name;
         private final String details;
         private final int state;
+        private final int last_state;
+        private final long last_state_change;
+        private boolean isExpanded=false;
 
 
-        Service(String name, String details, int state) {
+        Service(String name, String details, int state, int last_state, long last_state_change) {
             this.name = name;
             this.details = details;
             this.state = state;
+            this.last_state = last_state;
+            this.last_state_change = last_state_change;
         }
 
         String getServiceName() {
@@ -125,6 +147,22 @@ class Host implements Serializable, Comparable<Host>{
 
         int getState() {
             return state;
+        }
+
+        int getLastState(){
+            return last_state;
+        }
+
+        long getLastStateChange(){
+            return last_state_change;
+        }
+
+        boolean isExpanded() {
+            return isExpanded;
+        }
+
+        void setIsExpanded(boolean expanded) {
+            isExpanded = expanded;
         }
 
         @Override

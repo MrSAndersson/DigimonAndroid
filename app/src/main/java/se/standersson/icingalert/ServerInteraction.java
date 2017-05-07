@@ -12,8 +12,11 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -36,7 +39,7 @@ class ServerInteraction {
         String password = prefs[2];
         String statusURL = serverString + "/v1/status/CIB";
         String hostURL = serverString + "/v1/objects/hosts?attrs=last_check_result&attrs=state&attrs=name";
-        String serviceURL = serverString + "/v1/objects/services?attrs=last_check_result&attrs=state&attrs=name&attrs=host_name";
+        String serviceURL = serverString + "/v1/objects/services?attrs=last_check_result&attrs=state&attrs=name&attrs=host_name&attrs=last_state&attrs=last_state_change";
 
             /*
             * Create a connection with input/output with a plaintext body
@@ -106,9 +109,9 @@ class ServerInteraction {
         int hostsCount = data.getJSONArray("hosts").length();
         int hostsDownCount = data.getJSONObject("status").getInt("num_hosts_down");
 
-        String hostName, serviceName;
-        String serviceDetails;
-        int state;
+        String hostName, serviceName, serviceDetails;
+        int state, lastState;
+        long lastStateChange;
 
         /*
             * Add all downed hosts to the list first in order to sort them to the top
@@ -133,13 +136,17 @@ class ServerInteraction {
             serviceName = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getString("name");
             serviceDetails = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getJSONObject("last_check_result").getString("output");
             state = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getInt("state");
+            lastState = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getInt("last_state");
+            lastStateChange = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getLong("last_state_change");
+
+
 
             if (hostPositions.containsKey(hostName)) {
-                hosts.get(hostPositions.get(hostName)).addService(serviceName, serviceDetails, state);
+                hosts.get(hostPositions.get(hostName)).addService(serviceName, serviceDetails, state, lastState, lastStateChange);
             } else {
                 hostPositions.put(hostName, hosts.size());
                 hosts.add(new Host(hostName, false));
-                hosts.get(hostPositions.get(hostName)).addService(serviceName, serviceDetails, state);
+                hosts.get(hostPositions.get(hostName)).addService(serviceName, serviceDetails, state, lastState, lastStateChange);
             }
         }
 
