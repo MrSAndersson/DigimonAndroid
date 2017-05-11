@@ -39,7 +39,7 @@ class ServerInteraction {
         String password = prefs[2];
         String statusURL = serverString + "/v1/status/CIB";
         String hostURL = serverString + "/v1/objects/hosts?attrs=last_check_result&attrs=state&attrs=name";
-        String serviceURL = serverString + "/v1/objects/services?attrs=last_check_result&attrs=state&attrs=name&attrs=host_name&attrs=last_state&attrs=last_state_change";
+        String serviceURL = serverString + "/v1/objects/services?attrs=last_check_result&attrs=state&attrs=name&attrs=host_name&attrs=last_state&attrs=last_state_change&attrs=enable_notifications";
 
             /*
             * Create a connection with input/output with a plaintext body
@@ -112,6 +112,7 @@ class ServerInteraction {
         String hostName, serviceName, serviceDetails;
         int state, lastState;
         long lastStateChange;
+        boolean notifications;
 
         /*
             * Add all downed hosts to the list first in order to sort them to the top
@@ -138,15 +139,16 @@ class ServerInteraction {
             state = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getInt("state");
             lastState = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getInt("last_state");
             lastStateChange = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getLong("last_state_change");
+            notifications = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getBoolean("enable_notifications");
 
 
 
             if (hostPositions.containsKey(hostName)) {
-                hosts.get(hostPositions.get(hostName)).addService(serviceName, serviceDetails, state, lastState, lastStateChange);
+                hosts.get(hostPositions.get(hostName)).addService(serviceName, serviceDetails, state, lastState, lastStateChange, notifications);
             } else {
                 hostPositions.put(hostName, hosts.size());
                 hosts.add(new Host(hostName, false));
-                hosts.get(hostPositions.get(hostName)).addService(serviceName, serviceDetails, state, lastState, lastStateChange);
+                hosts.get(hostPositions.get(hostName)).addService(serviceName, serviceDetails, state, lastState, lastStateChange, notifications);
             }
         }
 

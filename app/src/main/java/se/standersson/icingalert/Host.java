@@ -32,8 +32,8 @@ class Host implements Serializable, Comparable<Host>{
     }
 
     //Add a service with name, details and state. Also increment the state counters
-    void addService(String serviceName, String serviceDetails, int state, int lastState, long lastStateChange){
-        services.add(new Service(serviceName, serviceDetails, state, lastState, lastStateChange));
+    void addService(String serviceName, String serviceDetails, int state, int lastState, long lastStateChange, boolean notifications){
+        services.add(new Service(serviceName, serviceDetails, state, lastState, lastStateChange, notifications));
         switch (state){
             case 0:
                 okList.add(services.size()-1);
@@ -86,6 +86,10 @@ class Host implements Serializable, Comparable<Host>{
         return services.get(position).getLastStateChange();
     }
 
+    boolean isServiceNotifying(int position) {
+        return services.get(position).isNotifying();
+    }
+
 
     int getStateCount(int state){
         switch (state) {
@@ -127,14 +131,16 @@ class Host implements Serializable, Comparable<Host>{
         private final int last_state;
         private final long last_state_change;
         private boolean isExpanded=false;
+        private boolean notifications;
 
 
-        Service(String name, String details, int state, int last_state, long last_state_change) {
+        Service(String name, String details, int state, int last_state, long last_state_change, boolean notifications) {
             this.name = name;
             this.details = details;
             this.state = state;
             this.last_state = last_state;
             this.last_state_change = last_state_change;
+            this.notifications = notifications;
         }
 
         String getServiceName() {
@@ -155,6 +161,10 @@ class Host implements Serializable, Comparable<Host>{
 
         long getLastStateChange(){
             return last_state_change;
+        }
+
+        boolean isNotifying() {
+            return notifications;
         }
 
         boolean isExpanded() {

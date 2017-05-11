@@ -23,7 +23,7 @@ final class Tools {
                 newList.add(new Host(hosts.get(x).getHostName(), true));
                 hasBeenAdded = true;
                 for (int y = 0 ; y < hosts.get(x).getServiceCount() ; y++) {
-                    newList.get(newList.size()-1).addService(hosts.get(x).getServiceName(y), hosts.get(x).getServiceDetails(y), hosts.get(x).getServiceState(y), hosts.get(x).getServiceLastState(y), hosts.get(x).getServiceLastStateChange(y));
+                    newList.get(newList.size()-1).addService(hosts.get(x).getServiceName(y), hosts.get(x).getServiceDetails(y), hosts.get(x).getServiceState(y), hosts.get(x).getServiceLastState(y), hosts.get(x).getServiceLastStateChange(y), hosts.get(x).isServiceNotifying(y));
                 }
             } else {
                 for (int y = 0 ; y < hosts.get(x).getServiceCount() ; y++) {
@@ -34,7 +34,7 @@ final class Tools {
                             newList.add(new Host(hosts.get(x).getHostName(), false));
                             hasBeenAdded = true;
                         }
-                        newList.get(newList.size()-1).addService(hosts.get(x).getServiceName(y), hosts.get(x).getServiceDetails(y), hosts.get(x).getServiceState(y), hosts.get(x).getServiceLastState(y), hosts.get(x).getServiceLastStateChange(y));
+                        newList.get(newList.size()-1).addService(hosts.get(x).getServiceName(y), hosts.get(x).getServiceDetails(y), hosts.get(x).getServiceState(y), hosts.get(x).getServiceLastState(y), hosts.get(x).getServiceLastStateChange(y), hosts.get(x).isServiceNotifying(y));
                     }
                 }
             }
@@ -88,7 +88,7 @@ final class Tools {
                 newList.add(new Host(hosts.get(x).getHostName(), hosts.get(x).isDown()));
                 hasBeenAdded = true;
                 for (int y = 0 ; y < hosts.get(x).getServiceCount() ; y++) {
-                    newList.get(newList.size()-1).addService(hosts.get(x).getServiceName(y), hosts.get(x).getServiceDetails(y), hosts.get(x).getServiceState(y), hosts.get(x).getServiceLastState(y), hosts.get(x).getServiceLastStateChange(y));
+                    newList.get(newList.size()-1).addService(hosts.get(x).getServiceName(y), hosts.get(x).getServiceDetails(y), hosts.get(x).getServiceState(y), hosts.get(x).getServiceLastState(y), hosts.get(x).getServiceLastStateChange(y), hosts.get(x).isServiceNotifying(y));
                 }
             } else {
                 for (int y = 0 ; y < hosts.get(x).getServiceCount() ; y++) {
@@ -100,7 +100,7 @@ final class Tools {
                             newList.add(new Host(hosts.get(x).getHostName(), hosts.get(x).isDown()));
                             hasBeenAdded = true;
                         }
-                        newList.get(newList.size()-1).addService(hosts.get(x).getServiceName(y), hosts.get(x).getServiceDetails(y), hosts.get(x).getServiceState(y), hosts.get(x).getServiceLastState(y), hosts.get(x).getServiceLastStateChange(y));
+                        newList.get(newList.size()-1).addService(hosts.get(x).getServiceName(y), hosts.get(x).getServiceDetails(y), hosts.get(x).getServiceState(y), hosts.get(x).getServiceLastState(y), hosts.get(x).getServiceLastStateChange(y), hosts.get(x).isServiceNotifying(y));
                     }
                 }
             }

@@ -5,9 +5,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 
@@ -134,7 +136,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         }
         viewHolder.serviceName.setText(hosts.get(groupPosition).getServiceName(childPosition));
         viewHolder.serviceDetails.setText(hosts.get(groupPosition).getServiceDetails(childPosition));
-        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm dd/MMM");
+        /*SimpleDateFormat sdf = new SimpleDateFormat("hh:mm dd/MMM");
         viewHolder.lastStateChange.setText(sdf.format(hosts.get(groupPosition).getServiceLastStateChange(childPosition)));
         switch (hosts.get(groupPosition).getServiceLastState(childPosition)) {
             case 0:
@@ -152,7 +154,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
             default:
                 viewHolder.lastState.setText("Error");
                 break;
-        }
+        }*/
 
         // Show the right color of bar to the left of the service name
         switch (hosts.get(groupPosition).getServiceState(childPosition)){
@@ -179,11 +181,9 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         }
 
         if (hosts.get(groupPosition).isServiceExpanded(childPosition)) {
-            viewHolder.lastState.setVisibility(View.VISIBLE);
-            viewHolder.lastStateChange.setVisibility(View.VISIBLE);
+            viewHolder.childExpand.setVisibility(View.VISIBLE);
         } else {
-            viewHolder.lastState.setVisibility(View.GONE);
-            viewHolder.lastStateChange.setVisibility(View.GONE);
+            viewHolder.childExpand.setVisibility(View.GONE);
         }
 
         return convertView;
@@ -197,12 +197,10 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
     public void childClick(int groupPosition, int childPosition, View view) {
         ChildViewHolder viewHolder = (ChildViewHolder) view.getTag();
         if (hosts.get(groupPosition).isServiceExpanded(childPosition)) {
-            viewHolder.lastState.setVisibility(View.GONE);
-            viewHolder.lastStateChange.setVisibility(View.GONE);
+            viewHolder.childExpand.setVisibility(View.GONE);
             hosts.get(groupPosition).setServiceExpanded(childPosition, false);
         } else {
-            viewHolder.lastState.setVisibility(View.VISIBLE);
-            viewHolder.lastStateChange.setVisibility(View.VISIBLE);
+            viewHolder.childExpand.setVisibility(View.VISIBLE);
             hosts.get(groupPosition).setServiceExpanded(childPosition, true);
         }
     }
@@ -231,8 +229,10 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         final TextView criticalBar;
         final TextView warningBar;
         final TextView unknownBar;
-        final TextView lastState;
-        final TextView lastStateChange;
+        final LinearLayout childExpand;
+        final CheckBox serviceNotifications;
+        //final TextView lastState;
+        //final TextView lastStateChange;
 
 
         ChildViewHolder(View view){
@@ -241,8 +241,10 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
             criticalBar = (TextView) view.findViewById(R.id.critical_state_bar);
             warningBar = (TextView) view.findViewById(R.id.warning_state_bar);
             unknownBar = (TextView) view.findViewById(R.id.unknown_state_bar);
-            lastState = (TextView) view.findViewById(R.id.last_state);
-            lastStateChange = (TextView) view.findViewById(R.id.last_state_change);
+            childExpand = (LinearLayout) view.findViewById(R.id.child_expand);
+            serviceNotifications = (CheckBox) view.findViewById(R.id.service_notifications);
+            //lastState = (TextView) view.findViewById(R.id.last_state);
+            //lastStateChange = (TextView) view.findViewById(R.id.last_state_change);
         }
     }
 
