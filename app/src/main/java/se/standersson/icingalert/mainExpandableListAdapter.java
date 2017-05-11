@@ -136,6 +136,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         }
         viewHolder.serviceName.setText(hosts.get(groupPosition).getServiceName(childPosition));
         viewHolder.serviceDetails.setText(hosts.get(groupPosition).getServiceDetails(childPosition));
+        viewHolder.serviceNotifications.setChecked(hosts.get(groupPosition).isServiceNotifying(childPosition));
         /*SimpleDateFormat sdf = new SimpleDateFormat("hh:mm dd/MMM");
         viewHolder.lastStateChange.setText(sdf.format(hosts.get(groupPosition).getServiceLastStateChange(childPosition)));
         switch (hosts.get(groupPosition).getServiceLastState(childPosition)) {
@@ -194,7 +195,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         return true;
     }
 
-    public void childClick(int groupPosition, int childPosition, View view) {
+    void childClick(int groupPosition, int childPosition, View view) {
         ChildViewHolder viewHolder = (ChildViewHolder) view.getTag();
         if (hosts.get(groupPosition).isServiceExpanded(childPosition)) {
             viewHolder.childExpand.setVisibility(View.GONE);

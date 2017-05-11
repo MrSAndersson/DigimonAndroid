@@ -13,7 +13,7 @@
     <string name="logout_item">Logout</string>
 
     <!-- Service List -->
-    <string name="service_notifications">Enable Notifications</string>
+    <string name="service_notifications">Send Notifications</string>
 
 
     <!-- String related to the Preferences menu -->

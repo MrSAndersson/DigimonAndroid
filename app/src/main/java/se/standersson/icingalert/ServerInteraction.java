@@ -12,11 +12,8 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -46,14 +43,14 @@ class ServerInteraction {
             * */
         String credentials = "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP);
 
-            replyGroup = sendRequest(replyGroup, "status", statusURL, credentials);
-            replyGroup = sendRequest(replyGroup, "hosts", hostURL, credentials);
-            replyGroup = sendRequest(replyGroup, "services", serviceURL, credentials);
+            replyGroup = sendStatusRequest(replyGroup, "status", statusURL, credentials);
+            replyGroup = sendStatusRequest(replyGroup, "hosts", hostURL, credentials);
+            replyGroup = sendStatusRequest(replyGroup, "services", serviceURL, credentials);
         return replyGroup.toString();
 
     }
 
-    private static JSONObject sendRequest(JSONObject completeObject, String part, String serverString, String credentials) throws Exception {
+    private static JSONObject sendStatusRequest(JSONObject completeObject, String part, String serverString, String credentials) throws Exception {
         URL url = new URL(serverString);
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
         connection.setRequestProperty("Authorization", credentials);
@@ -82,18 +79,6 @@ class ServerInteraction {
     }
 
 
-    static boolean isConnected(Context context){
-        /*
-        * Check Network Connectivity and then request data from Icinga
-        * */
-
-        ConnectivityManager cm =
-                (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        return activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting();
-    }
 
     static List<Host> createExpandableListSummary(String reply) throws JSONException {
         /*
@@ -159,6 +144,28 @@ class ServerInteraction {
         }
 
         return hosts;
+    }
+
+    /*
+     * Send an Action to Icinga
+     */
+
+
+
+    /*
+     * Check if device is connected to the network
+     */
+    static boolean isConnected(Context context){
+        /*
+        * Check Network Connectivity and then request data from Icinga
+        * */
+
+        ConnectivityManager cm =
+                (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
     }
 
 }
