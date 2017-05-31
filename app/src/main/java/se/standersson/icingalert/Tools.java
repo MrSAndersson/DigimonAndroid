@@ -1,6 +1,10 @@
 package se.standersson.icingalert;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.support.v7.app.AppCompatActivity;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -110,5 +114,15 @@ final class Tools {
             }
         }
         return newList;
+    }
+
+    static String[] getLogin(Context context){
+        //Get login credentials and make a call to get status data
+        String[] prefsString = new String[3];
+        SharedPreferences prefStorage = context.getSharedPreferences("Login", 0);
+        prefsString[0] = prefStorage.getString("serverString", "");
+        prefsString[1] = prefStorage.getString("username", "");
+        prefsString[2] = prefStorage.getString("password", "");
+        return prefsString;
     }
 }

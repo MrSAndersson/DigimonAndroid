@@ -1,16 +1,34 @@
 package se.standersson.icingalert;
 
 import android.content.Context;
+import android.net.Credentials;
+import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 class mainExpandableListAdapter extends BaseExpandableListAdapter {
@@ -119,7 +137,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+    public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         ChildViewHolder viewHolder;
 
         /*
@@ -137,6 +155,52 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         viewHolder.serviceName.setText(hosts.get(groupPosition).getServiceName(childPosition));
         viewHolder.serviceDetails.setText(hosts.get(groupPosition).getServiceDetails(childPosition));
         viewHolder.serviceNotifications.setChecked(hosts.get(groupPosition).isServiceNotifying(childPosition));
+        viewHolder.serviceNotifications.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                String serviceName = hosts.get(groupPosition).getHostName() + "!" + hosts.get(groupPosition).getServiceName(childPosition);
+
+                VolleySingleton.getInstance(context).getRequestQueue();
+                final String[] prefsString = Tools.getLogin(context);
+
+                String serviceIdentifier = hosts.get(groupPosition).getHostName() + "!" + hosts.get(groupPosition).getServiceName(childPosition);
+                String requestString = prefsString[0] + "/v1/objects/services?service=" + serviceIdentifier;
+
+                JSONObject actionJSON = new JSONObject();
+                try {
+                    actionJSON.put("attrs", new JSONObject());
+                    actionJSON.getJSONObject("attrs").put("enable_notifications", isChecked);
+                } catch (JSONException e) {
+                    Log.d("MainList: ", "JSONException");
+                }
+
+                JsonObjectRequest notificationChangeRequest = new JsonObjectRequest(Request.Method.POST, requestString, actionJSON, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        JSONObject test = response;
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        String temp = error.getMessage();
+
+                    }
+                }) {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String>  params = new HashMap<String, String>();
+                        String credentials = String.format("Basic %s", Base64.encodeToString(String.format("%s:%s", prefsString[1], prefsString[2]).getBytes(), Base64.DEFAULT));
+                        params.put("Authorization", credentials);
+                        params.put("Accept", "application/json");
+                        return params;
+                    }};
+
+
+                VolleySingleton.getInstance(context).addToRequestQueue(notificationChangeRequest);
+            }
+        });
         /*SimpleDateFormat sdf = new SimpleDateFormat("hh:mm dd/MMM");
         viewHolder.lastStateChange.setText(sdf.format(hosts.get(groupPosition).getServiceLastStateChange(childPosition)));
         switch (hosts.get(groupPosition).getServiceLastState(childPosition)) {

@@ -128,12 +128,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     public void refresh() {
 
-        //Get login credentials and make a call to get status data
-        String[] prefsString = new String[3];
-        SharedPreferences prefStorage = getSharedPreferences("Login", 0);
-        prefsString[0] = prefStorage.getString("serverString", "");
-        prefsString[1] = prefStorage.getString("username", "");
-        prefsString[2] = prefStorage.getString("password", "");
+        String[] prefsString = Tools.getLogin(this);
 
         ((MainPagerAdapter) adapterViewPager).getFragment(1).setRefreshSpinner(true);
         ((MainPagerAdapter) adapterViewPager).getFragment(0).setRefreshSpinner(true);
