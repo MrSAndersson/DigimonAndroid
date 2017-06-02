@@ -29,15 +29,7 @@ import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
-    private static List<Host> hosts;
     private FragmentPagerAdapter adapterViewPager;
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        // Save hosts list and hostListCount for when activity recreates
-        outState.putSerializable("hosts", (Serializable) hosts);
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -51,15 +43,15 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public boolean onQueryTextChange(String query) {
-        ((MainPagerAdapter) adapterViewPager).getFragment(0).update(Tools.filterTextMatch(Tools.filterProblems(hosts), query));
-        ((MainPagerAdapter) adapterViewPager).getFragment(1).update(Tools.filterTextMatch(hosts, query));
+        ((MainPagerAdapter) adapterViewPager).getFragment(0).update(Tools.filterTextMatch(Tools.filterProblems(HostSingleton.getInstance().getHosts()), query));
+        ((MainPagerAdapter) adapterViewPager).getFragment(1).update(Tools.filterTextMatch(HostSingleton.getInstance().getHosts(), query));
         return true;
     }
 
     @Override
     public boolean onQueryTextSubmit(String query){
-        ((MainPagerAdapter) adapterViewPager).getFragment(0).update(Tools.filterTextMatch(Tools.filterProblems(hosts), query));
-        ((MainPagerAdapter) adapterViewPager).getFragment(1).update(Tools.filterTextMatch(hosts, query));
+        ((MainPagerAdapter) adapterViewPager).getFragment(0).update(Tools.filterTextMatch(Tools.filterProblems(HostSingleton.getInstance().getHosts()), query));
+        ((MainPagerAdapter) adapterViewPager).getFragment(1).update(Tools.filterTextMatch(HostSingleton.getInstance().getHosts(), query));
         return true;
     }
 
@@ -93,18 +85,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
         if (notificationPrefs.getBoolean("service_push", false)){
             FirebaseMessaging.getInstance().subscribeToTopic("services");
-        }
-
-        Intent intent = getIntent();
-
-
-        // If we have a saved state, use that to create the list, otherwise, get from the intent
-        if (savedInstanceState != null){
-            // noinspection unchecked
-            hosts = (List<Host>) savedInstanceState.getSerializable("hosts");
-        } else {
-            // noinspection unchecked
-            hosts  = (List<Host>) intent.getSerializableExtra("hosts");
         }
 
         ViewPager mainViewPager = (ViewPager) findViewById(R.id.main_view_pager);
@@ -195,9 +175,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         protected void onPostExecute(String reply){
             if (reply != null) {
                 try {
-                    hosts = ServerInteraction.createExpandableListSummary(reply);
-                    ((MainPagerAdapter) adapterViewPager).getFragment(0).update(Tools.filterProblems(hosts));
-                    ((MainPagerAdapter) adapterViewPager).getFragment(1).update(hosts);
+                    ServerInteraction.createExpandableListSummary(reply);
+                    ((MainPagerAdapter) adapterViewPager).getFragment(0).update(Tools.filterProblems(HostSingleton.getInstance().getHosts()));
+                    ((MainPagerAdapter) adapterViewPager).getFragment(1).update(HostSingleton.getInstance().getHosts());
                 } catch (JSONException e) {
                     Toast.makeText(getApplicationContext(), "Unable to parse response", Toast.LENGTH_LONG).show();
                 }
@@ -227,11 +207,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         public android.support.v4.app.Fragment getItem(int position) {
             switch (position) {
                 case 0: // Trouble List
-                    HostListFragment troubleFragment = HostListFragment.newInstance(position, Tools.filterProblems(MainActivity.hosts));
+                    HostListFragment troubleFragment = HostListFragment.newInstance(position, Tools.filterProblems(HostSingleton.getInstance().getHosts()));
                     fragmentArray[0] = troubleFragment;
                     return troubleFragment;
                 case 1: // All-things-list
-                    HostListFragment allFragment = HostListFragment.newInstance(position, MainActivity.hosts);
+                    HostListFragment allFragment = HostListFragment.newInstance(position, HostSingleton.getInstance().getHosts());
                     fragmentArray[1] = allFragment;
                     return allFragment;
                 default:

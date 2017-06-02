@@ -193,9 +193,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private void startMainActivity(String reply){
         try{
-            List<Host> hosts = ServerInteraction.createExpandableListSummary(reply);
+            ServerInteraction.createExpandableListSummary(reply);
             Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra("hosts", (Serializable) hosts);
             startActivity(intent);
 
             finish();

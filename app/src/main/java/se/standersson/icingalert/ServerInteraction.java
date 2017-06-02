@@ -89,7 +89,7 @@ class ServerInteraction {
 
 
 
-    static List<Host> createExpandableListSummary(String reply) throws JSONException {
+    static void createExpandableListSummary(String reply) throws JSONException {
         /*
          * Prepare status info into the hosts list
          */
@@ -152,7 +152,8 @@ class ServerInteraction {
             host.sortServices();
         }
 
-        return hosts;
+        // Save host info in HostSingleton;
+        HostSingleton.getInstance().putHosts(hosts);
     }
 
     /*
