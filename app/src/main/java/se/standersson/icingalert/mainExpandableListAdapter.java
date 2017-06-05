@@ -332,7 +332,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
 
                 VolleySingleton.getInstance(context).addToRequestQueue(notificationChangeRequest);
             } else {
-                Toast.makeText(context, "No Network", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.no_connectivity, Toast.LENGTH_SHORT).show();
                 button.setChecked(!isChecked);
             }
         }

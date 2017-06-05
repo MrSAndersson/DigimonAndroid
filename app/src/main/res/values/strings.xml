@@ -7,6 +7,9 @@
     <string name="login_password">Password</string>
     <string name="login_button">Log In</string>
 
+    <!-- Network Messages -->
+    <string name="no_connectivity">No Network Connectivity</string>
+
 
     <!-- Strings related to the Main Menu -->
     <string name="settings_item">Settings</string>
