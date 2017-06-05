@@ -4,23 +4,14 @@ package se.standersson.icingalert;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.util.Base64;
-import android.util.Log;
-import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -155,48 +146,6 @@ class ServerInteraction {
         // Save host info in HostSingleton;
         HostSingleton.getInstance().putHosts(hosts);
     }
-
-    /*
-     * Send an Action to Icinga
-     */
-
-    static boolean setEnableNotifications(final String[] prefs, String service, boolean enableIt)throws  Exception{
-
-        JSONObject action = new JSONObject();
-        action.put("attrs", new JSONObject());
-        action.getJSONObject("attrs").put("enable_notifications", enableIt);
-
-        String serverString = prefs[0];
-        String username = prefs[1];
-        String password = prefs[2];
-        String statusURL = serverString + "/v1/objects/services?service=" + service;
-
-            /*
-            * Create a connection with input/output with a plaintext body
-            * */
-        String credentials = "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP);
-
-        URL url = new URL(statusURL);
-        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty("Authorization", credentials);
-        connection.setRequestProperty("Accept", "application/json");
-        connection.setConnectTimeout(10000);
-
-        OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
-        wr.write(action.toString());
-        wr.flush();
-        wr.close();
-        connection.disconnect();
-        if (connection.getResponseCode() == HttpURLConnection.HTTP_OK){
-            return true;
-        } else {
-            return false;
-        }
-
-    }
-
-
 
     /*
      * Check if device is connected to the network

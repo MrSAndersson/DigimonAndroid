@@ -21,11 +21,9 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import org.json.JSONException;
 
 import java.io.FileNotFoundException;
-import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
-import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {

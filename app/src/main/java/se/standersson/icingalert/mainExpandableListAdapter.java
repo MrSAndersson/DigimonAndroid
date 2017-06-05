@@ -1,14 +1,12 @@
 package se.standersson.icingalert;
 
 import android.content.Context;
-import android.net.Credentials;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
@@ -20,12 +18,10 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -155,52 +151,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         viewHolder.serviceName.setText(hosts.get(groupPosition).getServiceName(childPosition));
         viewHolder.serviceDetails.setText(hosts.get(groupPosition).getServiceDetails(childPosition));
         viewHolder.serviceNotifications.setChecked(hosts.get(groupPosition).isServiceNotifying(childPosition));
-        viewHolder.serviceNotifications.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                String serviceName = hosts.get(groupPosition).getHostName() + "!" + hosts.get(groupPosition).getServiceName(childPosition);
-
-                VolleySingleton.getInstance(context).getRequestQueue();
-                final String[] prefsString = Tools.getLogin(context);
-
-                String serviceIdentifier = hosts.get(groupPosition).getHostName() + "!" + hosts.get(groupPosition).getServiceName(childPosition);
-                String requestString = prefsString[0] + "/v1/objects/services?service=" + serviceIdentifier;
-
-                JSONObject actionJSON = new JSONObject();
-                try {
-                    actionJSON.put("attrs", new JSONObject());
-                    actionJSON.getJSONObject("attrs").put("enable_notifications", isChecked);
-                } catch (JSONException e) {
-                    Log.d("MainList: ", "JSONException");
-                }
-
-                JsonObjectRequest notificationChangeRequest = new JsonObjectRequest(Request.Method.POST, requestString, actionJSON, new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        JSONObject test = response;
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        String temp = error.getMessage();
-
-                    }
-                }) {
-                    @Override
-                    public Map<String, String> getHeaders() throws AuthFailureError {
-                        Map<String, String>  params = new HashMap<String, String>();
-                        String credentials = String.format("Basic %s", Base64.encodeToString(String.format("%s:%s", prefsString[1], prefsString[2]).getBytes(), Base64.DEFAULT));
-                        params.put("Authorization", credentials);
-                        params.put("Accept", "application/json");
-                        return params;
-                    }};
-
-
-                VolleySingleton.getInstance(context).addToRequestQueue(notificationChangeRequest);
-            }
-        });
+        viewHolder.serviceNotifications.setOnCheckedChangeListener(new onNotificationUpdate(groupPosition, childPosition, context));
         /*SimpleDateFormat sdf = new SimpleDateFormat("hh:mm dd/MMM");
         viewHolder.lastStateChange.setText(sdf.format(hosts.get(groupPosition).getServiceLastStateChange(childPosition)));
         switch (hosts.get(groupPosition).getServiceLastState(childPosition)) {
@@ -313,6 +264,69 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         }
     }
 
+    private class onNotificationUpdate implements CompoundButton.OnCheckedChangeListener {
+        final int groupPosition;
+        final int childPosition;
+        final Context context;
+
+        onNotificationUpdate(int groupPosition, int childPosition, Context context) {
+            this.groupPosition = groupPosition;
+            this.childPosition = childPosition;
+            this.context = context;
+        }
+
+        @Override
+        public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
+            String serviceIdentifier = hosts.get(groupPosition).getHostName() + "!" + hosts.get(groupPosition).getServiceName(childPosition);
+
+            VolleySingleton.getInstance(context).getRequestQueue();
+            final String[] prefsString = Tools.getLogin(context);
+
+            final String requestString = prefsString[0] + "/v1/objects/services?service=" + serviceIdentifier;
+
+            JSONObject actionJSON = new JSONObject();
+            try {
+                actionJSON.put("attrs", new JSONObject());
+                actionJSON.getJSONObject("attrs").put("enable_notifications", isChecked);
+            } catch (JSONException e) {
+                Log.d("MainList: ", "JSONException");
+            }
+
+            JsonObjectRequest notificationChangeRequest = new JsonObjectRequest(Request.Method.POST, requestString, actionJSON, new Response.Listener<JSONObject>() {
+
+                @Override
+                public void onResponse(JSONObject response) {
+                    if(isChecked) {
+                        Toast.makeText(context, "Notifications Enabled!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, "Notifications Disabled!", Toast.LENGTH_SHORT).show();
+                    }
+                    hosts.get(groupPosition).setServiceExpanded(childPosition, isChecked);
+                    int singletonHostPos = HostSingleton.getInstance().findHostName(hosts.get(groupPosition).getHostName());
+                    int singletonServicePos = HostSingleton.getInstance().findServiceName(singletonHostPos, hosts.get(groupPosition).getServiceName(childPosition));
+                    HostSingleton.getInstance().setServiceNotifying(singletonHostPos, singletonServicePos, isChecked);
+                }
+            }, new Response.ErrorListener() {
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, "Could not update server: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                    buttonView.setChecked(!isChecked);
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String>  params = new HashMap<>();
+                    String credentials = String.format("Basic %s", Base64.encodeToString(String.format("%s:%s", prefsString[1], prefsString[2]).getBytes(), Base64.DEFAULT));
+                    params.put("Authorization", credentials);
+                    params.put("Accept", "application/json");
+                    return params;
+                }};
+
+
+            VolleySingleton.getInstance(context).addToRequestQueue(notificationChangeRequest);
+        }
+    }
 
 }
 

@@ -1,13 +1,10 @@
 package se.standersson.icingalert;
 
-import android.annotation.SuppressLint;
-import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 class Host implements Serializable, Comparable<Host>{
@@ -78,6 +75,10 @@ class Host implements Serializable, Comparable<Host>{
         services.get(position).setIsExpanded(expanded);
     }
 
+    void setServiceNotifying(int position, boolean isNotifying) {
+        services.get(position).setIsNotifying(isNotifying);
+    }
+
     int getServiceLastState(int position) {
         return services.get(position).getLastState();
     }
@@ -88,6 +89,15 @@ class Host implements Serializable, Comparable<Host>{
 
     boolean isServiceNotifying(int position) {
         return services.get(position).isNotifying();
+    }
+
+    int findServiceName(String serviceName) {
+        for ( int x=0 ; x<services.size() ; x++) {
+            if (services.get(x).getServiceName().equals(serviceName)) {
+                return x;
+            }
+        }
+        return -1;
     }
 
 
@@ -173,6 +183,10 @@ class Host implements Serializable, Comparable<Host>{
 
         void setIsExpanded(boolean expanded) {
             isExpanded = expanded;
+        }
+
+        void setIsNotifying(boolean notifications) {
+            this.notifications = notifications;
         }
 
         @Override

@@ -17,11 +17,9 @@ import android.widget.Toast;
 import org.json.JSONException;
 
 import java.io.FileNotFoundException;
-import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
-import java.util.List;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -64,7 +62,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    public void logInButton(View view){
+    public void logInButton(@SuppressWarnings("UnusedParameters") View view){
 
         // Get the settings from the text boxes
         EditText editTextServer = (EditText) findViewById(R.id.login_server);

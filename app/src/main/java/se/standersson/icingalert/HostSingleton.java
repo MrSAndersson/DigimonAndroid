@@ -1,6 +1,5 @@
 package se.standersson.icingalert;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -25,5 +24,22 @@ class HostSingleton {
 
     List<Host> getHosts() {
         return hosts;
+    }
+
+    void setServiceNotifying(int host, int service, boolean isNotifying) {
+        hosts.get(host).setServiceNotifying(service, isNotifying);
+    }
+
+    int findHostName(String hostname) {
+        for ( int x=0 ; x<hosts.size() ; x++) {
+            if (hosts.get(x).getHostName().equals(hostname)) {
+                return x;
+            }
+        }
+        return -1;
+    }
+
+    int findServiceName(int host, String serviceName) {
+        return hosts.get(host).findServiceName(serviceName);
     }
 }
