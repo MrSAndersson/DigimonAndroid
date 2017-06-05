@@ -151,7 +151,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         viewHolder.serviceName.setText(hosts.get(groupPosition).getServiceName(childPosition));
         viewHolder.serviceDetails.setText(hosts.get(groupPosition).getServiceDetails(childPosition));
         viewHolder.serviceNotifications.setChecked(hosts.get(groupPosition).isServiceNotifying(childPosition));
-        viewHolder.serviceNotifications.setOnCheckedChangeListener(new onNotificationUpdate(groupPosition, childPosition, context));
+        viewHolder.serviceNotifications.setOnClickListener(new onNotificationUpdate(viewHolder.serviceNotifications, groupPosition, childPosition, context));
         /*SimpleDateFormat sdf = new SimpleDateFormat("hh:mm dd/MMM");
         viewHolder.lastStateChange.setText(sdf.format(hosts.get(groupPosition).getServiceLastStateChange(childPosition)));
         switch (hosts.get(groupPosition).getServiceLastState(childPosition)) {
@@ -264,19 +264,23 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         }
     }
 
-    private class onNotificationUpdate implements CompoundButton.OnCheckedChangeListener {
+    private class onNotificationUpdate implements  View.OnClickListener {
         final int groupPosition;
         final int childPosition;
         final Context context;
+        CompoundButton button;
 
-        onNotificationUpdate(int groupPosition, int childPosition, Context context) {
+        onNotificationUpdate(CompoundButton button, int groupPosition, int childPosition, Context context) {
+            this.button = button;
             this.groupPosition = groupPosition;
             this.childPosition = childPosition;
             this.context = context;
         }
 
+
         @Override
-        public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
+        public void onClick(View view) {
+            final boolean isChecked = button.isChecked();
             String serviceIdentifier = hosts.get(groupPosition).getHostName() + "!" + hosts.get(groupPosition).getServiceName(childPosition);
 
             VolleySingleton.getInstance(context).getRequestQueue();
@@ -311,7 +315,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Toast.makeText(context, "Could not update server: " + error.getMessage(), Toast.LENGTH_LONG).show();
-                    buttonView.setChecked(!isChecked);
+                    button.setChecked(!isChecked);
                 }
             }) {
                 @Override
