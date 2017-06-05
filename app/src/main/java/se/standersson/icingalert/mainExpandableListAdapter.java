@@ -281,54 +281,60 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         @Override
         public void onClick(View view) {
             final boolean isChecked = button.isChecked();
-            String serviceIdentifier = hosts.get(groupPosition).getHostName() + "!" + hosts.get(groupPosition).getServiceName(childPosition);
+            if (Tools.isConnected(context)) {
+                String serviceIdentifier = hosts.get(groupPosition).getHostName() + "!" + hosts.get(groupPosition).getServiceName(childPosition);
 
-            VolleySingleton.getInstance(context).getRequestQueue();
-            final String[] prefsString = Tools.getLogin(context);
+                VolleySingleton.getInstance(context).getRequestQueue();
+                final String[] prefsString = Tools.getLogin(context);
 
-            final String requestString = prefsString[0] + "/v1/objects/services?service=" + serviceIdentifier;
+                final String requestString = prefsString[0] + "/v1/objects/services?service=" + serviceIdentifier;
 
-            JSONObject actionJSON = new JSONObject();
-            try {
-                actionJSON.put("attrs", new JSONObject());
-                actionJSON.getJSONObject("attrs").put("enable_notifications", isChecked);
-            } catch (JSONException e) {
-                Log.d("MainList: ", "JSONException");
-            }
+                JSONObject actionJSON = new JSONObject();
+                try {
+                    actionJSON.put("attrs", new JSONObject());
+                    actionJSON.getJSONObject("attrs").put("enable_notifications", isChecked);
+                } catch (JSONException e) {
+                    Log.d("MainList: ", "JSONException");
+                }
 
-            JsonObjectRequest notificationChangeRequest = new JsonObjectRequest(Request.Method.POST, requestString, actionJSON, new Response.Listener<JSONObject>() {
+                JsonObjectRequest notificationChangeRequest = new JsonObjectRequest(Request.Method.POST, requestString, actionJSON, new Response.Listener<JSONObject>() {
 
-                @Override
-                public void onResponse(JSONObject response) {
-                    if(isChecked) {
-                        Toast.makeText(context, "Notifications Enabled!", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(context, "Notifications Disabled!", Toast.LENGTH_SHORT).show();
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        if (isChecked) {
+                            Toast.makeText(context, "Notifications Enabled!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(context, "Notifications Disabled!", Toast.LENGTH_SHORT).show();
+                        }
+                        hosts.get(groupPosition).setServiceExpanded(childPosition, isChecked);
+                        int singletonHostPos = HostSingleton.getInstance().findHostName(hosts.get(groupPosition).getHostName());
+                        int singletonServicePos = HostSingleton.getInstance().findServiceName(singletonHostPos, hosts.get(groupPosition).getServiceName(childPosition));
+                        HostSingleton.getInstance().setServiceNotifying(singletonHostPos, singletonServicePos, isChecked);
                     }
-                    hosts.get(groupPosition).setServiceExpanded(childPosition, isChecked);
-                    int singletonHostPos = HostSingleton.getInstance().findHostName(hosts.get(groupPosition).getHostName());
-                    int singletonServicePos = HostSingleton.getInstance().findServiceName(singletonHostPos, hosts.get(groupPosition).getServiceName(childPosition));
-                    HostSingleton.getInstance().setServiceNotifying(singletonHostPos, singletonServicePos, isChecked);
-                }
-            }, new Response.ErrorListener() {
+                }, new Response.ErrorListener() {
 
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, "Could not update server: " + error.getMessage(), Toast.LENGTH_LONG).show();
-                    button.setChecked(!isChecked);
-                }
-            }) {
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String>  params = new HashMap<>();
-                    String credentials = String.format("Basic %s", Base64.encodeToString(String.format("%s:%s", prefsString[1], prefsString[2]).getBytes(), Base64.DEFAULT));
-                    params.put("Authorization", credentials);
-                    params.put("Accept", "application/json");
-                    return params;
-                }};
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(context, "Could not update server: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                        button.setChecked(!isChecked);
+                    }
+                }) {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<>();
+                        String credentials = String.format("Basic %s", Base64.encodeToString(String.format("%s:%s", prefsString[1], prefsString[2]).getBytes(), Base64.DEFAULT));
+                        params.put("Authorization", credentials);
+                        params.put("Accept", "application/json");
+                        return params;
+                    }
+                };
 
 
-            VolleySingleton.getInstance(context).addToRequestQueue(notificationChangeRequest);
+                VolleySingleton.getInstance(context).addToRequestQueue(notificationChangeRequest);
+            } else {
+                Toast.makeText(context, "No Network", Toast.LENGTH_SHORT).show();
+                button.setChecked(!isChecked);
+            }
         }
     }
 

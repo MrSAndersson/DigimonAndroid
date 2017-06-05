@@ -3,6 +3,8 @@ package se.standersson.icingalert;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -124,4 +126,21 @@ final class Tools {
         prefsString[2] = prefStorage.getString("password", "");
         return prefsString;
     }
+
+    /*
+     * Check if device is connected to the network
+     */
+    static boolean isConnected(Context context){
+        /*
+        * Check Network Connectivity and then request data from Icinga
+        * */
+
+        ConnectivityManager cm =
+                (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+    }
+
 }

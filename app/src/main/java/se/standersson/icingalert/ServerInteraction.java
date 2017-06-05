@@ -147,20 +147,4 @@ class ServerInteraction {
         HostSingleton.getInstance().putHosts(hosts);
     }
 
-    /*
-     * Check if device is connected to the network
-     */
-    static boolean isConnected(Context context){
-        /*
-        * Check Network Connectivity and then request data from Icinga
-        * */
-
-        ConnectivityManager cm =
-                (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        return activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting();
-    }
-
 }

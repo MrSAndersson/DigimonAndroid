@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         ((MainPagerAdapter) adapterViewPager).getFragment(1).setRefreshSpinner(true);
         ((MainPagerAdapter) adapterViewPager).getFragment(0).setRefreshSpinner(true);
 
-        if (ServerInteraction.isConnected(getApplicationContext())){
+        if (Tools.isConnected(getApplicationContext())){
             new refreshFetch().execute(prefsString);
         } else {
             Toast.makeText(getApplicationContext(), "No Network Connectivity", Toast.LENGTH_LONG).show();

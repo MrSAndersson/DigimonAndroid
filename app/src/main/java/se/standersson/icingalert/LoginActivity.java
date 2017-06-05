@@ -49,7 +49,7 @@ public class LoginActivity extends AppCompatActivity {
         prefsString[1] = prefStorage.getString("username", "");
         prefsString[2] = prefStorage.getString("password", "");
 
-        if (ServerInteraction.isConnected(getApplicationContext())){
+        if (Tools.isConnected(getApplicationContext())){
             if (!(prefsString[0].equals("") && prefsString[1].equals("") && prefsString[2].equals(""))) {
                 progressBar.setVisibility(View.VISIBLE);
                 startLogin();
@@ -83,7 +83,7 @@ public class LoginActivity extends AppCompatActivity {
         prefStorage.edit().putString("password", prefsString[2]).apply();
 
         // If we have internet connectivity, start the connection to the server
-        if (ServerInteraction.isConnected(getApplicationContext())){
+        if (Tools.isConnected(getApplicationContext())){
             progressBar.setVisibility(View.VISIBLE);
             startLogin();
         }
