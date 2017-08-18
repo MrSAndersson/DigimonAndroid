@@ -99,6 +99,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         prefStorage.edit().putString("serverString", "").apply();
         prefStorage.edit().putString("username", "").apply();
         prefStorage.edit().putString("password", "").apply();
+        FirebaseMessaging.getInstance().unsubscribeFromTopic("hosts");
+        FirebaseMessaging.getInstance().unsubscribeFromTopic("services");
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
         finish();
