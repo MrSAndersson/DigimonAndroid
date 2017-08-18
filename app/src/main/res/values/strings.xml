@@ -2,6 +2,7 @@
     <string name="app_name">IcingAlert</string>
 
     <!-- Strings related to login -->
+    <string name="login_logo">IcingAlert Logo</string>
     <string name="login_server">Server String</string>
     <string name="login_username">Username</string>
     <string name="login_password">Password</string>
