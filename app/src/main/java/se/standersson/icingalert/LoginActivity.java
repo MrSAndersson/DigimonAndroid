@@ -73,15 +73,6 @@ public class LoginActivity extends AppCompatActivity {
         prefsString[1] = editTextUsername.getText().toString();
         prefsString[2] = editTextPassword.getText().toString();
 
-
-        /*
-        Store the settings, get data and start the MainActivity
-         */
-        SharedPreferences prefStorage = getSharedPreferences("Login", 0);
-        prefStorage.edit().putString("serverString", prefsString[0]).apply();
-        prefStorage.edit().putString("username", prefsString[1]).apply();
-        prefStorage.edit().putString("password", prefsString[2]).apply();
-
         // If we have internet connectivity, start the connection to the server
         if (Tools.isConnected(getApplicationContext())){
             progressBar.setVisibility(View.VISIBLE);
@@ -191,6 +182,15 @@ public class LoginActivity extends AppCompatActivity {
 
     private void startMainActivity(String reply){
         try{
+            /*
+            Store the login details
+            */
+            SharedPreferences prefStorage = getSharedPreferences("Login", 0);
+            prefStorage.edit().putString("serverString", prefsString[0]).apply();
+            prefStorage.edit().putString("username", prefsString[1]).apply();
+            prefStorage.edit().putString("password", prefsString[2]).apply();
+
+            //Parse reply and start MainActivity
             ServerInteraction.createExpandableListSummary(reply);
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
