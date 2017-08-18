@@ -26,6 +26,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_INTERNET = 1;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_NETWORK_STATE = 2;
     private final String[] prefsString = new String[3];
+    private View logoView;
     private View serverView;
     private View usernameView;
     private View passwordView;
@@ -36,6 +37,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log_in);
+
+        logoView = findViewById(R.id.login_logo);
         serverView = findViewById(R.id.login_server);
         usernameView = findViewById(R.id.login_username);
         passwordView = findViewById(R.id.login_password);
@@ -203,6 +206,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void showLoginUI() {
+        logoView.setVisibility(View.VISIBLE);
         serverView.setVisibility(View.VISIBLE);
         usernameView.setVisibility(View.VISIBLE);
         passwordView.setVisibility(View.VISIBLE);
