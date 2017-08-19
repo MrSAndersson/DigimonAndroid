@@ -35,8 +35,9 @@ class ServerInteraction {
         String username = prefs[1];
         String password = prefs[2];
         String statusURL = serverString + "/v1/status/CIB";
-        String hostURL = serverString + "/v1/objects/hosts?attrs=last_check_result&attrs=state&attrs=name";
-        String serviceURL = serverString + "/v1/objects/services?attrs=last_check_result&attrs=state&attrs=name&attrs=host_name&attrs=last_state&attrs=last_state_change&attrs=enable_notifications";
+        String hostURL = serverString + "/v1/objects/hosts?attrs=last_check_result&attrs=state&attrs=name&attrs=acknowledgement";
+        String serviceURL = serverString + "/v1/objects/services?attrs=last_check_result&attrs=state&attrs=name&attrs=host_name&attrs=last_state&attrs=last_state_change&attrs=enable_notifications&attrs=acknowledgement";
+        String commentsURL = serverString + "/v1/objects/comments?attrs=author&attrs=host_name&attrs=service_name&attrs=text";
 
             /*
             * Create a connection with input/output with a plaintext body
@@ -46,6 +47,8 @@ class ServerInteraction {
             replyGroup = sendStatusRequest(replyGroup, "status", statusURL, credentials);
             replyGroup = sendStatusRequest(replyGroup, "hosts", hostURL, credentials);
             replyGroup = sendStatusRequest(replyGroup, "services", serviceURL, credentials);
+            replyGroup = sendStatusRequest(replyGroup, "comments", commentsURL, credentials);
+
         return replyGroup.toString();
 
     }
@@ -94,10 +97,10 @@ class ServerInteraction {
         int hostsCount = data.getJSONArray("hosts").length();
         int hostsDownCount = data.getJSONObject("status").getInt("num_hosts_down");
 
-        String hostName, serviceName, serviceDetails;
+        String hostName, hostComment, serviceName, serviceDetails, serviceComment;
         int state, lastState;
         long lastStateChange;
-        boolean notifications;
+        boolean notifications, hostAcknowledged, serviceAcknowledged;
 
         /*
             * Add all downed hosts to the list first in order to sort them to the top
@@ -106,7 +109,25 @@ class ServerInteraction {
             if (data.getJSONArray("hosts").getJSONObject(x).getJSONObject("attrs").getInt("state") == 1) {
                 hostName = data.getJSONArray("hosts").getJSONObject(x).getJSONObject("attrs").getString("name");
                 hostPositions.put(hostName, hosts.size());
-                hosts.add(new Host(hostName, true));
+
+                // Check for acknowledgements
+                hostComment = "";
+                if (data.getJSONArray("hosts").getJSONObject(x).getJSONObject("attrs").getInt("acknowledgement") != 0) {
+                    hostAcknowledged = true;
+                    for (int z = 0 ; z < data.getJSONArray("comments").length() ;  z++) {
+                        if (data.getJSONArray("comments").getJSONObject(z).getJSONObject("attrs").getString("host_name").equals(hostName)
+                                && data.getJSONArray("comments").getJSONObject(z).getJSONObject("attrs").getString("service_name").equals("")) {
+                            hostComment = data.getJSONArray("comments").getJSONObject(z).getJSONObject("attrs").getString("text");
+                        }
+                    }
+                } else {
+                    hostAcknowledged = false;
+                    hostComment = "";
+                }
+
+
+
+                hosts.add(new Host(hostName, true, hostAcknowledged, hostComment));
                 y++;
                 if (y == hostsDownCount) {
                     break;
@@ -125,15 +146,30 @@ class ServerInteraction {
             lastState = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getInt("last_state");
             lastStateChange = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getLong("last_state_change");
             notifications = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getBoolean("enable_notifications");
+            serviceComment = "";
 
+
+            // Check for acknowledgements
+            if (data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getInt("acknowledgement") != 0) {
+                serviceAcknowledged = true;
+
+                for (int y = 0 ; y < data.getJSONArray("comments").length() ; y++) {
+                    if (data.getJSONArray("comments").getJSONObject(y).getJSONObject("attrs").getString("host_name").equals(hostName)
+                            && data.getJSONArray("comments").getJSONObject(y).getJSONObject("attrs").getString("service_name").equals(serviceName)) {
+                        serviceComment = data.getJSONArray("comments").getJSONObject(y).getJSONObject("attrs").getString("text");
+                    }
+                }
+            } else {
+                serviceAcknowledged = false;
+            }
 
 
             if (hostPositions.containsKey(hostName)) {
-                hosts.get(hostPositions.get(hostName)).addService(serviceName, serviceDetails, state, lastState, lastStateChange, notifications);
+                hosts.get(hostPositions.get(hostName)).addService(serviceName, serviceDetails, state, lastState, lastStateChange, notifications, serviceAcknowledged, serviceComment);
             } else {
                 hostPositions.put(hostName, hosts.size());
-                hosts.add(new Host(hostName, false));
-                hosts.get(hostPositions.get(hostName)).addService(serviceName, serviceDetails, state, lastState, lastStateChange, notifications);
+                hosts.add(new Host(hostName, false, false, ""));
+                hosts.get(hostPositions.get(hostName)).addService(serviceName, serviceDetails, state, lastState, lastStateChange, notifications, serviceAcknowledged, serviceComment);
             }
         }
 

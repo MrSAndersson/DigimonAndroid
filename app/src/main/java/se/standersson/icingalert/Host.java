@@ -18,19 +18,23 @@ class Host implements Serializable, Comparable<Host>{
     private final List<Integer> warnList = new ArrayList<>();
     private final List<Integer> unknownList = new ArrayList<>();
     private boolean isDown = false;
+    private final boolean acknowledged;
+    private final String comment;
 
 
     //Constructor for hosts
-    Host(String hostName, boolean isDown) {
+    Host(String hostName, boolean isDown, boolean acknowledged, String comment) {
         this.hostName = hostName;
+        this.acknowledged = acknowledged;
+        this.comment = comment;
         if (isDown) {
             this.isDown = true;
         }
     }
 
     //Add a service with name, details and state. Also increment the state counters
-    void addService(String serviceName, String serviceDetails, int state, int lastState, long lastStateChange, boolean notifications){
-        services.add(new Service(serviceName, serviceDetails, state, lastState, lastStateChange, notifications));
+    void addService(String serviceName, String serviceDetails, int state, int lastState, long lastStateChange, boolean notifications, boolean acknowledged, String comment){
+        services.add(new Service(serviceName, serviceDetails, state, lastState, lastStateChange, notifications, acknowledged, comment));
         switch (state){
             case 0:
                 okList.add(services.size()-1);
@@ -91,6 +95,14 @@ class Host implements Serializable, Comparable<Host>{
         return services.get(position).isNotifying();
     }
 
+    boolean isServiceAcknowledged(int position) {
+        return services.get(position).isAcknowledged();
+    }
+
+    String getServiceComment(int position) {
+        return services.get(position).getComment();
+    }
+
     int findServiceName(String serviceName) {
         for ( int x=0 ; x<services.size() ; x++) {
             if (services.get(x).getServiceName().equals(serviceName)) {
@@ -121,6 +133,14 @@ class Host implements Serializable, Comparable<Host>{
         return isDown;
     }
 
+    boolean isAcknowledged() {
+        return acknowledged;
+    }
+
+    String getComment() {
+        return comment;
+    }
+
     void sortServices(){
         Collections.sort(services);
     }
@@ -142,15 +162,19 @@ class Host implements Serializable, Comparable<Host>{
         private final long last_state_change;
         private boolean isExpanded=false;
         private boolean notifications;
+        private final boolean acknowledged;
+        private final String comment;
 
 
-        Service(String name, String details, int state, int last_state, long last_state_change, boolean notifications) {
+        Service(String name, String details, int state, int last_state, long last_state_change, boolean notifications, boolean acknowledged, String comment) {
             this.name = name;
             this.details = details;
             this.state = state;
             this.last_state = last_state;
             this.last_state_change = last_state_change;
             this.notifications = notifications;
+            this.acknowledged = acknowledged;
+            this.comment = comment;
         }
 
         String getServiceName() {
@@ -187,6 +211,14 @@ class Host implements Serializable, Comparable<Host>{
 
         void setIsNotifying(boolean notifications) {
             this.notifications = notifications;
+        }
+
+        boolean isAcknowledged() {
+            return acknowledged;
+        }
+
+        String getComment() {
+            return comment;
         }
 
         @Override

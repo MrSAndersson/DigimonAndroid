@@ -25,10 +25,10 @@ final class Tools {
         for (int x = 0 ; x < hostCount ; x++) {
             boolean hasBeenAdded = false;
             if (hosts.get(x).isDown()){
-                newList.add(new Host(hosts.get(x).getHostName(), true));
+                newList.add(new Host(hosts.get(x).getHostName(), true, hosts.get(x).isAcknowledged(), hosts.get(x).getComment()));
                 hasBeenAdded = true;
                 for (int y = 0 ; y < hosts.get(x).getServiceCount() ; y++) {
-                    newList.get(newList.size()-1).addService(hosts.get(x).getServiceName(y), hosts.get(x).getServiceDetails(y), hosts.get(x).getServiceState(y), hosts.get(x).getServiceLastState(y), hosts.get(x).getServiceLastStateChange(y), hosts.get(x).isServiceNotifying(y));
+                    newList.get(newList.size()-1).addService(hosts.get(x).getServiceName(y), hosts.get(x).getServiceDetails(y), hosts.get(x).getServiceState(y), hosts.get(x).getServiceLastState(y), hosts.get(x).getServiceLastStateChange(y), hosts.get(x).isServiceNotifying(y), hosts.get(x).isServiceAcknowledged(y), hosts.get(x).getServiceComment(y));
                 }
             } else {
                 for (int y = 0 ; y < hosts.get(x).getServiceCount() ; y++) {
@@ -36,10 +36,10 @@ final class Tools {
                         try{
                             newList.get(addedCounter);
                         } catch (IndexOutOfBoundsException e) {
-                            newList.add(new Host(hosts.get(x).getHostName(), false));
+                            newList.add(new Host(hosts.get(x).getHostName(), false, hosts.get(x).isAcknowledged(), hosts.get(x).getComment()));
                             hasBeenAdded = true;
                         }
-                        newList.get(newList.size()-1).addService(hosts.get(x).getServiceName(y), hosts.get(x).getServiceDetails(y), hosts.get(x).getServiceState(y), hosts.get(x).getServiceLastState(y), hosts.get(x).getServiceLastStateChange(y), hosts.get(x).isServiceNotifying(y));
+                        newList.get(newList.size()-1).addService(hosts.get(x).getServiceName(y), hosts.get(x).getServiceDetails(y), hosts.get(x).getServiceState(y), hosts.get(x).getServiceLastState(y), hosts.get(x).getServiceLastStateChange(y), hosts.get(x).isServiceNotifying(y), hosts.get(x).isServiceAcknowledged(y), hosts.get(x).getServiceComment(y));
                     }
                 }
             }
@@ -90,10 +90,10 @@ final class Tools {
         for (int x = 0 ; x < hosts.size() ; x++) {
             boolean hasBeenAdded = false;
             if (hosts.get(x).getHostName().toLowerCase().contains(searchString.toLowerCase())) {
-                newList.add(new Host(hosts.get(x).getHostName(), hosts.get(x).isDown()));
+                newList.add(new Host(hosts.get(x).getHostName(), hosts.get(x).isDown(), hosts.get(x).isAcknowledged(), hosts.get(x).getComment()));
                 hasBeenAdded = true;
                 for (int y = 0 ; y < hosts.get(x).getServiceCount() ; y++) {
-                    newList.get(newList.size()-1).addService(hosts.get(x).getServiceName(y), hosts.get(x).getServiceDetails(y), hosts.get(x).getServiceState(y), hosts.get(x).getServiceLastState(y), hosts.get(x).getServiceLastStateChange(y), hosts.get(x).isServiceNotifying(y));
+                    newList.get(newList.size()-1).addService(hosts.get(x).getServiceName(y), hosts.get(x).getServiceDetails(y), hosts.get(x).getServiceState(y), hosts.get(x).getServiceLastState(y), hosts.get(x).getServiceLastStateChange(y), hosts.get(x).isServiceNotifying(y), hosts.get(x).isServiceAcknowledged(y), hosts.get(x).getServiceComment(y));
                 }
             } else {
                 for (int y = 0 ; y < hosts.get(x).getServiceCount() ; y++) {
@@ -102,10 +102,10 @@ final class Tools {
                         try{
                             newList.get(addedCounter);
                         } catch (IndexOutOfBoundsException e) {
-                            newList.add(new Host(hosts.get(x).getHostName(), hosts.get(x).isDown()));
+                            newList.add(new Host(hosts.get(x).getHostName(), hosts.get(x).isDown(), hosts.get(x).isAcknowledged(), hosts.get(x).getComment()));
                             hasBeenAdded = true;
                         }
-                        newList.get(newList.size()-1).addService(hosts.get(x).getServiceName(y), hosts.get(x).getServiceDetails(y), hosts.get(x).getServiceState(y), hosts.get(x).getServiceLastState(y), hosts.get(x).getServiceLastStateChange(y), hosts.get(x).isServiceNotifying(y));
+                        newList.get(newList.size()-1).addService(hosts.get(x).getServiceName(y), hosts.get(x).getServiceDetails(y), hosts.get(x).getServiceState(y), hosts.get(x).getServiceLastState(y), hosts.get(x).getServiceLastStateChange(y), hosts.get(x).isServiceNotifying(y), hosts.get(x).isServiceAcknowledged(y), hosts.get(x).getServiceComment(y));
                     }
                 }
             }
