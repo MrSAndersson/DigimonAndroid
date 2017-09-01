@@ -9,7 +9,7 @@
         android:layout_width="20dp"
         android:layout_height="match_parent"
         android:background="@drawable/critical_bar"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/warning_state_bar"

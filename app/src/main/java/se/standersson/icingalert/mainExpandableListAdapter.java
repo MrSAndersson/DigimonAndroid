@@ -1,6 +1,10 @@
 package se.standersson.icingalert;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
+import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -95,6 +99,13 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
             groupViewHolder.downHostName.setText(hosts.get(groupPosition).getHostName());
             groupViewHolder.downHostName.setVisibility(View.VISIBLE);
             groupViewHolder.hostName.setVisibility(View.GONE);
+
+            LayerDrawable bg = (LayerDrawable)groupViewHolder.downHostName.getBackground();
+            GradientDrawable bgitem = (GradientDrawable)bg.findDrawableByLayerId(R.id.critical_bar_item);
+           // bgitem.setColor(ContextCompat.getColor(context, R.color.colorGroup));
+            ContextCompat.getColor(context,R.color.colorGroup);
+            bgitem.setColor(ContextCompat.getColor(context,R.color.colorGroup));
+
         } else {
             groupViewHolder.hostName.setText(hosts.get(groupPosition).getHostName());
             groupViewHolder.hostName.setVisibility(View.VISIBLE);
