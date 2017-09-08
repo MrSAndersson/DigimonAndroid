@@ -15,8 +15,11 @@ class Host implements Serializable, Comparable<Host>{
     private final List<Service> services = new ArrayList<>();
     private final List<Integer> okList = new ArrayList<>();
     private final List<Integer> critList = new ArrayList<>();
+    private final List<Integer> critAckList = new ArrayList<>();
     private final List<Integer> warnList = new ArrayList<>();
+    private final List<Integer> warnAckList = new ArrayList<>();
     private final List<Integer> unknownList = new ArrayList<>();
+    private final List<Integer> unknownAckList = new ArrayList<>();
     private boolean isDown = false;
     private final boolean acknowledged;
     private final String comment;
@@ -37,16 +40,28 @@ class Host implements Serializable, Comparable<Host>{
         services.add(new Service(serviceName, serviceDetails, state, lastState, lastStateChange, notifications, acknowledged, comment));
         switch (state){
             case 0:
-                okList.add(services.size()-1);
+                okList.add(services.size() - 1);
                 break;
             case 1:
-                warnList.add(services.size()-1);
+                if (acknowledged) {
+                    warnAckList.add(services.size()-1);
+                } else {
+                    warnList.add(services.size() - 1);
+                }
                 break;
             case 2:
-                critList.add(services.size()-1);
+                if (acknowledged) {
+                    critAckList.add(services.size()-1);
+                } else {
+                    critList.add(services.size() - 1);
+                }
                 break;
             case 3:
-                unknownList.add(services.size()-1);
+                if (acknowledged) {
+                    unknownAckList.add(services.size()-1);
+                } else {
+                    unknownList.add(services.size() - 1);
+                }
                 break;
         }
     }
@@ -123,6 +138,22 @@ class Host implements Serializable, Comparable<Host>{
                 return critList.size();
             case 3:
                 return unknownList.size();
+            default:
+                // Return 0 so we won't try to draw something we don't have
+                return 0;
+        }
+    }
+
+    int getStateAckCount(int state){
+        switch (state) {
+            case 0:
+                return okList.size();
+            case 1:
+                return warnAckList.size();
+            case 2:
+                return critAckList.size();
+            case 3:
+                return unknownAckList.size();
             default:
                 // Return 0 so we won't try to draw something we don't have
                 return 0;

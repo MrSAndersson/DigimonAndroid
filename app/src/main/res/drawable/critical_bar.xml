@@ -9,11 +9,11 @@
         </shape>
     </item>
 
-    <item android:id="@+id/critical_bar_item">
+    <item>
         <shape android:shape="rectangle">
             <solid android:color="@color/colorCritical" />
-            <stroke android:width="2dip" android:color="@color/colorCritical"/>
         </shape>
     </item>
+
 
 </ripple>

@@ -100,17 +100,20 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
             groupViewHolder.downHostName.setVisibility(View.VISIBLE);
             groupViewHolder.hostName.setVisibility(View.GONE);
 
-            LayerDrawable bg = (LayerDrawable)groupViewHolder.downHostName.getBackground();
-            GradientDrawable bgitem = (GradientDrawable)bg.findDrawableByLayerId(R.id.critical_bar_item);
-           // bgitem.setColor(ContextCompat.getColor(context, R.color.colorGroup));
-            ContextCompat.getColor(context,R.color.colorGroup);
-            bgitem.setColor(ContextCompat.getColor(context,R.color.colorGroup));
+
+            if (hosts.get(groupPosition).isAcknowledged()) {
+                groupViewHolder.downHostName.setBackground(context.getDrawable(R.drawable.critical_box_ack));
+            } else {
+                groupViewHolder.downHostName.setBackground(context.getDrawable(R.drawable.critical_box));
+            }
 
         } else {
             groupViewHolder.hostName.setText(hosts.get(groupPosition).getHostName());
             groupViewHolder.hostName.setVisibility(View.VISIBLE);
             groupViewHolder.downHostName.setVisibility(View.GONE);
         }
+
+        // Set and show the number of failing services
 
         Integer stateCount = hosts.get(groupPosition).getStateCount(1);
         String stateCountString;
@@ -122,6 +125,16 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
             groupViewHolder.warningCount.setText(stateCountString);
             groupViewHolder.warningCount.setVisibility(View.VISIBLE);
         }
+
+        stateCount = hosts.get(groupPosition).getStateAckCount(1);
+        if (stateCount == 0) {
+            groupViewHolder.warningAckCount.setVisibility(View.GONE);
+        } else {
+            stateCountString = stateCount.toString();
+            groupViewHolder.warningAckCount.setText(stateCountString);
+            groupViewHolder.warningAckCount.setVisibility(View.VISIBLE);
+        }
+
         stateCount = hosts.get(groupPosition).getStateCount(2);
         if (stateCount == 0) {
             groupViewHolder.criticalCount.setVisibility(View.GONE);
@@ -130,6 +143,16 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
             groupViewHolder.criticalCount.setText(stateCountString);
             groupViewHolder.criticalCount.setVisibility(View.VISIBLE);
         }
+
+        stateCount = hosts.get(groupPosition).getStateAckCount(2);
+        if (stateCount == 0) {
+            groupViewHolder.criticalAckCount.setVisibility(View.GONE);
+        } else {
+            stateCountString = stateCount.toString();
+            groupViewHolder.criticalAckCount.setText(stateCountString);
+            groupViewHolder.criticalAckCount.setVisibility(View.VISIBLE);
+        }
+
         stateCount = hosts.get(groupPosition).getStateCount(3);
         if (stateCount == 0) {
             groupViewHolder.unknownCount.setVisibility(View.GONE);
@@ -137,6 +160,15 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
             stateCountString = stateCount.toString();
             groupViewHolder.unknownCount.setText(stateCountString);
             groupViewHolder.unknownCount.setVisibility(View.VISIBLE);
+        }
+
+        stateCount = hosts.get(groupPosition).getStateAckCount(3);
+        if (stateCount == 0) {
+            groupViewHolder.unknownAckCount.setVisibility(View.GONE);
+        } else {
+            stateCountString = stateCount.toString();
+            groupViewHolder.unknownAckCount.setText(stateCountString);
+            groupViewHolder.unknownAckCount.setVisibility(View.VISIBLE);
         }
 
 
@@ -186,24 +218,33 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         // Show the right color of bar to the left of the service name
         switch (hosts.get(groupPosition).getServiceState(childPosition)){
             case 1:
-                viewHolder.criticalBar.setVisibility(View.GONE);
-                viewHolder.warningBar.setVisibility(View.VISIBLE);
-                viewHolder.unknownBar.setVisibility(View.GONE);
+                if (hosts.get(groupPosition).isServiceAcknowledged(childPosition)) {
+                    viewHolder.stateBar.setBackground(context.getDrawable(R.drawable.warning_bar_ack));
+                } else {
+                    viewHolder.stateBar.setBackground(context.getDrawable(R.drawable.warning_bar));
+                }
+                viewHolder.stateBar.setVisibility(View.VISIBLE);
+
                 break;
             case 2:
-                viewHolder.criticalBar.setVisibility(View.VISIBLE);
-                viewHolder.warningBar.setVisibility(View.GONE);
-                viewHolder.unknownBar.setVisibility(View.GONE);
+                if (hosts.get(groupPosition).isServiceAcknowledged(childPosition)) {
+                    viewHolder.stateBar.setBackground(context.getDrawable(R.drawable.critical_bar_ack));
+                } else {
+                    viewHolder.stateBar.setBackground(context.getDrawable(R.drawable.critical_bar));
+                }
+                viewHolder.stateBar.setVisibility(View.VISIBLE);
                 break;
             case 3:
-                viewHolder.criticalBar.setVisibility(View.GONE);
-                viewHolder.warningBar.setVisibility(View.GONE);
-                viewHolder.unknownBar.setVisibility(View.VISIBLE);
+                if (hosts.get(groupPosition).isServiceAcknowledged(childPosition))
+                {
+                    viewHolder.stateBar.setBackground(context.getDrawable(R.drawable.unknown_bar_ack));
+                } else {
+                    viewHolder.stateBar.setBackground(context.getDrawable(R.drawable.unknown_bar));
+                }
+                viewHolder.stateBar.setVisibility(View.VISIBLE);
                 break;
             default:
-                viewHolder.criticalBar.setVisibility(View.GONE);
-                viewHolder.warningBar.setVisibility(View.GONE);
-                viewHolder.unknownBar.setVisibility(View.INVISIBLE);
+                viewHolder.stateBar.setVisibility(View.INVISIBLE);
                 break;
         }
 
@@ -237,25 +278,29 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         final TextView hostName;
         final TextView downHostName;
         final TextView criticalCount;
+        final TextView criticalAckCount;
         final TextView warningCount;
+        final TextView warningAckCount;
         final TextView unknownCount;
+        final TextView unknownAckCount;
 
 
         GroupViewHolder(View view){
             hostName = (TextView) view.findViewById(R.id.main_exp_list_hostname);
             downHostName = (TextView) view.findViewById(R.id.main_exp_list_hostname_down);
             criticalCount = (TextView) view.findViewById(R.id.main_exp_list_critical_count);
+            criticalAckCount = (TextView) view.findViewById(R.id.main_exp_list_critical_ack_count);
             warningCount = (TextView) view.findViewById(R.id.main_exp_list_warning_count);
+            warningAckCount = (TextView) view.findViewById(R.id.main_exp_list_warning_ack_count);
             unknownCount = (TextView) view.findViewById(R.id.main_exp_list_unknown_count);
+            unknownAckCount = (TextView) view.findViewById(R.id.main_exp_list_unknown_ack_count);
         }
     }
 
     private class ChildViewHolder{
         final TextView serviceName;
         final TextView serviceDetails;
-        final TextView criticalBar;
-        final TextView warningBar;
-        final TextView unknownBar;
+        final TextView stateBar;
         final LinearLayout childExpand;
         final CheckBox serviceNotifications;
         //final TextView lastState;
@@ -265,9 +310,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         ChildViewHolder(View view){
             serviceName = (TextView) view.findViewById(R.id.expandedListItem);
             serviceDetails = (TextView) view.findViewById(R.id.exp_service_details);
-            criticalBar = (TextView) view.findViewById(R.id.critical_state_bar);
-            warningBar = (TextView) view.findViewById(R.id.warning_state_bar);
-            unknownBar = (TextView) view.findViewById(R.id.unknown_state_bar);
+            stateBar = (TextView) view.findViewById(R.id.state_bar);
             childExpand = (LinearLayout) view.findViewById(R.id.child_expand);
             serviceNotifications = (CheckBox) view.findViewById(R.id.service_notifications);
             //lastState = (TextView) view.findViewById(R.id.last_state);
