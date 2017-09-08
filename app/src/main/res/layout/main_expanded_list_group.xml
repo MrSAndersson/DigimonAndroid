@@ -8,21 +8,19 @@
 
 
     <LinearLayout
+        android:id="@+id/main_exp_list_state_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:orientation="horizontal"
         android:layout_centerVertical="true">
 
-
         <TextView
             android:id="@+id/main_exp_list_critical_count"
-            android:paddingTop="2dp"
-            android:paddingBottom="2dp"
-            android:layout_width="25dp"
+            android:padding="4dp"
             android:textAlignment="center"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="5dp"
             android:background="@drawable/critical_box"
             android:textColor="@android:color/white" />
 
@@ -30,20 +28,20 @@
             android:id="@+id/main_exp_list_critical_ack_count"
             android:paddingTop="2dp"
             android:paddingBottom="2dp"
-            android:layout_width="25dp"
+            android:padding="4dp"
+            android:layout_width="wrap_content"
             android:textAlignment="center"
             android:layout_height="wrap_content"
             android:layout_marginEnd="5dp"
             android:background="@drawable/critical_box_ack"
-            android:textColor="@android:color/primary_text_light" />
+            android:textColor="@android:color/white" />
+
 
         <TextView
             android:id="@+id/main_exp_list_warning_count"
-            android:paddingTop="2dp"
-            android:paddingBottom="2dp"
-            android:layout_width="25dp"
+            android:padding="4dp"
+            android:layout_width="wrap_content"
             android:textAlignment="center"
-            android:layout_marginEnd="5dp"
             android:layout_height="wrap_content"
             android:background="@drawable/warning_box"
             android:textColor="@android:color/white" />
@@ -52,34 +50,34 @@
             android:id="@+id/main_exp_list_warning_ack_count"
             android:paddingTop="2dp"
             android:paddingBottom="2dp"
-            android:layout_width="25dp"
+            android:padding="4dp"
+            android:layout_width="wrap_content"
             android:textAlignment="center"
             android:layout_height="wrap_content"
             android:layout_marginEnd="5dp"
             android:background="@drawable/warning_box_ack"
-            android:textColor="@android:color/primary_text_light" />
+            android:textColor="@android:color/white" />
 
         <TextView
             android:id="@+id/main_exp_list_unknown_count"
-            android:paddingTop="2dp"
-            android:paddingBottom="2dp"
-            android:layout_width="25dp"
+            android:padding="4dp"
             android:textAlignment="center"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="5dp"
             android:background="@drawable/unknown_box"
-            android:textColor="@android:color/white"/>
+            android:textColor="@android:color/white" />
 
         <TextView
             android:id="@+id/main_exp_list_unknown_ack_count"
             android:paddingTop="2dp"
             android:paddingBottom="2dp"
-            android:layout_width="25dp"
+            android:padding="4dp"
+            android:layout_width="wrap_content"
             android:textAlignment="center"
             android:layout_height="wrap_content"
             android:layout_marginEnd="5dp"
             android:background="@drawable/unknown_box_ack"
-            android:textColor="@android:color/primary_text_light" />
+            android:textColor="@android:color/white" />
 
     </LinearLayout>
 
@@ -87,17 +85,18 @@
         android:id="@+id/main_exp_list_hostname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
         android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
         android:layout_marginStart="?android:expandableListPreferredItemPaddingLeft"
-        android:paddingTop="10dp"
+        android:layout_toStartOf="@id/main_exp_list_state_layout"
         android:paddingBottom="10dp"
-        android:paddingStart="10dp"
         android:paddingEnd="10dp"
+        android:paddingStart="10dp"
+        android:paddingTop="10dp"
 
         android:textColor="@android:color/primary_text_light"
-        android:textStyle="bold"
-        android:textSize="15sp" />
+        android:textSize="15sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/main_exp_list_hostname_down"
@@ -106,6 +105,7 @@
         android:layout_centerVertical="true"
         android:layout_alignParentStart="true"
         android:layout_marginStart="?android:expandableListPreferredItemPaddingLeft"
+        android:layout_toStartOf="@id/main_exp_list_state_layout"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:paddingStart="10dp"
@@ -113,7 +113,6 @@
 
         android:textStyle="bold"
         android:textColor="@android:color/primary_text_light"
-        android:background="@drawable/critical_box"
         android:textSize="15sp"
         android:visibility="gone"/>
 

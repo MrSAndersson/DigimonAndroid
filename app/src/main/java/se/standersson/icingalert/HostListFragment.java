@@ -46,7 +46,7 @@ public class HostListFragment extends Fragment {
         /*
          * Set up a callback for refresh PullDown
          */
-        swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.exp_swipe);
+        swipeContainer = view.findViewById(R.id.exp_swipe);
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -54,7 +54,7 @@ public class HostListFragment extends Fragment {
             }
         });
 
-        ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.main_expand_list);
+        ExpandableListView listView = view.findViewById(R.id.main_expand_list);
         final mainExpandableListAdapter listAdapter = new mainExpandableListAdapter(view.getContext(), hosts);
         listView.setAdapter(listAdapter);
         listView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
@@ -79,7 +79,7 @@ public class HostListFragment extends Fragment {
     }
 
     public void update(List<Host> hosts){
-        ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.main_expand_list);
+        ExpandableListView listView = view.findViewById(R.id.main_expand_list);
         ExpandableListAdapter listAdapter = new mainExpandableListAdapter(view.getContext(), hosts);
         listView.setAdapter(listAdapter);
     }

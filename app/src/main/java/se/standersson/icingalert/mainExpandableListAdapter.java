@@ -1,10 +1,6 @@
 package se.standersson.icingalert;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.LayerDrawable;
-import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -100,7 +96,6 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
             groupViewHolder.downHostName.setVisibility(View.VISIBLE);
             groupViewHolder.hostName.setVisibility(View.GONE);
 
-
             if (hosts.get(groupPosition).isAcknowledged()) {
                 groupViewHolder.downHostName.setBackground(context.getDrawable(R.drawable.critical_box_ack));
             } else {
@@ -116,61 +111,78 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         // Set and show the number of failing services
 
         Integer stateCount = hosts.get(groupPosition).getStateCount(1);
+        Integer stateAckCount = hosts.get(groupPosition).getStateAckCount(1);
         String stateCountString;
 
-        if (stateCount == 0) {
-            groupViewHolder.warningCount.setVisibility(View.GONE);
-        } else {
-            stateCountString = stateCount.toString();
-            groupViewHolder.warningCount.setText(stateCountString);
-            groupViewHolder.warningCount.setVisibility(View.VISIBLE);
-        }
 
-        stateCount = hosts.get(groupPosition).getStateAckCount(1);
-        if (stateCount == 0) {
+        if (stateCount == 0 && stateAckCount == 0) {
+            groupViewHolder.warningCount.setVisibility(View.GONE);
             groupViewHolder.warningAckCount.setVisibility(View.GONE);
         } else {
-            stateCountString = stateCount.toString();
+            if (stateCount == 0) {
+                stateCountString = "";
+            } else {
+                stateCountString = stateCount.toString();
+            }
+            groupViewHolder.warningCount.setText(stateCountString);
+
+            if (stateAckCount == 0) {
+                stateCountString = "";
+            } else {
+                stateCountString = stateAckCount.toString();
+            }
             groupViewHolder.warningAckCount.setText(stateCountString);
+            groupViewHolder.warningCount.setVisibility(View.VISIBLE);
             groupViewHolder.warningAckCount.setVisibility(View.VISIBLE);
         }
 
         stateCount = hosts.get(groupPosition).getStateCount(2);
-        if (stateCount == 0) {
-            groupViewHolder.criticalCount.setVisibility(View.GONE);
-        } else {
-            stateCountString = stateCount.toString();
-            groupViewHolder.criticalCount.setText(stateCountString);
-            groupViewHolder.criticalCount.setVisibility(View.VISIBLE);
-        }
+        stateAckCount = hosts.get(groupPosition).getStateAckCount(2);
 
-        stateCount = hosts.get(groupPosition).getStateAckCount(2);
-        if (stateCount == 0) {
+        if (stateCount == 0 && stateAckCount == 0) {
+            groupViewHolder.criticalCount.setVisibility(View.GONE);
             groupViewHolder.criticalAckCount.setVisibility(View.GONE);
         } else {
-            stateCountString = stateCount.toString();
+            if (stateCount == 0) {
+                stateCountString = "";
+            } else {
+                stateCountString = stateCount.toString();
+            }
+            groupViewHolder.criticalCount.setText(stateCountString);
+
+            if (stateAckCount == 0) {
+                stateCountString = "";
+            } else {
+                stateCountString = stateAckCount.toString();
+            }
             groupViewHolder.criticalAckCount.setText(stateCountString);
+            groupViewHolder.criticalCount.setVisibility(View.VISIBLE);
             groupViewHolder.criticalAckCount.setVisibility(View.VISIBLE);
         }
 
         stateCount = hosts.get(groupPosition).getStateCount(3);
-        if (stateCount == 0) {
-            groupViewHolder.unknownCount.setVisibility(View.GONE);
-        } else {
-            stateCountString = stateCount.toString();
-            groupViewHolder.unknownCount.setText(stateCountString);
-            groupViewHolder.unknownCount.setVisibility(View.VISIBLE);
-        }
+        stateAckCount = hosts.get(groupPosition).getStateAckCount(3);
 
-        stateCount = hosts.get(groupPosition).getStateAckCount(3);
-        if (stateCount == 0) {
+        if (stateCount == 0 && stateAckCount == 0) {
+            groupViewHolder.unknownCount.setVisibility(View.GONE);
             groupViewHolder.unknownAckCount.setVisibility(View.GONE);
         } else {
-            stateCountString = stateCount.toString();
+            if (stateCount == 0) {
+                stateCountString = "";
+            } else {
+                stateCountString = stateCount.toString();
+            }
+            groupViewHolder.unknownCount.setText(stateCountString);
+
+            if (stateAckCount == 0) {
+                stateCountString = "";
+            } else {
+                stateCountString = stateAckCount.toString();
+            }
             groupViewHolder.unknownAckCount.setText(stateCountString);
+            groupViewHolder.unknownCount.setVisibility(View.VISIBLE);
             groupViewHolder.unknownAckCount.setVisibility(View.VISIBLE);
         }
-
 
         return convertView;
     }
@@ -286,14 +298,14 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
 
 
         GroupViewHolder(View view){
-            hostName = (TextView) view.findViewById(R.id.main_exp_list_hostname);
-            downHostName = (TextView) view.findViewById(R.id.main_exp_list_hostname_down);
-            criticalCount = (TextView) view.findViewById(R.id.main_exp_list_critical_count);
-            criticalAckCount = (TextView) view.findViewById(R.id.main_exp_list_critical_ack_count);
-            warningCount = (TextView) view.findViewById(R.id.main_exp_list_warning_count);
-            warningAckCount = (TextView) view.findViewById(R.id.main_exp_list_warning_ack_count);
-            unknownCount = (TextView) view.findViewById(R.id.main_exp_list_unknown_count);
-            unknownAckCount = (TextView) view.findViewById(R.id.main_exp_list_unknown_ack_count);
+            hostName = view.findViewById(R.id.main_exp_list_hostname);
+            downHostName = view.findViewById(R.id.main_exp_list_hostname_down);
+            criticalCount = view.findViewById(R.id.main_exp_list_critical_count);
+            criticalAckCount = view.findViewById(R.id.main_exp_list_critical_ack_count);
+            warningCount = view.findViewById(R.id.main_exp_list_warning_count);
+            warningAckCount = view.findViewById(R.id.main_exp_list_warning_ack_count);
+            unknownCount = view.findViewById(R.id.main_exp_list_unknown_count);
+            unknownAckCount = view.findViewById(R.id.main_exp_list_unknown_ack_count);
         }
     }
 
@@ -308,11 +320,11 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
 
 
         ChildViewHolder(View view){
-            serviceName = (TextView) view.findViewById(R.id.expandedListItem);
-            serviceDetails = (TextView) view.findViewById(R.id.exp_service_details);
-            stateBar = (TextView) view.findViewById(R.id.state_bar);
-            childExpand = (LinearLayout) view.findViewById(R.id.child_expand);
-            serviceNotifications = (CheckBox) view.findViewById(R.id.service_notifications);
+            serviceName = view.findViewById(R.id.expandedListItem);
+            serviceDetails = view.findViewById(R.id.exp_service_details);
+            stateBar = view.findViewById(R.id.state_bar);
+            childExpand = view.findViewById(R.id.child_expand);
+            serviceNotifications = view.findViewById(R.id.service_notifications);
             //lastState = (TextView) view.findViewById(R.id.last_state);
             //lastStateChange = (TextView) view.findViewById(R.id.last_state_change);
         }
@@ -322,7 +334,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         final int groupPosition;
         final int childPosition;
         final Context context;
-        CompoundButton button;
+        final CompoundButton button;
 
         onNotificationUpdate(CompoundButton button, int groupPosition, int childPosition, Context context) {
             this.button = button;
