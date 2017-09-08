@@ -22,8 +22,11 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -97,9 +100,9 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
             groupViewHolder.hostName.setVisibility(View.GONE);
 
             if (hosts.get(groupPosition).isAcknowledged()) {
-                groupViewHolder.downHostName.setBackground(context.getDrawable(R.drawable.critical_box_ack));
+                groupViewHolder.downHostName.setBackground(context.getDrawable(R.drawable.host_down_ack_box));
             } else {
-                groupViewHolder.downHostName.setBackground(context.getDrawable(R.drawable.critical_box));
+                groupViewHolder.downHostName.setBackground(context.getDrawable(R.drawable.host_down_box));
             }
 
         } else {
@@ -207,9 +210,10 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         viewHolder.serviceDetails.setText(hosts.get(groupPosition).getServiceDetails(childPosition));
         viewHolder.serviceNotifications.setChecked(hosts.get(groupPosition).isServiceNotifying(childPosition));
         viewHolder.serviceNotifications.setOnClickListener(new onNotificationUpdate(viewHolder.serviceNotifications, groupPosition, childPosition, context));
-        /*SimpleDateFormat sdf = new SimpleDateFormat("hh:mm dd/MMM");
-        viewHolder.lastStateChange.setText(sdf.format(hosts.get(groupPosition).getServiceLastStateChange(childPosition)));
-        switch (hosts.get(groupPosition).getServiceLastState(childPosition)) {
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm  dd/MM", Locale.getDefault());
+        String tt = sdf.format(new Date(hosts.get(groupPosition).getServiceLastStateChange(childPosition) * 1000));
+        viewHolder.lastStateChange.setText(tt);
+        /*switch (hosts.get(groupPosition).getServiceLastState(childPosition)) {
             case 0:
                 viewHolder.lastState.setText("OK");
                 break;
@@ -316,17 +320,17 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         final LinearLayout childExpand;
         final CheckBox serviceNotifications;
         //final TextView lastState;
-        //final TextView lastStateChange;
+        final TextView lastStateChange;
 
 
         ChildViewHolder(View view){
-            serviceName = view.findViewById(R.id.expandedListItem);
+            serviceName = view.findViewById(R.id.expanded_list_item);
             serviceDetails = view.findViewById(R.id.exp_service_details);
             stateBar = view.findViewById(R.id.state_bar);
             childExpand = view.findViewById(R.id.child_expand);
             serviceNotifications = view.findViewById(R.id.service_notifications);
             //lastState = (TextView) view.findViewById(R.id.last_state);
-            //lastStateChange = (TextView) view.findViewById(R.id.last_state_change);
+            lastStateChange = view.findViewById(R.id.expanded_list_item_last_state_changed);
         }
     }
 
