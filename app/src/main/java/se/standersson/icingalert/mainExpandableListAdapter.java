@@ -22,6 +22,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -210,26 +211,9 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         viewHolder.serviceDetails.setText(hosts.get(groupPosition).getServiceDetails(childPosition));
         viewHolder.serviceNotifications.setChecked(hosts.get(groupPosition).isServiceNotifying(childPosition));
         viewHolder.serviceNotifications.setOnClickListener(new onNotificationUpdate(viewHolder.serviceNotifications, groupPosition, childPosition, context));
-        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm  dd/MM", Locale.getDefault());
-        String tt = sdf.format(new Date(hosts.get(groupPosition).getServiceLastStateChange(childPosition) * 1000));
-        viewHolder.lastStateChange.setText(tt);
-        /*switch (hosts.get(groupPosition).getServiceLastState(childPosition)) {
-            case 0:
-                viewHolder.lastState.setText("OK");
-                break;
-            case 1:
-                viewHolder.lastState.setText("Warning");
-                break;
-            case 2:
-                viewHolder.lastState.setText("Critical");
-                break;
-            case 3:
-                viewHolder.lastState.setText("Unknown");
-                break;
-            default:
-                viewHolder.lastState.setText("Error");
-                break;
-        }*/
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm  dd/MM/yy", Locale.getDefault());
+        String timeString = dateFormat.format(new Date(hosts.get(groupPosition).getServiceLastStateChange(childPosition) * 1000));
+        viewHolder.lastStateChange.setText(timeString);
 
         // Show the right color of bar to the left of the service name
         switch (hosts.get(groupPosition).getServiceState(childPosition)){
