@@ -63,11 +63,12 @@
             android:id="@+id/child_expand"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:visibility="gone">
 
         <CheckBox
             android:id="@+id/service_notifications"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:focusable="false"
             android:focusableInTouchMode="false"
@@ -78,9 +79,25 @@
             android:layout_marginStart="5dp"
             android:layout_marginEnd="20dp"/>
 
+            <TextView
+                android:id="@+id/service_comment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/secondary_text_light"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="20dp"/>
+
         </LinearLayout>
 
+        <ImageView
+            android:contentDescription="@string/expand_icon"
+            android:id="@+id/child_expand_icon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_expand_24dp"/>
+
     </LinearLayout>
+
 
 
 

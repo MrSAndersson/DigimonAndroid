@@ -18,6 +18,7 @@
 
     <!-- Service List -->
     <string name="service_notifications">Send Notifications</string>
+    <string name="expand_icon">Expand Icon</string>
 
 
     <!-- String related to the Preferences menu -->

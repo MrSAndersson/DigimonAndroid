@@ -1,5 +1,6 @@
 package se.standersson.icingalert;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.util.Base64;
 import android.util.Log;
@@ -9,20 +10,17 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -210,6 +208,13 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         viewHolder.serviceName.setText(hosts.get(groupPosition).getServiceName(childPosition));
         viewHolder.serviceDetails.setText(hosts.get(groupPosition).getServiceDetails(childPosition));
         viewHolder.serviceNotifications.setChecked(hosts.get(groupPosition).isServiceNotifying(childPosition));
+        viewHolder.serviceComment.setText(hosts.get(groupPosition).getServiceComment(childPosition));
+        if (viewHolder.serviceComment.getText() == "") {
+            viewHolder.serviceComment.setVisibility(View.GONE);
+        } else {
+            viewHolder.serviceComment.setVisibility(View.VISIBLE);
+        }
+
         viewHolder.serviceNotifications.setOnClickListener(new onNotificationUpdate(viewHolder.serviceNotifications, groupPosition, childPosition, context));
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm  dd/MM/yy", Locale.getDefault());
         String timeString = dateFormat.format(new Date(hosts.get(groupPosition).getServiceLastStateChange(childPosition) * 1000));
@@ -250,8 +255,10 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
 
         if (hosts.get(groupPosition).isServiceExpanded(childPosition)) {
             viewHolder.childExpand.setVisibility(View.VISIBLE);
+            viewHolder.expandArrow.setRotation(180);
         } else {
             viewHolder.childExpand.setVisibility(View.GONE);
+            viewHolder.expandArrow.setRotation(0);
         }
 
         return convertView;
@@ -267,9 +274,11 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         if (hosts.get(groupPosition).isServiceExpanded(childPosition)) {
             viewHolder.childExpand.setVisibility(View.GONE);
             hosts.get(groupPosition).setServiceExpanded(childPosition, false);
+            viewHolder.expandArrow.animate().rotation(0);
         } else {
             viewHolder.childExpand.setVisibility(View.VISIBLE);
             hosts.get(groupPosition).setServiceExpanded(childPosition, true);
+            viewHolder.expandArrow.animate().rotation(180);
         }
     }
 
@@ -303,8 +312,9 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         final TextView stateBar;
         final LinearLayout childExpand;
         final CheckBox serviceNotifications;
-        //final TextView lastState;
         final TextView lastStateChange;
+        final TextView serviceComment;
+        final ImageView expandArrow;
 
 
         ChildViewHolder(View view){
@@ -313,8 +323,9 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
             stateBar = view.findViewById(R.id.state_bar);
             childExpand = view.findViewById(R.id.child_expand);
             serviceNotifications = view.findViewById(R.id.service_notifications);
-            //lastState = (TextView) view.findViewById(R.id.last_state);
             lastStateChange = view.findViewById(R.id.expanded_list_item_last_state_changed);
+            serviceComment = view.findViewById(R.id.service_comment);
+            expandArrow = view.findViewById(R.id.child_expand_icon);
         }
     }
 
