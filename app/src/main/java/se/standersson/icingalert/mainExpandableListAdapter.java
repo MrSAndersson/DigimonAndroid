@@ -371,7 +371,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
                         } else {
                             Toast.makeText(context, "Notifications Disabled!", Toast.LENGTH_SHORT).show();
                         }
-                        hosts.get(groupPosition).setServiceExpanded(childPosition, isChecked);
+                        hosts.get(groupPosition).setServiceNotifying(childPosition, isChecked);
                         int singletonHostPos = HostSingleton.getInstance().findHostName(hosts.get(groupPosition).getHostName());
                         int singletonServicePos = HostSingleton.getInstance().findServiceName(singletonHostPos, hosts.get(groupPosition).getServiceName(childPosition));
                         HostSingleton.getInstance().setServiceNotifying(singletonHostPos, singletonServicePos, isChecked);
