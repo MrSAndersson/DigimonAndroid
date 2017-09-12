@@ -7,6 +7,37 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+class HostList implements Serializable, Comparable<HostList> {
+    private final int hostPosition;
+    private final List<Integer> service = new ArrayList<>();
+
+    HostList(int hostPosition) {
+        this.hostPosition = hostPosition;
+    }
+
+    public void addService(int position) {
+        service.add(service.size(), position);
+    }
+
+    public int getHostPosition() {
+        return hostPosition;
+    }
+
+    public int getService(int position) {
+        return service.get(position);
+    }
+
+    /*
+    * Sorts hosts in alphabetical order
+     */
+
+    @Override
+    public int compareTo(@NonNull HostList other) {
+        return HostSingleton.getInstance().getHosts().get(this.getHostPosition()).getHostName().compareToIgnoreCase(
+                HostSingleton.getInstance().getHosts().get(other.getHostPosition()).getHostName());
+    }
+}
+
 class Host implements Serializable, Comparable<Host>{
     /*
     * Declaration of host details

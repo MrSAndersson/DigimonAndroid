@@ -19,9 +19,9 @@ public class HostListFragment extends Fragment {
     private SwipeRefreshLayout swipeContainer;
     private View view;
     private Context parentActivity;
-    private List<Host> hosts;
+    private List<HostList> hosts;
 
-    static HostListFragment newInstance(int position, List<Host> hosts) {
+    static HostListFragment newInstance(int position, List<HostList> hosts) {
         HostListFragment fragment = new HostListFragment();
         Bundle args = new Bundle();
         args.putInt("position", position);
@@ -35,7 +35,7 @@ public class HostListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         parentActivity = getActivity();
         // noinspection unchecked
-        hosts = (List<Host>) getArguments().getSerializable("hosts");
+        hosts = (List<HostList>) getArguments().getSerializable("hosts");
     }
 
     @Override
@@ -78,7 +78,7 @@ public class HostListFragment extends Fragment {
         }
     }
 
-    public void update(List<Host> hosts){
+    public void update(List<HostList> hosts){
         ExpandableListView listView = view.findViewById(R.id.main_expand_list);
         ExpandableListAdapter listAdapter = new mainExpandableListAdapter(view.getContext(), hosts);
         listView.setAdapter(listAdapter);

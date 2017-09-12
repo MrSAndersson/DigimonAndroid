@@ -39,15 +39,17 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public boolean onQueryTextChange(String query) {
+
         ((MainPagerAdapter) adapterViewPager).getFragment(0).update(Tools.filterTextMatch(Tools.filterProblems(HostSingleton.getInstance().getHosts()), query));
-        ((MainPagerAdapter) adapterViewPager).getFragment(1).update(Tools.filterTextMatch(HostSingleton.getInstance().getHosts(), query));
+        //((MainPagerAdapter) adapterViewPager).getFragment(0).update(Tools.filterTextMatch(Tools.filterProblems(HostSingleton.getInstance().getHosts()), query));
+        ((MainPagerAdapter) adapterViewPager).getFragment(1).update(Tools.filterTextMatch(Tools.fullHostList(HostSingleton.getInstance().getHosts()), query));
         return true;
     }
 
     @Override
     public boolean onQueryTextSubmit(String query){
         ((MainPagerAdapter) adapterViewPager).getFragment(0).update(Tools.filterTextMatch(Tools.filterProblems(HostSingleton.getInstance().getHosts()), query));
-        ((MainPagerAdapter) adapterViewPager).getFragment(1).update(Tools.filterTextMatch(HostSingleton.getInstance().getHosts(), query));
+        ((MainPagerAdapter) adapterViewPager).getFragment(1).update(Tools.filterTextMatch(Tools.fullHostList(HostSingleton.getInstance().getHosts()), query));
         return true;
     }
 
@@ -175,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 try {
                     ServerInteraction.createExpandableListSummary(reply);
                     ((MainPagerAdapter) adapterViewPager).getFragment(0).update(Tools.filterProblems(HostSingleton.getInstance().getHosts()));
-                    ((MainPagerAdapter) adapterViewPager).getFragment(1).update(HostSingleton.getInstance().getHosts());
+                    ((MainPagerAdapter) adapterViewPager).getFragment(1).update(Tools.fullHostList(HostSingleton.getInstance().getHosts()));
                 } catch (JSONException e) {
                     Toast.makeText(getApplicationContext(), "Unable to parse response", Toast.LENGTH_LONG).show();
                 }
@@ -209,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     fragmentArray[0] = troubleFragment;
                     return troubleFragment;
                 case 1: // All-things-list
-                    HostListFragment allFragment = HostListFragment.newInstance(position, HostSingleton.getInstance().getHosts());
+                    HostListFragment allFragment = HostListFragment.newInstance(position, Tools.fullHostList(HostSingleton.getInstance().getHosts()));
                     fragmentArray[1] = allFragment;
                     return allFragment;
                 default:

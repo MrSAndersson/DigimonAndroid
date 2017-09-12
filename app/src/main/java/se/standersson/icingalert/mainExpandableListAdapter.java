@@ -31,10 +31,10 @@ import java.util.Map;
 
 class mainExpandableListAdapter extends BaseExpandableListAdapter {
     private final Context context;
-    private final List<Host> hosts;
+    private final List<HostList> hosts;
 
 
-    mainExpandableListAdapter(Context context, List<Host> hosts) {
+    mainExpandableListAdapter(Context context, List<HostList> hosts) {
         this.context = context;
         this.hosts = hosts;
     }
@@ -46,17 +46,17 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return hosts.get(groupPosition).getServiceCount();
+        return HostSingleton.getInstance().getHosts().get(hosts.get(groupPosition).getHostPosition()).getServiceCount();
     }
 
     @Override
     public Object getGroup(int groupPosition) {
-        return hosts.get(groupPosition).getHostName();
+        return HostSingleton.getInstance().getHosts().get(hosts.get(groupPosition).getHostPosition()).getHostName();
     }
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        return hosts.get(groupPosition).getServiceName(childPosition);
+        return HostSingleton.getInstance().getHosts().get(hosts.get(groupPosition).getHostPosition()).getServiceName(childPosition);
     }
 
     @Override
@@ -93,27 +93,27 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
             * Show what hosts are down and how many services are down
              */
 
-        if (hosts.get(groupPosition).isDown()){
-            groupViewHolder.downHostName.setText(hosts.get(groupPosition).getHostName());
+        if (HostSingleton.getInstance().getHosts().get(hosts.get(groupPosition).getHostPosition()).isDown()){
+            groupViewHolder.downHostName.setText(HostSingleton.getInstance().getHosts().get(hosts.get(groupPosition).getHostPosition()).getHostName());
             groupViewHolder.downHostName.setVisibility(View.VISIBLE);
             groupViewHolder.hostName.setVisibility(View.GONE);
 
-            if (hosts.get(groupPosition).isAcknowledged()) {
+            if (HostSingleton.getInstance().getHosts().get(hosts.get(groupPosition).getHostPosition()).isAcknowledged()) {
                 groupViewHolder.downHostName.setBackground(context.getDrawable(R.drawable.host_down_ack_box));
             } else {
                 groupViewHolder.downHostName.setBackground(context.getDrawable(R.drawable.host_down_box));
             }
 
         } else {
-            groupViewHolder.hostName.setText(hosts.get(groupPosition).getHostName());
+            groupViewHolder.hostName.setText(HostSingleton.getInstance().getHosts().get(hosts.get(groupPosition).getHostPosition()).getHostName());
             groupViewHolder.hostName.setVisibility(View.VISIBLE);
             groupViewHolder.downHostName.setVisibility(View.GONE);
         }
 
         // Set and show the number of failing services
 
-        Integer stateCount = hosts.get(groupPosition).getStateCount(1);
-        Integer stateAckCount = hosts.get(groupPosition).getStateAckCount(1);
+        Integer stateCount = HostSingleton.getInstance().getHosts().get(hosts.get(groupPosition).getHostPosition()).getStateCount(1);
+        Integer stateAckCount = HostSingleton.getInstance().getHosts().get(hosts.get(groupPosition).getHostPosition()).getStateAckCount(1);
         String stateCountString;
 
 
@@ -138,8 +138,8 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
             groupViewHolder.warningAckCount.setVisibility(View.VISIBLE);
         }
 
-        stateCount = hosts.get(groupPosition).getStateCount(2);
-        stateAckCount = hosts.get(groupPosition).getStateAckCount(2);
+        stateCount = HostSingleton.getInstance().getHosts().get(hosts.get(groupPosition).getHostPosition()).getStateCount(2);
+        stateAckCount = HostSingleton.getInstance().getHosts().get(hosts.get(groupPosition).getHostPosition()).getStateAckCount(2);
 
         if (stateCount == 0 && stateAckCount == 0) {
             groupViewHolder.criticalCount.setVisibility(View.GONE);
@@ -162,8 +162,8 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
             groupViewHolder.criticalAckCount.setVisibility(View.VISIBLE);
         }
 
-        stateCount = hosts.get(groupPosition).getStateCount(3);
-        stateAckCount = hosts.get(groupPosition).getStateAckCount(3);
+        stateCount = HostSingleton.getInstance().getHosts().get(hosts.get(groupPosition).getHostPosition()).getStateCount(3);
+        stateAckCount = HostSingleton.getInstance().getHosts().get(hosts.get(groupPosition).getHostPosition()).getStateAckCount(3);
 
         if (stateCount == 0 && stateAckCount == 0) {
             groupViewHolder.unknownCount.setVisibility(View.GONE);
@@ -205,10 +205,10 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         } else {
             viewHolder = (ChildViewHolder) convertView.getTag();
         }
-        viewHolder.serviceName.setText(hosts.get(groupPosition).getServiceName(childPosition));
-        viewHolder.serviceDetails.setText(hosts.get(groupPosition).getServiceDetails(childPosition));
-        viewHolder.serviceNotifications.setChecked(hosts.get(groupPosition).isServiceNotifying(childPosition));
-        viewHolder.serviceComment.setText(hosts.get(groupPosition).getServiceComment(childPosition));
+        viewHolder.serviceName.setText(HostSingleton.getInstance().getHosts().get(hosts.get(groupPosition).getHostPosition()).getServiceName(childPosition));
+        viewHolder.serviceDetails.setText(HostSingleton.getInstance().getHosts().get(hosts.get(groupPosition).getHostPosition()).getServiceDetails(childPosition));
+        viewHolder.serviceNotifications.setChecked(HostSingleton.getInstance().getHosts().get(hosts.get(groupPosition).getHostPosition()).isServiceNotifying(childPosition));
+        viewHolder.serviceComment.setText(HostSingleton.getInstance().getHosts().get(hosts.get(groupPosition).getHostPosition()).getServiceComment(childPosition));
         if (viewHolder.serviceComment.getText() == "") {
             viewHolder.serviceComment.setVisibility(View.GONE);
         } else {
@@ -217,13 +217,13 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
 
         viewHolder.serviceNotifications.setOnClickListener(new onNotificationUpdate(viewHolder.serviceNotifications, groupPosition, childPosition, context));
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm  dd/MM/yy", Locale.getDefault());
-        String timeString = dateFormat.format(new Date(hosts.get(groupPosition).getServiceLastStateChange(childPosition) * 1000));
+        String timeString = dateFormat.format(new Date(HostSingleton.getInstance().getHosts().get(hosts.get(groupPosition).getHostPosition()).getServiceLastStateChange(childPosition) * 1000));
         viewHolder.lastStateChange.setText(timeString);
 
         // Show the right color of bar to the left of the service name
-        switch (hosts.get(groupPosition).getServiceState(childPosition)){
+        switch (HostSingleton.getInstance().getHosts().get(hosts.get(groupPosition).getHostPosition()).getServiceState(childPosition)){
             case 1:
-                if (hosts.get(groupPosition).isServiceAcknowledged(childPosition)) {
+                if (HostSingleton.getInstance().getHosts().get(hosts.get(groupPosition).getHostPosition()).isServiceAcknowledged(childPosition)) {
                     viewHolder.stateBar.setBackground(context.getDrawable(R.drawable.warning_bar_ack));
                 } else {
                     viewHolder.stateBar.setBackground(context.getDrawable(R.drawable.warning_bar));
@@ -232,7 +232,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
 
                 break;
             case 2:
-                if (hosts.get(groupPosition).isServiceAcknowledged(childPosition)) {
+                if (HostSingleton.getInstance().getHosts().get(hosts.get(groupPosition).getHostPosition()).isServiceAcknowledged(childPosition)) {
                     viewHolder.stateBar.setBackground(context.getDrawable(R.drawable.critical_bar_ack));
                 } else {
                     viewHolder.stateBar.setBackground(context.getDrawable(R.drawable.critical_bar));
@@ -240,7 +240,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
                 viewHolder.stateBar.setVisibility(View.VISIBLE);
                 break;
             case 3:
-                if (hosts.get(groupPosition).isServiceAcknowledged(childPosition))
+                if (HostSingleton.getInstance().getHosts().get(hosts.get(groupPosition).getHostPosition()).isServiceAcknowledged(childPosition))
                 {
                     viewHolder.stateBar.setBackground(context.getDrawable(R.drawable.unknown_bar_ack));
                 } else {
@@ -253,7 +253,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
                 break;
         }
 
-        if (hosts.get(groupPosition).isServiceExpanded(childPosition)) {
+        if (HostSingleton.getInstance().getHosts().get(hosts.get(groupPosition).getHostPosition()).isServiceExpanded(childPosition)) {
             viewHolder.childExpand.setVisibility(View.VISIBLE);
             viewHolder.expandArrow.setRotation(180);
         } else {
@@ -271,13 +271,13 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
 
     void childClick(int groupPosition, int childPosition, View view) {
         ChildViewHolder viewHolder = (ChildViewHolder) view.getTag();
-        if (hosts.get(groupPosition).isServiceExpanded(childPosition)) {
+        if (HostSingleton.getInstance().getHosts().get(hosts.get(groupPosition).getHostPosition()).isServiceExpanded(childPosition)) {
             viewHolder.childExpand.setVisibility(View.GONE);
-            hosts.get(groupPosition).setServiceExpanded(childPosition, false);
+            HostSingleton.getInstance().getHosts().get(hosts.get(groupPosition).getHostPosition()).setServiceExpanded(childPosition, false);
             viewHolder.expandArrow.animate().rotation(0);
         } else {
             viewHolder.childExpand.setVisibility(View.VISIBLE);
-            hosts.get(groupPosition).setServiceExpanded(childPosition, true);
+            HostSingleton.getInstance().getHosts().get(hosts.get(groupPosition).getHostPosition()).setServiceExpanded(childPosition, true);
             viewHolder.expandArrow.animate().rotation(180);
         }
     }
@@ -347,7 +347,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         public void onClick(View view) {
             final boolean isChecked = button.isChecked();
             if (Tools.isConnected(context)) {
-                String serviceIdentifier = hosts.get(groupPosition).getHostName() + "!" + hosts.get(groupPosition).getServiceName(childPosition);
+                String serviceIdentifier = HostSingleton.getInstance().getHosts().get(hosts.get(groupPosition).getHostPosition()).getHostName() + "!" + HostSingleton.getInstance().getHosts().get(hosts.get(groupPosition).getHostPosition()).getServiceName(childPosition);
 
                 VolleySingleton.getInstance(context).getRequestQueue();
                 final String[] prefsString = Tools.getLogin(context);
@@ -371,9 +371,9 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
                         } else {
                             Toast.makeText(context, "Notifications Disabled!", Toast.LENGTH_SHORT).show();
                         }
-                        hosts.get(groupPosition).setServiceNotifying(childPosition, isChecked);
-                        int singletonHostPos = HostSingleton.getInstance().findHostName(hosts.get(groupPosition).getHostName());
-                        int singletonServicePos = HostSingleton.getInstance().findServiceName(singletonHostPos, hosts.get(groupPosition).getServiceName(childPosition));
+                        HostSingleton.getInstance().getHosts().get(hosts.get(groupPosition).getHostPosition()).setServiceNotifying(childPosition, isChecked);
+                        int singletonHostPos = HostSingleton.getInstance().findHostName(HostSingleton.getInstance().getHosts().get(hosts.get(groupPosition).getHostPosition()).getHostName());
+                        int singletonServicePos = HostSingleton.getInstance().findServiceName(singletonHostPos, HostSingleton.getInstance().getHosts().get(hosts.get(groupPosition).getHostPosition()).getServiceName(childPosition));
                         HostSingleton.getInstance().setServiceNotifying(singletonHostPos, singletonServicePos, isChecked);
                     }
                 }, new Response.ErrorListener() {
