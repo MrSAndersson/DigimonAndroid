@@ -41,7 +41,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     public boolean onQueryTextChange(String query) {
 
         ((MainPagerAdapter) adapterViewPager).getFragment(0).update(Tools.filterTextMatch(Tools.filterProblems(HostSingleton.getInstance().getHosts()), query));
-        //((MainPagerAdapter) adapterViewPager).getFragment(0).update(Tools.filterTextMatch(Tools.filterProblems(HostSingleton.getInstance().getHosts()), query));
         ((MainPagerAdapter) adapterViewPager).getFragment(1).update(Tools.filterTextMatch(Tools.fullHostList(HostSingleton.getInstance().getHosts()), query));
         return true;
     }

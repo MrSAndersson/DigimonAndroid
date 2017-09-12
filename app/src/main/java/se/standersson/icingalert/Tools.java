@@ -22,7 +22,6 @@ final class Tools {
         */
 
         int hostCount = hosts.size();
-        //List<Host> newList = new ArrayList<>();
         List<HostList> hostList = new ArrayList<>();
 
         int addedCounter = 0;
@@ -30,25 +29,20 @@ final class Tools {
             boolean hasBeenAdded = false;
             if (hosts.get(x).isDown()){
                 hostList.add(new HostList(x));
-                //newList.add(new Host(hosts.get(x).getHostName(), true, hosts.get(x).isAcknowledged(), hosts.get(x).getComment()));
                 hasBeenAdded = true;
                 for (int y = 0 ; y < hosts.get(x).getServiceCount() ; y++) {
                     hostList.get(hostList.size()-1).addService(y);
-                    //newList.get(newList.size()-1).addService(hosts.get(x).getServiceName(y), hosts.get(x).getServiceDetails(y), hosts.get(x).getServiceState(y), hosts.get(x).getServiceLastState(y), hosts.get(x).getServiceLastStateChange(y), hosts.get(x).isServiceNotifying(y), hosts.get(x).isServiceAcknowledged(y), hosts.get(x).getServiceComment(y));
                 }
             } else {
                 for (int y = 0 ; y < hosts.get(x).getServiceCount() ; y++) {
                     if (hosts.get(x).getServiceState(y) != 0){
                         try{
                             hostList.get(addedCounter);
-                            //newList.get(addedCounter);
                         } catch (IndexOutOfBoundsException e) {
                             hostList.add(new HostList(x));
-                            //newList.add(new Host(hosts.get(x).getHostName(), false, hosts.get(x).isAcknowledged(), hosts.get(x).getComment()));
                             hasBeenAdded = true;
                         }
                         hostList.get(hostList.size()-1).addService(y);
-                        //newList.get(newList.size()-1).addService(hosts.get(x).getServiceName(y), hosts.get(x).getServiceDetails(y), hosts.get(x).getServiceState(y), hosts.get(x).getServiceLastState(y), hosts.get(x).getServiceLastStateChange(y), hosts.get(x).isServiceNotifying(y), hosts.get(x).isServiceAcknowledged(y), hosts.get(x).getServiceComment(y));
                     }
                 }
             }
@@ -94,37 +88,27 @@ final class Tools {
      * Filter based on a string
      */
     static List<HostList> filterTextMatch(List<HostList> hosts, String searchString) {
-        //List<Host> newList = new ArrayList<>();
         List<HostList> newHostList = new ArrayList<>();
         int addedCounter = 0;
-        List<Host> GlobalHosts = HostSingleton.getInstance().getHosts();
         for (int x = 0 ; x < hosts.size() ; x++) {
             boolean hasBeenAdded = false;
             if (HostSingleton.getInstance().getHosts().get(hosts.get(x).getHostPosition()).getHostName().toLowerCase().contains(searchString.toLowerCase())) {
-            //if (hosts.get(x).getHostName().toLowerCase().contains(searchString.toLowerCase())) {
                 newHostList.add(new HostList(hosts.get(x).getHostPosition()));
-                //newList.add(new Host(hosts.get(x).getHostName(), hosts.get(x).isDown(), hosts.get(x).isAcknowledged(), hosts.get(x).getComment()));
                 hasBeenAdded = true;
                 for (int y = 0 ; y < HostSingleton.getInstance().getHosts().get(x).getServiceCount() ; y++) {
                     newHostList.get(newHostList.size()-1).addService(y);
-                    //newList.get(newList.size()-1).addService(hosts.get(x).getServiceName(y), hosts.get(x).getServiceDetails(y), hosts.get(x).getServiceState(y), hosts.get(x).getServiceLastState(y), hosts.get(x).getServiceLastStateChange(y), hosts.get(x).isServiceNotifying(y), hosts.get(x).isServiceAcknowledged(y), hosts.get(x).getServiceComment(y));
                 }
             } else {
                 for (int y = 0 ; y < HostSingleton.getInstance().getHosts().get(hosts.get(x).getHostPosition()).getServiceCount() ; y++) {
                     if (HostSingleton.getInstance().getHosts().get(hosts.get(x).getHostPosition()).getServiceName(y).toLowerCase().contains(searchString.toLowerCase()) ||
                             HostSingleton.getInstance().getHosts().get(hosts.get(x).getHostPosition()).getServiceDetails(y).toLowerCase().contains(searchString.toLowerCase())) {
-
-                    //if (hosts.get(x).getServiceName(y).toLowerCase().contains(searchString.toLowerCase()) ||
-                    //        hosts.get(x).getServiceDetails(y).toLowerCase().contains(searchString.toLowerCase())) {
                         try{
                             newHostList.get(addedCounter);
                         } catch (IndexOutOfBoundsException e) {
                             newHostList.add(new HostList(hosts.get(x).getHostPosition()));
-                            //newList.add(new Host(hosts.get(x).getHostName(), hosts.get(x).isDown(), hosts.get(x).isAcknowledged(), hosts.get(x).getComment()));
                             hasBeenAdded = true;
                         }
                         newHostList.get(newHostList.size()-1).addService(y);
-                        //newList.get(newList.size()-1).addService(hosts.get(x).getServiceName(y), hosts.get(x).getServiceDetails(y), hosts.get(x).getServiceState(y), hosts.get(x).getServiceLastState(y), hosts.get(x).getServiceLastStateChange(y), hosts.get(x).isServiceNotifying(y), hosts.get(x).isServiceAcknowledged(y), hosts.get(x).getServiceComment(y));
                     }
                 }
             }

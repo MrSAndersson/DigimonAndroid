@@ -15,16 +15,20 @@ class HostList implements Serializable, Comparable<HostList> {
         this.hostPosition = hostPosition;
     }
 
-    public void addService(int position) {
+    void addService(int position) {
         service.add(service.size(), position);
     }
 
-    public int getHostPosition() {
+    int getHostPosition() {
         return hostPosition;
     }
 
-    public int getService(int position) {
+    int getService(int position) {
         return service.get(position);
+    }
+
+    int getServiceCount() {
+        return service.size();
     }
 
     /*
