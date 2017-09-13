@@ -22,7 +22,7 @@ final class Tools {
         */
 
         int hostCount = hosts.size();
-        List<HostList> hostList = new ArrayList<>();
+        final List<HostList> hostList = new ArrayList<>();
 
         int addedCounter = 0;
         for (int x = 0 ; x < hostCount ; x++) {
@@ -60,24 +60,24 @@ final class Tools {
                 int warn = 1;
                 int crit = 2;
                 int unknown = 3;
-                if(HostSingleton.getInstance().getHosts().get(o1.getHostPosition()).isDown() && !HostSingleton.getInstance().getHosts().get(o2.getHostPosition()).isDown()){
+                if(o1.isDown() && !o2.isDown()){
                     return -1;
-                } else if (!HostSingleton.getInstance().getHosts().get(o1.getHostPosition()).isDown() && HostSingleton.getInstance().getHosts().get(o2.getHostPosition()).isDown()){
+                } else if (!o1.isDown() && o2.isDown()){
                     return 1;
-                } else if(HostSingleton.getInstance().getHosts().get(o1.getHostPosition()).getStateCount(crit) > HostSingleton.getInstance().getHosts().get(o2.getHostPosition()).getStateCount(crit) ) {
+                } else if(o1.getStateCount(crit) > o2.getStateCount(crit) ) {
                     return -1;
-                } else if(HostSingleton.getInstance().getHosts().get(o1.getHostPosition()).getStateCount(crit) < HostSingleton.getInstance().getHosts().get(o2.getHostPosition()).getStateCount(crit)) {
+                } else if(o1.getStateCount(crit) < o2.getStateCount(crit)) {
                     return 1;
-                } else if (HostSingleton.getInstance().getHosts().get(o1.getHostPosition()).getStateCount(warn) > HostSingleton.getInstance().getHosts().get(o2.getHostPosition()).getStateCount(warn)) {
+                } else if (o1.getStateCount(warn) > o2.getStateCount(warn)) {
                     return -1;
-                } else if (HostSingleton.getInstance().getHosts().get(o1.getHostPosition()).getStateCount(warn) < HostSingleton.getInstance().getHosts().get(o2.getHostPosition()).getStateCount(warn)) {
+                } else if (o1.getStateCount(warn) < o2.getStateCount(warn)) {
                     return 1;
-                } else if (HostSingleton.getInstance().getHosts().get(o1.getHostPosition()).getStateCount(unknown) > HostSingleton.getInstance().getHosts().get(o2.getHostPosition()).getStateCount(unknown)) {
+                } else if (o1.getStateCount(unknown) > o2.getStateCount(unknown)) {
                     return -1;
-                } else if (HostSingleton.getInstance().getHosts().get(o1.getHostPosition()).getStateCount(unknown) < HostSingleton.getInstance().getHosts().get(o2.getHostPosition()).getStateCount(unknown)) {
+                } else if (o1.getStateCount(unknown) < o2.getStateCount(unknown)) {
                     return 1;
                 } else {
-                    return HostSingleton.getInstance().getHosts().get(o1.getHostPosition()).getHostName().compareToIgnoreCase(HostSingleton.getInstance().getHosts().get(o2.getHostPosition()).getHostName());
+                    return o1.getHostName().compareToIgnoreCase(o2.getHostName());
                 }
             }
         });
@@ -92,20 +92,20 @@ final class Tools {
         int addedCounter = 0;
         for (int x = 0 ; x < hosts.size() ; x++) {
             boolean hasBeenAdded = false;
-            if (HostSingleton.getInstance().getHosts().get(hosts.get(x).getHostPosition()).getHostName().toLowerCase().contains(searchString.toLowerCase())) {
-                newHostList.add(new HostList(hosts.get(x).getHostPosition()));
+            if (hosts.get(x).getHostName().toLowerCase().contains(searchString.toLowerCase())) {
+                newHostList.add(new HostList(hosts.get(x).getHost()));
                 hasBeenAdded = true;
-                for (int y = 0 ; y < HostSingleton.getInstance().getHosts().get(x).getServiceCount() ; y++) {
+                for (int y = 0 ; y < hosts.get(x).getServiceCount() ; y++) {
                     newHostList.get(newHostList.size()-1).addService(y);
                 }
             } else {
-                for (int y = 0 ; y < HostSingleton.getInstance().getHosts().get(hosts.get(x).getHostPosition()).getServiceCount() ; y++) {
-                    if (HostSingleton.getInstance().getHosts().get(hosts.get(x).getHostPosition()).getServiceName(y).toLowerCase().contains(searchString.toLowerCase()) ||
-                            HostSingleton.getInstance().getHosts().get(hosts.get(x).getHostPosition()).getServiceDetails(y).toLowerCase().contains(searchString.toLowerCase())) {
+                for (int y = 0; y < hosts.get(x).getServiceCount() ; y++) {
+                    if (hosts.get(x).getServiceName(y).toLowerCase().contains(searchString.toLowerCase()) ||
+                            hosts.get(x).getServiceDetails(y).toLowerCase().contains(searchString.toLowerCase())) {
                         try{
                             newHostList.get(addedCounter);
                         } catch (IndexOutOfBoundsException e) {
-                            newHostList.add(new HostList(hosts.get(x).getHostPosition()));
+                            newHostList.add(new HostList(hosts.get(x).getHost()));
                             hasBeenAdded = true;
                         }
                         newHostList.get(newHostList.size()-1).addService(y);

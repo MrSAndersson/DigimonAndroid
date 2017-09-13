@@ -26,10 +26,6 @@ class HostSingleton {
         return hosts;
     }
 
-    void setServiceNotifying(int host, int service, boolean isNotifying) {
-        hosts.get(host).setServiceNotifying(service, isNotifying);
-    }
-
     int findHostName(String hostname) {
         for ( int x=0 ; x<hosts.size() ; x++) {
             if (hosts.get(x).getHostName().equals(hostname)) {

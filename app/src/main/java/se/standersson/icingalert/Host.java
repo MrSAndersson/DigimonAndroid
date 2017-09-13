@@ -7,6 +7,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/*
+ * Map of a subset of host/services and pointers to their place in HostSingleton
+ */
+
 class HostList implements Serializable, Comparable<HostList> {
     private final int hostPosition;
     private final List<Integer> service = new ArrayList<>();
@@ -19,16 +23,73 @@ class HostList implements Serializable, Comparable<HostList> {
         service.add(service.size(), position);
     }
 
-    int getHostPosition() {
+    int getHost() {
         return hostPosition;
     }
 
-    int getService(int position) {
-        return service.get(position);
-    }
 
     int getServiceCount() {
         return service.size();
+    }
+
+    String getHostName() {
+        return HostSingleton.getInstance().getHosts().get(hostPosition).getHostName();
+    }
+
+    boolean isDown() {
+        return HostSingleton.getInstance().getHosts().get(hostPosition).isDown();
+    }
+
+    boolean isAcknowledged() {
+        return HostSingleton.getInstance().getHosts().get(hostPosition).isAcknowledged();
+    }
+
+    int getStateCount(int state) {
+        return HostSingleton.getInstance().getHosts().get(hostPosition).getStateCount(state);
+    }
+
+    int getStateAckCount(int state) {
+        return HostSingleton.getInstance().getHosts().get(hostPosition).getStateAckCount(state);
+    }
+
+    String getServiceName(int servicePosition) {
+        return HostSingleton.getInstance().getHosts().get(hostPosition).getServiceName(service.get(servicePosition));
+    }
+
+    String getServiceDetails(int servicePosition) {
+        return HostSingleton.getInstance().getHosts().get(hostPosition).getServiceDetails(service.get(servicePosition));
+    }
+
+    int getServiceState(int servicePosition) {
+        return HostSingleton.getInstance().getHosts().get(hostPosition).getServiceState(service.get(servicePosition));
+    }
+
+    String getServiceComment(int servicePosition) {
+        return HostSingleton.getInstance().getHosts().get(hostPosition).getServiceComment(service.get(servicePosition));
+    }
+
+    long getServiceLastStateChange(int servicePosition) {
+        return HostSingleton.getInstance().getHosts().get(hostPosition).getServiceLastStateChange(service.get(servicePosition));
+    }
+
+    boolean isServiceAcknowledged(int servicePosition) {
+        return HostSingleton.getInstance().getHosts().get(hostPosition).isServiceAcknowledged(service.get(servicePosition));
+    }
+
+    boolean isServiceNotifying(int servicePosition) {
+        return HostSingleton.getInstance().getHosts().get(hostPosition).isServiceNotifying(service.get(servicePosition));
+    }
+
+    boolean isServiceExpanded(int servicePosition) {
+        return HostSingleton.getInstance().getHosts().get(hostPosition).isServiceExpanded(service.get(servicePosition));
+    }
+
+    void setServiceNotifying(int servicePosition, boolean isNotifying) {
+        HostSingleton.getInstance().getHosts().get(hostPosition).setServiceNotifying(service.get(servicePosition), isNotifying);
+    }
+
+    void setServiceExpanded(int servicePosition, boolean expanded) {
+        HostSingleton.getInstance().getHosts().get(hostPosition).setServiceExpanded(service.get(servicePosition), expanded);
     }
 
     /*
@@ -37,8 +98,8 @@ class HostList implements Serializable, Comparable<HostList> {
 
     @Override
     public int compareTo(@NonNull HostList other) {
-        return HostSingleton.getInstance().getHosts().get(this.getHostPosition()).getHostName().compareToIgnoreCase(
-                HostSingleton.getInstance().getHosts().get(other.getHostPosition()).getHostName());
+        return this.getHostName().compareToIgnoreCase(
+                other.getHostName());
     }
 }
 
