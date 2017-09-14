@@ -36,12 +36,28 @@ class HostList implements Serializable, Comparable<HostList> {
         return HostSingleton.getInstance().getHosts().get(hostPosition).getHostName();
     }
 
+    String getComment() {
+        return HostSingleton.getInstance().getHosts().get(hostPosition).getComment();
+    }
+
+    String getCommentAuthor() {
+        return HostSingleton.getInstance().getHosts().get(hostPosition).getCommentAuthor();
+    }
+
     boolean isDown() {
         return HostSingleton.getInstance().getHosts().get(hostPosition).isDown();
     }
 
     boolean isAcknowledged() {
         return HostSingleton.getInstance().getHosts().get(hostPosition).isAcknowledged();
+    }
+
+    boolean isExpanded() {
+        return HostSingleton.getInstance().getHosts().get(hostPosition).isExpanded();
+    }
+
+    void setExpanded(boolean expanded) {
+        HostSingleton.getInstance().getHosts().get(hostPosition).setExpanded(expanded);
     }
 
     int getStateCount(int state) {
@@ -66,6 +82,10 @@ class HostList implements Serializable, Comparable<HostList> {
 
     String getServiceComment(int servicePosition) {
         return HostSingleton.getInstance().getHosts().get(hostPosition).getServiceComment(service.get(servicePosition));
+    }
+
+    String getServiceCommentAuthor(int servicePosition) {
+        return HostSingleton.getInstance().getHosts().get(hostPosition).getServiceCommentAuthor(servicePosition);
     }
 
     long getServiceLastStateChange(int servicePosition) {
@@ -117,23 +137,26 @@ class Host implements Serializable, Comparable<Host>{
     private final List<Integer> unknownList = new ArrayList<>();
     private final List<Integer> unknownAckList = new ArrayList<>();
     private boolean isDown = false;
+    private boolean isExpanded = false;
     private final boolean acknowledged;
     private final String comment;
+    private final String commentAuthor;
 
 
     //Constructor for hosts
-    Host(String hostName, boolean isDown, boolean acknowledged, String comment) {
+    Host(String hostName, boolean isDown, boolean acknowledged, String comment, String commentAuthor) {
         this.hostName = hostName;
         this.acknowledged = acknowledged;
         this.comment = comment;
+        this.commentAuthor = commentAuthor;
         if (isDown) {
             this.isDown = true;
         }
     }
 
     //Add a service with name, details and state. Also increment the state counters
-    void addService(String serviceName, String serviceDetails, int state, int lastState, long lastStateChange, boolean notifications, boolean acknowledged, String comment){
-        services.add(new Service(serviceName, serviceDetails, state, lastState, lastStateChange, notifications, acknowledged, comment));
+    void addService(String serviceName, String serviceDetails, int state, int lastState, long lastStateChange, boolean notifications, boolean acknowledged, String comment, String commentAuthor){
+        services.add(new Service(serviceName, serviceDetails, state, lastState, lastStateChange, notifications, acknowledged, comment, commentAuthor));
         switch (state){
             case 0:
                 okList.add(services.size() - 1);
@@ -182,6 +205,14 @@ class Host implements Serializable, Comparable<Host>{
         return hostName;
     }
 
+    void setExpanded(boolean expanded) {
+        this.isExpanded = expanded;
+    }
+
+    boolean isExpanded() {
+        return this.isExpanded;
+    }
+
     boolean isServiceExpanded(int position) {
         return services.get(position).isExpanded();
     }
@@ -212,6 +243,10 @@ class Host implements Serializable, Comparable<Host>{
 
     String getServiceComment(int position) {
         return services.get(position).getComment();
+    }
+
+    String getServiceCommentAuthor(int position) {
+        return services.get(position).getCommentAuthor();
     }
 
     int findServiceName(String serviceName) {
@@ -268,6 +303,10 @@ class Host implements Serializable, Comparable<Host>{
         return comment;
     }
 
+    String getCommentAuthor() {
+        return commentAuthor;
+    }
+
     void sortServices(){
         Collections.sort(services);
     }
@@ -291,9 +330,10 @@ class Host implements Serializable, Comparable<Host>{
         private boolean notifications;
         private final boolean acknowledged;
         private final String comment;
+        private final String commentAuthor;
 
 
-        Service(String name, String details, int state, int last_state, long last_state_change, boolean notifications, boolean acknowledged, String comment) {
+        Service(String name, String details, int state, int last_state, long last_state_change, boolean notifications, boolean acknowledged, String comment, String commentAuthor) {
             this.name = name;
             this.details = details;
             this.state = state;
@@ -302,6 +342,7 @@ class Host implements Serializable, Comparable<Host>{
             this.notifications = notifications;
             this.acknowledged = acknowledged;
             this.comment = comment;
+            this.commentAuthor = commentAuthor;
         }
 
         String getServiceName() {
@@ -346,6 +387,10 @@ class Host implements Serializable, Comparable<Host>{
 
         String getComment() {
             return comment;
+        }
+
+        String getCommentAuthor() {
+            return commentAuthor;
         }
 
         @Override

@@ -91,7 +91,7 @@ class ServerInteraction {
         int hostsCount = data.getJSONArray("hosts").length();
         int hostsDownCount = data.getJSONObject("status").getInt("num_hosts_down");
 
-        String hostName, hostComment, serviceName, serviceDetails, serviceComment;
+        String hostName, hostComment, hostCommentAuthor, serviceName, serviceDetails, serviceComment, serviceCommentAuthor;
         int state, lastState;
         long lastStateChange;
         boolean notifications, hostAcknowledged, serviceAcknowledged;
@@ -106,12 +106,14 @@ class ServerInteraction {
 
                 // Check for acknowledgements
                 hostComment = "";
+                hostCommentAuthor = "";
                 if (data.getJSONArray("hosts").getJSONObject(x).getJSONObject("attrs").getInt("acknowledgement") != 0) {
                     hostAcknowledged = true;
                     for (int z = 0 ; z < data.getJSONArray("comments").length() ;  z++) {
                         if (data.getJSONArray("comments").getJSONObject(z).getJSONObject("attrs").getString("host_name").equals(hostName)
                                 && data.getJSONArray("comments").getJSONObject(z).getJSONObject("attrs").getString("service_name").equals("")) {
                             hostComment = data.getJSONArray("comments").getJSONObject(z).getJSONObject("attrs").getString("text");
+                            hostCommentAuthor = data.getJSONArray("comments").getJSONObject(z).getJSONObject("attrs").getString("author");
                         }
                     }
                 } else {
@@ -121,7 +123,7 @@ class ServerInteraction {
 
 
 
-                hosts.add(new Host(hostName, true, hostAcknowledged, hostComment));
+                hosts.add(new Host(hostName, true, hostAcknowledged, hostComment, hostCommentAuthor));
                 y++;
                 if (y == hostsDownCount) {
                     break;
@@ -141,6 +143,7 @@ class ServerInteraction {
             lastStateChange = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getLong("last_state_change");
             notifications = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getBoolean("enable_notifications");
             serviceComment = "";
+            serviceCommentAuthor = "";
 
 
             // Check for acknowledgements
@@ -151,6 +154,7 @@ class ServerInteraction {
                     if (data.getJSONArray("comments").getJSONObject(y).getJSONObject("attrs").getString("host_name").equals(hostName)
                             && data.getJSONArray("comments").getJSONObject(y).getJSONObject("attrs").getString("service_name").equals(serviceName)) {
                         serviceComment = data.getJSONArray("comments").getJSONObject(y).getJSONObject("attrs").getString("text");
+                        serviceCommentAuthor = data.getJSONArray("comments").getJSONObject(y).getJSONObject("attrs").getString("author");
                     }
                 }
             } else {
@@ -159,11 +163,11 @@ class ServerInteraction {
 
 
             if (hostPositions.containsKey(hostName)) {
-                hosts.get(hostPositions.get(hostName)).addService(serviceName, serviceDetails, state, lastState, lastStateChange, notifications, serviceAcknowledged, serviceComment);
+                hosts.get(hostPositions.get(hostName)).addService(serviceName, serviceDetails, state, lastState, lastStateChange, notifications, serviceAcknowledged, serviceComment, serviceCommentAuthor);
             } else {
                 hostPositions.put(hostName, hosts.size());
-                hosts.add(new Host(hostName, false, false, ""));
-                hosts.get(hostPositions.get(hostName)).addService(serviceName, serviceDetails, state, lastState, lastStateChange, notifications, serviceAcknowledged, serviceComment);
+                hosts.add(new Host(hostName, false, false, "", ""));
+                hosts.get(hostPositions.get(hostName)).addService(serviceName, serviceDetails, state, lastState, lastStateChange, notifications, serviceAcknowledged, serviceComment, serviceCommentAuthor);
             }
         }
 

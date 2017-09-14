@@ -185,6 +185,20 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
             groupViewHolder.unknownAckCount.setVisibility(View.VISIBLE);
         }
 
+        if (!(hosts.get(groupPosition).getComment().equals("") && hosts.get(groupPosition).getCommentAuthor().equals("")))
+        {
+            String comment = hosts.get(groupPosition).getComment() + "\n/" + hosts.get(groupPosition).getCommentAuthor();
+            groupViewHolder.hostComment.setText(comment);
+        }
+
+        if (isExpanded && hosts.get(groupPosition).isAcknowledged() && groupViewHolder.hostComment.getText() != "") {
+            hosts.get(groupPosition).setExpanded(true);
+            groupViewHolder.hostComment.setVisibility(View.VISIBLE);
+        } else {
+            hosts.get(groupPosition).setExpanded(false);
+            groupViewHolder.hostComment.setVisibility(View.GONE);
+        }
+
         return convertView;
     }
 
@@ -208,6 +222,13 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         viewHolder.serviceDetails.setText(hosts.get(groupPosition).getServiceDetails(childPosition));
         viewHolder.serviceNotifications.setChecked(hosts.get(groupPosition).isServiceNotifying(childPosition));
         viewHolder.serviceComment.setText(hosts.get(groupPosition).getServiceComment(childPosition));
+
+        if (!(hosts.get(groupPosition).getServiceComment(childPosition).equals("") && hosts.get(groupPosition).getServiceCommentAuthor(childPosition).equals("")))
+        {
+            String comment = hosts.get(groupPosition).getServiceComment(childPosition) + "\n/" + hosts.get(groupPosition).getServiceCommentAuthor(childPosition);
+            viewHolder.serviceComment.setText(comment);
+        }
+
         if (viewHolder.serviceComment.getText() == "") {
             viewHolder.serviceComment.setVisibility(View.GONE);
         } else {
@@ -291,6 +312,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         final TextView warningAckCount;
         final TextView unknownCount;
         final TextView unknownAckCount;
+        final TextView hostComment;
 
 
         GroupViewHolder(View view){
@@ -302,6 +324,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
             warningAckCount = view.findViewById(R.id.main_exp_list_warning_ack_count);
             unknownCount = view.findViewById(R.id.main_exp_list_unknown_count);
             unknownAckCount = view.findViewById(R.id.main_exp_list_unknown_ack_count);
+            hostComment = view.findViewById(R.id.host_comment);
         }
     }
 
