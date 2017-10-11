@@ -30,7 +30,8 @@ import java.util.Map;
 
 class mainExpandableListAdapter extends BaseExpandableListAdapter {
     private final Context context;
-    private final List<HostList> hosts;
+    private List<HostList> hosts;
+    private final List<Host> RealHost = HostSingleton.getInstance().getHosts();
 
 
     mainExpandableListAdapter(Context context, List<HostList> hosts) {
@@ -420,6 +421,10 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
                 button.setChecked(!isChecked);
             }
         }
+    }
+
+    void updateHostList(List<HostList> hosts){
+        this.hosts = hosts;
     }
 
 }

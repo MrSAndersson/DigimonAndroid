@@ -27,12 +27,13 @@ import java.net.UnknownHostException;
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
     private FragmentPagerAdapter adapterViewPager;
+    SearchView searchView = null;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
-        final SearchView searchView = (SearchView) menu.findItem(R.id.main_search).getActionView();
+        searchView = (SearchView) menu.findItem(R.id.main_search).getActionView();
         searchView.setOnQueryTextListener(this);
         return true;
     }
@@ -106,6 +107,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     public void refresh() {
+
+        // Reset the search bar
+        searchView.onActionViewCollapsed();
+        searchView.setQuery("", false);
+        searchView.clearFocus();
 
         String[] prefsString = Tools.getLogin(this);
 

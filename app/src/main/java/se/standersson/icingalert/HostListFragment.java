@@ -35,7 +35,7 @@ public class HostListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         parentActivity = getActivity();
         // noinspection unchecked
-        hosts = (List<HostList>) getArguments().getSerializable("hosts");
+        this.hosts = (List<HostList>) getArguments().getSerializable("hosts");
     }
 
     @Override
@@ -80,8 +80,9 @@ public class HostListFragment extends Fragment {
 
     public void update(List<HostList> hosts){
         ExpandableListView listView = view.findViewById(R.id.main_expand_list);
-        ExpandableListAdapter listAdapter = new mainExpandableListAdapter(view.getContext(), hosts);
-        listView.setAdapter(listAdapter);
+        mainExpandableListAdapter adapter = (mainExpandableListAdapter) listView.getExpandableListAdapter();
+        adapter.updateHostList(hosts);
+        adapter.notifyDataSetChanged();
     }
 
 }
