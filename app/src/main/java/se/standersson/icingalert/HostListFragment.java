@@ -83,6 +83,11 @@ public class HostListFragment extends Fragment {
         mainExpandableListAdapter adapter = (mainExpandableListAdapter) listView.getExpandableListAdapter();
         adapter.updateHostList(hosts);
         adapter.notifyDataSetChanged();
+
+        //Collapse all groups
+        for (int x=0 ; x<hosts.size() ; x++) {
+            listView.collapseGroup(x);
+        }
     }
 
 }
