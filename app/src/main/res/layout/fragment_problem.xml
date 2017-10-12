@@ -9,11 +9,25 @@
         android:layout_height="match_parent"
         android:id="@+id/exp_swipe">
 
-
-        <ExpandableListView
-            android:id="@+id/main_expand_list"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/main_expand_all_clear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/all_clear"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"/>
+
+            <ExpandableListView
+                android:id="@+id/main_expand_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </RelativeLayout>
+
 
     </android.support.v4.widget.SwipeRefreshLayout>
 

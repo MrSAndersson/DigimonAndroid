@@ -57,6 +57,16 @@ public class HostListFragment extends Fragment {
         ExpandableListView listView = view.findViewById(R.id.main_expand_list);
         final mainExpandableListAdapter listAdapter = new mainExpandableListAdapter(view.getContext(), hosts);
         listView.setAdapter(listAdapter);
+
+        // If list is empty, display All Clear
+        if (hosts.size() == 0) {
+            listView.setVisibility(View.GONE);
+            view.findViewById(R.id.main_expand_all_clear).setVisibility(View.VISIBLE);
+        } else {
+            listView.setVisibility(View.VISIBLE);
+            view.findViewById(R.id.main_expand_all_clear).setVisibility(View.GONE);
+        }
+
         listView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
 
             @Override
@@ -83,6 +93,15 @@ public class HostListFragment extends Fragment {
         mainExpandableListAdapter adapter = (mainExpandableListAdapter) listView.getExpandableListAdapter();
         adapter.updateHostList(hosts);
         adapter.notifyDataSetChanged();
+
+        // If list is empty, display All Clear
+        if (hosts.size() == 0) {
+            listView.setVisibility(View.GONE);
+            view.findViewById(R.id.main_expand_all_clear).setVisibility(View.VISIBLE);
+        } else {
+            listView.setVisibility(View.VISIBLE);
+            view.findViewById(R.id.main_expand_all_clear).setVisibility(View.GONE);
+        }
 
         //Collapse all groups
         for (int x=0 ; x<hosts.size() ; x++) {
