@@ -27,7 +27,7 @@ import java.net.UnknownHostException;
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
     private FragmentPagerAdapter adapterViewPager;
-    SearchView searchView = null;
+    private SearchView searchView = null;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

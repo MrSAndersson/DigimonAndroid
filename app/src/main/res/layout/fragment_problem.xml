@@ -2,7 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="se.standersson.icingalert.HostListFragment">
+    tools:context="se.standersson.icingalert.HostListFragment"
+    android:background="@drawable/all_clear_background_transition">
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
@@ -16,12 +17,18 @@
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <TextView
+
+    <ImageView
         android:id="@+id/main_expand_all_clear"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:paddingStart="5dp"
+        android:paddingEnd="0dp"
         android:layout_centerInParent="true"
-        android:text="@string/all_clear"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"/>
+        android:scaleType="fitCenter"
+        android:contentDescription="@string/sun_cloud_desc"
+        android:src="@drawable/ic_sun_cloud"/>
+
+
 
 </RelativeLayout>

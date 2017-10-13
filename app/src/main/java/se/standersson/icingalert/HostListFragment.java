@@ -2,6 +2,7 @@ package se.standersson.icingalert;
 
 
 import android.content.Context;
+import android.graphics.drawable.TransitionDrawable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,7 +10,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 
 import java.io.Serializable;
@@ -20,6 +20,8 @@ public class HostListFragment extends Fragment {
     private View view;
     private Context parentActivity;
     private List<HostList> hosts;
+    private boolean backgroundIsBlue = false;
+    private int globalProblemHostCount;
 
     static HostListFragment newInstance(int position, List<HostList> hosts) {
         HostListFragment fragment = new HostListFragment();
@@ -36,6 +38,7 @@ public class HostListFragment extends Fragment {
         parentActivity = getActivity();
         // noinspection unchecked
         this.hosts = (List<HostList>) getArguments().getSerializable("hosts");
+        this.globalProblemHostCount = Tools.filterProblems(HostSingleton.getInstance().getHosts()).size();
     }
 
     @Override
@@ -59,12 +62,22 @@ public class HostListFragment extends Fragment {
         listView.setAdapter(listAdapter);
 
         // If list is empty, display All Clear
-        if (hosts.size() == 0) {
+        TransitionDrawable backgroundTransition = (TransitionDrawable) view.getBackground();
+
+        if (globalProblemHostCount == 0) {
             listView.setVisibility(View.GONE);
             view.findViewById(R.id.main_expand_all_clear).setVisibility(View.VISIBLE);
+            if (!backgroundIsBlue) {
+                backgroundTransition.startTransition(180);
+                backgroundIsBlue = true;
+            }
         } else {
             listView.setVisibility(View.VISIBLE);
             view.findViewById(R.id.main_expand_all_clear).setVisibility(View.GONE);
+            if (backgroundIsBlue) {
+                backgroundTransition.reverseTransition(180);
+                backgroundIsBlue = false;
+            }
         }
 
         listView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
@@ -95,12 +108,21 @@ public class HostListFragment extends Fragment {
         adapter.notifyDataSetChanged();
 
         // If list is empty, display All Clear
-        if (hosts.size() == 0) {
+        TransitionDrawable backgroundTransition = (TransitionDrawable) view.getBackground();
+        if (globalProblemHostCount == 0) {
             listView.setVisibility(View.GONE);
             view.findViewById(R.id.main_expand_all_clear).setVisibility(View.VISIBLE);
+            if (!backgroundIsBlue) {
+                backgroundTransition.startTransition(180);
+                backgroundIsBlue = true;
+            }
         } else {
             listView.setVisibility(View.VISIBLE);
             view.findViewById(R.id.main_expand_all_clear).setVisibility(View.GONE);
+            if (backgroundIsBlue) {
+                backgroundTransition.reverseTransition(180);
+                backgroundIsBlue = false;
+            }
         }
 
         //Collapse all groups

@@ -19,7 +19,7 @@
     <!-- Service List -->
     <string name="service_notifications">Send Notifications</string>
     <string name="expand_icon">Expand Icon</string>
-    <string name="all_clear">All Clear</string>
+    <string name="sun_cloud_desc">Clear Skies</string>
 
 
     <!-- String related to the Preferences menu -->
