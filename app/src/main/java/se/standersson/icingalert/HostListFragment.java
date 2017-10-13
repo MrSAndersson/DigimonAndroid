@@ -21,6 +21,7 @@ public class HostListFragment extends Fragment {
     private Context parentActivity;
     private List<HostList> hosts;
     private boolean backgroundIsBlue = false;
+    private int fragmentPosition;
     private int globalProblemHostCount;
 
     static HostListFragment newInstance(int position, List<HostList> hosts) {
@@ -38,6 +39,7 @@ public class HostListFragment extends Fragment {
         parentActivity = getActivity();
         // noinspection unchecked
         this.hosts = (List<HostList>) getArguments().getSerializable("hosts");
+        this.fragmentPosition = getArguments().getInt("position");
         this.globalProblemHostCount = Tools.filterProblems(HostSingleton.getInstance().getHosts()).size();
     }
 
@@ -64,7 +66,7 @@ public class HostListFragment extends Fragment {
         // If list is empty, display All Clear
         TransitionDrawable backgroundTransition = (TransitionDrawable) view.getBackground();
 
-        if (globalProblemHostCount == 0) {
+        if (globalProblemHostCount == 0 && fragmentPosition == 0) {
             listView.setVisibility(View.GONE);
             view.findViewById(R.id.main_expand_all_clear).setVisibility(View.VISIBLE);
             if (!backgroundIsBlue) {
@@ -109,7 +111,7 @@ public class HostListFragment extends Fragment {
 
         // If list is empty, display All Clear
         TransitionDrawable backgroundTransition = (TransitionDrawable) view.getBackground();
-        if (globalProblemHostCount == 0) {
+        if (globalProblemHostCount == 0 && fragmentPosition == 0) {
             listView.setVisibility(View.GONE);
             view.findViewById(R.id.main_expand_all_clear).setVisibility(View.VISIBLE);
             if (!backgroundIsBlue) {
