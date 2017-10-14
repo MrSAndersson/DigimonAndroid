@@ -104,6 +104,7 @@ public class HostListFragment extends Fragment {
     }
 
     public void update(List<HostList> hosts){
+        this.globalProblemHostCount = hosts.size();
         ExpandableListView listView = view.findViewById(R.id.main_expand_list);
         mainExpandableListAdapter adapter = (mainExpandableListAdapter) listView.getExpandableListAdapter();
         adapter.updateHostList(hosts);
