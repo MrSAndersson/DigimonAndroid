@@ -8,4 +8,7 @@
         android:key="service_push"
         android:title="@string/service_notification_pref"
         android:defaultValue="true" />
+    <EditTextPreference
+        android:key="acknowledgement_author"
+        android:title="@string/acknowledgement_author_pref" />
 </PreferenceScreen>

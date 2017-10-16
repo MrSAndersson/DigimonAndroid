@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">IcingAlert</string>
+    <string name="send">Send</string>
+    <string name="cancel">Cancel</string>
 
     <!-- Strings related to login -->
     <string name="login_logo">IcingAlert Logo</string>
@@ -20,11 +22,15 @@
     <string name="service_notifications">Send Notifications</string>
     <string name="expand_icon">Expand Icon</string>
     <string name="sun_cloud_desc">Clear Skies</string>
+    <string name="acknowledgement_dialog_title">Add Acknowledgement for</string>
+    <string name="acknowledgement_dialog_hint">Comment</string>
+    <string name="send_acknowledgement">Acknowledge</string>
 
 
     <!-- String related to the Preferences menu -->
     <string name="host_notification_pref">Subscribe to Host Notifications</string>
     <string name="service_notification_pref">Subscribe to Service Notifications</string>
+    <string name="acknowledgement_author_pref">Author Name for Acknowledgements</string>
 
 </resources>
 

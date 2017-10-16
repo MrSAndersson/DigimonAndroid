@@ -159,5 +159,6 @@ final class Tools {
         return activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
     }
-
 }
+
+

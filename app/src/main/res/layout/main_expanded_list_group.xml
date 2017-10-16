@@ -138,17 +138,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:visibility="visible">
+        android:visibility="visible"
+        android:layout_marginStart="37dp">
+
+        <Button
+            android:id="@+id/host_acknowledgement_dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:text="@string/send_acknowledgement" />
 
         <TextView
             android:id="@+id/host_comment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:textColor="@android:color/primary_text_light"
-            android:paddingStart="11dp"
-            android:paddingEnd="11dp"
-            android:paddingTop="3dp"
-            android:layout_marginStart="?android:expandableListPreferredItemPaddingLeft" />
+            android:paddingTop="3dp" />
 
     </LinearLayout>
 

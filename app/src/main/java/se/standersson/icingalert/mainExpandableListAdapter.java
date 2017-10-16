@@ -1,12 +1,16 @@
 package se.standersson.icingalert;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -31,7 +35,6 @@ import java.util.Map;
 class mainExpandableListAdapter extends BaseExpandableListAdapter {
     private final Context context;
     private List<HostList> hosts;
-    private final List<Host> RealHost = HostSingleton.getInstance().getHosts();
 
 
     mainExpandableListAdapter(Context context, List<HostList> hosts) {
@@ -75,7 +78,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+    public View getGroupView(final int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
 
         GroupViewHolder groupViewHolder;
 
@@ -186,11 +189,43 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
             groupViewHolder.unknownAckCount.setVisibility(View.VISIBLE);
         }
 
+        // Set Host Comment
         if (!(hosts.get(groupPosition).getComment().equals("") && hosts.get(groupPosition).getCommentAuthor().equals("")))
         {
             String comment = hosts.get(groupPosition).getComment() + "\n/" + hosts.get(groupPosition).getCommentAuthor();
             groupViewHolder.hostComment.setText(comment);
         }
+
+        // Show or hide Acknowledgement button
+
+        if (isExpanded && hosts.get(groupPosition).isDown() && !hosts.get(groupPosition).isAcknowledged()) {
+            groupViewHolder.acknowledgementDialog.setVisibility(View.VISIBLE);
+        } else {
+            groupViewHolder.acknowledgementDialog.setVisibility(View.GONE);
+        }
+
+        // Configure Acknowledgement button
+
+        // Set onClickListener for Acknowledgement Dialog button
+        groupViewHolder.acknowledgementDialog.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                if (prefs.getString("acknowledgement_author", "").equals("")) {
+                    Toast.makeText(context, "No Author set. Set Acknowledgement Author in the Settings", Toast.LENGTH_SHORT).show();
+                } else {
+
+                    AcknowledgementDialogFragment dialog = AcknowledgementDialogFragment.newInstance(hosts, groupPosition);
+
+                    try {
+                        final AppCompatActivity activity = (AppCompatActivity) context;
+                        dialog.show(activity.getFragmentManager(), "acknowledgementDialog");
+                    } catch (ClassCastException e) {
+                        Log.d("Error", "Can't get the fragment manager with this");
+                    }
+                }
+            }
+        });
 
         if (isExpanded && hosts.get(groupPosition).isAcknowledged() && groupViewHolder.hostComment.getText() != "") {
             hosts.get(groupPosition).setExpanded(true);
@@ -224,6 +259,8 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         viewHolder.serviceNotifications.setChecked(hosts.get(groupPosition).isServiceNotifying(childPosition));
         viewHolder.serviceComment.setText(hosts.get(groupPosition).getServiceComment(childPosition));
 
+
+        // Configure Service Comment
         if (!(hosts.get(groupPosition).getServiceComment(childPosition).equals("") && hosts.get(groupPosition).getServiceCommentAuthor(childPosition).equals("")))
         {
             String comment = hosts.get(groupPosition).getServiceComment(childPosition) + "\n/" + hosts.get(groupPosition).getServiceCommentAuthor(childPosition);
@@ -235,6 +272,34 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         } else {
             viewHolder.serviceComment.setVisibility(View.VISIBLE);
         }
+
+        // Set onClickListener for Acknowledgement Dialog button
+        viewHolder.acknowledgementDialog.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                if (prefs.getString("acknowledgement_author", "").equals("")) {
+                    Toast.makeText(context, "No Author set. Set Acknowledgement Author in the Settings", Toast.LENGTH_SHORT).show();
+                } else {
+
+                    AcknowledgementDialogFragment dialog = AcknowledgementDialogFragment.newInstance(hosts, groupPosition, childPosition);
+
+                    try {
+                        final AppCompatActivity activity = (AppCompatActivity) context;
+                        dialog.show(activity.getFragmentManager(), "acknowledgementDialog");
+                    } catch (ClassCastException e) {
+                        Log.d("Error", "Can't get the fragment manager with this");
+                    }
+                }
+            }
+        });
+
+        if (hosts.get(groupPosition).isServiceAcknowledged(childPosition)) {
+            viewHolder.acknowledgementDialog.setVisibility(View.GONE);
+        } else {
+            viewHolder.acknowledgementDialog.setVisibility(View.VISIBLE);
+        }
+
 
         viewHolder.serviceNotifications.setOnClickListener(new onNotificationUpdate(viewHolder.serviceNotifications, groupPosition, childPosition, context));
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm  dd/MM/yy", Locale.getDefault());
@@ -303,7 +368,6 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         }
     }
 
-
     private class GroupViewHolder{
         final TextView hostName;
         final TextView downHostName;
@@ -314,6 +378,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         final TextView unknownCount;
         final TextView unknownAckCount;
         final TextView hostComment;
+        final Button acknowledgementDialog;
 
 
         GroupViewHolder(View view){
@@ -326,6 +391,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
             unknownCount = view.findViewById(R.id.main_exp_list_unknown_count);
             unknownAckCount = view.findViewById(R.id.main_exp_list_unknown_ack_count);
             hostComment = view.findViewById(R.id.host_comment);
+            acknowledgementDialog = view.findViewById(R.id.host_acknowledgement_dialog);
         }
     }
 
@@ -338,6 +404,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         final TextView lastStateChange;
         final TextView serviceComment;
         final ImageView expandArrow;
+        final Button acknowledgementDialog;
 
 
         ChildViewHolder(View view){
@@ -349,6 +416,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
             lastStateChange = view.findViewById(R.id.expanded_list_item_last_state_changed);
             serviceComment = view.findViewById(R.id.service_comment);
             expandArrow = view.findViewById(R.id.child_expand_icon);
+            acknowledgementDialog = view.findViewById(R.id.service_acknowledgement_dialog);
         }
     }
 
@@ -428,8 +496,3 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
 }
-
-
-
-
-
