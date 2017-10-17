@@ -33,6 +33,10 @@ import java.util.Map;
 
 
 class mainExpandableListAdapter extends BaseExpandableListAdapter {
+    private final int OK = 0;
+    private final int WARNING = 1;
+    private final int CRITICAL = 2;
+    private final int UNKNOWN = 3;
     private final Context context;
     private List<HostList> hosts;
 
@@ -227,6 +231,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
             }
         });
 
+        // Show or hide hostComment
         if (isExpanded && hosts.get(groupPosition).isAcknowledged() && groupViewHolder.hostComment.getText() != "") {
             hosts.get(groupPosition).setExpanded(true);
             groupViewHolder.hostComment.setVisibility(View.VISIBLE);
@@ -294,7 +299,8 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
             }
         });
 
-        if (hosts.get(groupPosition).isServiceAcknowledged(childPosition)) {
+        // Show or hide acknowledgementDialog button
+        if (hosts.get(groupPosition).isServiceAcknowledged(childPosition) || hosts.get(groupPosition).getServiceState(childPosition) == OK) {
             viewHolder.acknowledgementDialog.setVisibility(View.GONE);
         } else {
             viewHolder.acknowledgementDialog.setVisibility(View.VISIBLE);
@@ -308,7 +314,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
 
         // Show the right color of bar to the left of the service name
         switch (hosts.get(groupPosition).getServiceState(childPosition)) {
-            case 1:
+            case WARNING:
                 if (hosts.get(groupPosition).isServiceAcknowledged(childPosition)) {
                     viewHolder.stateBar.setBackground(context.getDrawable(R.drawable.warning_bar_ack));
                 } else {
@@ -317,7 +323,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
                 viewHolder.stateBar.setVisibility(View.VISIBLE);
 
                 break;
-            case 2:
+            case CRITICAL:
                 if (hosts.get(groupPosition).isServiceAcknowledged(childPosition)) {
                     viewHolder.stateBar.setBackground(context.getDrawable(R.drawable.critical_bar_ack));
                 } else {
@@ -325,7 +331,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
                 }
                 viewHolder.stateBar.setVisibility(View.VISIBLE);
                 break;
-            case 3:
+            case UNKNOWN:
                 if (hosts.get(groupPosition).isServiceAcknowledged(childPosition))
                 {
                     viewHolder.stateBar.setBackground(context.getDrawable(R.drawable.unknown_bar_ack));
