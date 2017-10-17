@@ -33,10 +33,6 @@ import java.util.Map;
 
 
 class mainExpandableListAdapter extends BaseExpandableListAdapter {
-    private final int OK = 0;
-    private final int WARNING = 1;
-    private final int CRITICAL = 2;
-    private final int UNKNOWN = 3;
     private final Context context;
     private List<HostList> hosts;
 
@@ -233,10 +229,8 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
 
         // Show or hide hostComment
         if (isExpanded && hosts.get(groupPosition).isAcknowledged() && groupViewHolder.hostComment.getText() != "") {
-            hosts.get(groupPosition).setExpanded(true);
             groupViewHolder.hostComment.setVisibility(View.VISIBLE);
         } else {
-            hosts.get(groupPosition).setExpanded(false);
             groupViewHolder.hostComment.setVisibility(View.GONE);
         }
 
@@ -246,6 +240,10 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         ChildViewHolder viewHolder;
+        final int OK = 0;
+        final int WARNING = 1;
+        final int CRITICAL = 2;
+        final int UNKNOWN = 3;
 
         /*
         * If it's the first time the child is created, create the view and store the view

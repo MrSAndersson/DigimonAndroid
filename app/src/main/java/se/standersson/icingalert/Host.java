@@ -52,14 +52,6 @@ class HostList implements Serializable, Comparable<HostList> {
         return HostSingleton.getInstance().getHosts().get(hostPosition).isAcknowledged();
     }
 
-    boolean isExpanded() {
-        return HostSingleton.getInstance().getHosts().get(hostPosition).isExpanded();
-    }
-
-    void setExpanded(boolean expanded) {
-        HostSingleton.getInstance().getHosts().get(hostPosition).setExpanded(expanded);
-    }
-
     int getStateCount(int state) {
         return HostSingleton.getInstance().getHosts().get(hostPosition).getStateCount(state);
     }
@@ -137,7 +129,6 @@ class Host implements Serializable, Comparable<Host>{
     private final List<Integer> unknownList = new ArrayList<>();
     private final List<Integer> unknownAckList = new ArrayList<>();
     private boolean isDown = false;
-    private boolean isExpanded = false;
     private final boolean acknowledged;
     private final String comment;
     private final String commentAuthor;
@@ -203,14 +194,6 @@ class Host implements Serializable, Comparable<Host>{
 
     String getHostName(){
         return hostName;
-    }
-
-    void setExpanded(boolean expanded) {
-        this.isExpanded = expanded;
-    }
-
-    boolean isExpanded() {
-        return this.isExpanded;
     }
 
     boolean isServiceExpanded(int position) {
