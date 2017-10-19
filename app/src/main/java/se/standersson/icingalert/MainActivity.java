@@ -41,15 +41,15 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public boolean onQueryTextChange(String query) {
 
-        ((MainPagerAdapter) adapterViewPager).getFragment(0).update(Tools.filterTextMatch(Tools.filterProblems(HostSingleton.getInstance().getHosts()), query));
-        ((MainPagerAdapter) adapterViewPager).getFragment(1).update(Tools.filterTextMatch(Tools.fullHostList(HostSingleton.getInstance().getHosts()), query));
+        ((MainPagerAdapter) adapterViewPager).getFragment(0).update(Tools.filterTextMatch(Tools.filterProblems(HostSingleton.getInstance().getHosts()), query), true);
+        ((MainPagerAdapter) adapterViewPager).getFragment(1).update(Tools.filterTextMatch(Tools.fullHostList(HostSingleton.getInstance().getHosts()), query), true);
         return true;
     }
 
     @Override
     public boolean onQueryTextSubmit(String query){
-        ((MainPagerAdapter) adapterViewPager).getFragment(0).update(Tools.filterTextMatch(Tools.filterProblems(HostSingleton.getInstance().getHosts()), query));
-        ((MainPagerAdapter) adapterViewPager).getFragment(1).update(Tools.filterTextMatch(Tools.fullHostList(HostSingleton.getInstance().getHosts()), query));
+        ((MainPagerAdapter) adapterViewPager).getFragment(0).update(Tools.filterTextMatch(Tools.filterProblems(HostSingleton.getInstance().getHosts()), query), true);
+        ((MainPagerAdapter) adapterViewPager).getFragment(1).update(Tools.filterTextMatch(Tools.fullHostList(HostSingleton.getInstance().getHosts()), query), true);
         return true;
     }
 
@@ -181,8 +181,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             if (reply != null) {
                 try {
                     ServerInteraction.createExpandableListSummary(reply);
-                    ((MainPagerAdapter) adapterViewPager).getFragment(0).update(Tools.filterProblems(HostSingleton.getInstance().getHosts()));
-                    ((MainPagerAdapter) adapterViewPager).getFragment(1).update(Tools.fullHostList(HostSingleton.getInstance().getHosts()));
+                    ((MainPagerAdapter) adapterViewPager).getFragment(0).update(Tools.filterProblems(HostSingleton.getInstance().getHosts()), true);
+                    ((MainPagerAdapter) adapterViewPager).getFragment(1).update(Tools.fullHostList(HostSingleton.getInstance().getHosts()), true);
                 } catch (JSONException e) {
                     Toast.makeText(getApplicationContext(), "Unable to parse response", Toast.LENGTH_LONG).show();
                 }

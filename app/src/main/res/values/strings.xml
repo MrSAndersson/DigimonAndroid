@@ -24,6 +24,7 @@
     <string name="sun_cloud_desc">Clear Skies</string>
     <string name="acknowledgement_dialog_title">Add Acknowledgement for</string>
     <string name="acknowledgement_dialog_hint">Comment</string>
+    <string name="acknowledgement_dialog_notify">Send Notification</string>
     <string name="send_acknowledgement">Acknowledge</string>
 
 

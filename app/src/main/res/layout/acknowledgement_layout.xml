@@ -30,4 +30,11 @@
         android:hint="@string/acknowledgement_dialog_hint"
         />
 
+    <CheckBox
+        android:id="@+id/acknowledgement_notify"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="@string/acknowledgement_dialog_notify"/>
+
 </LinearLayout>

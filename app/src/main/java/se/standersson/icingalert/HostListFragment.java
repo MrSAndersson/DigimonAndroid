@@ -103,7 +103,7 @@ public class HostListFragment extends Fragment {
         }
     }
 
-    public void update(List<HostList> hosts){
+    public void update(List<HostList> hosts, boolean collapse){
         this.globalProblemHostCount = hosts.size();
         ExpandableListView listView = view.findViewById(R.id.main_expand_list);
         mainExpandableListAdapter adapter = (mainExpandableListAdapter) listView.getExpandableListAdapter();
@@ -128,9 +128,11 @@ public class HostListFragment extends Fragment {
             }
         }
 
-        //Collapse all groups
-        for (int x=0 ; x<hosts.size() ; x++) {
-            listView.collapseGroup(x);
+        if (collapse) {
+            //Collapse all groups
+            for (int x = 0; x < hosts.size(); x++) {
+                listView.collapseGroup(x);
+            }
         }
     }
 
