@@ -82,7 +82,7 @@ public class AcknowledgementDialogFragment extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         @SuppressLint("InflateParams") final View view = inflater.inflate(R.layout.acknowledgement_layout, null);
         assert hosts != null;
-        if (!getArguments().getBoolean("hostOnly", false)) {
+        if (isService) {
             String serviceString = hosts.get(groupPosition).getServiceName(childPosition);
             ((TextView) view.findViewById(R.id.acknowledgement_servicename)).setText(serviceString);
         }
@@ -116,12 +116,11 @@ public class AcknowledgementDialogFragment extends DialogFragment {
     }
 
     private void sendAcknowledgement(final String author, final String comment, final boolean isService, boolean notify) {
-
+        final MainActivity activity = (MainActivity) getActivity();
 
         if (Tools.isConnected(getActivity())) {
             String hostName =  hosts.get(groupPosition).getHostName();
             String serviceIdentifier = hostName + "!" + hosts.get(groupPosition).getServiceName(childPosition);
-
 
             VolleySingleton.getInstance(getActivity()).getRequestQueue();
             final String[] prefsString = Tools.getLogin(getActivity());
@@ -149,15 +148,15 @@ public class AcknowledgementDialogFragment extends DialogFragment {
                 public void onResponse(JSONObject response) {
 
                     try {
-                        String status = response.getJSONObject("results").getString("status");
+                        String status = response.getJSONArray("results").getJSONObject(0).getString("status");
                         if (status.contains("is UP")) {
-                            Toast.makeText(getActivity(), "The Host is UP! No Acknowledgement Set", Toast.LENGTH_LONG).show();
+                            Toast.makeText(activity, "The host is already up", Toast.LENGTH_LONG).show();
                         } else if (status.contains("is OK")) {
-                            Toast.makeText(getActivity(), "The Service is OK! No Acknowledgement Set", Toast.LENGTH_LONG).show();
+                            Toast.makeText(activity, "The Service has recovered", Toast.LENGTH_LONG).show();
                         } else {
-                            Toast.makeText(getActivity(), "Successfully sent Acknowledgement", Toast.LENGTH_LONG).show();
+                            Toast.makeText(activity, "Acknowledgement set", Toast.LENGTH_LONG).show();
                         }
-                        ((MainActivity)getActivity()).refresh();
+                        activity.refresh();
                     } catch (JSONException e) {
                         Log.d("MainList: ", "JSONException");
                     }
@@ -178,8 +177,6 @@ public class AcknowledgementDialogFragment extends DialogFragment {
                     return params;
                 }
             };
-
-
             VolleySingleton.getInstance(getActivity()).addToRequestQueue(notificationChangeRequest);
         } else {
             Toast.makeText(getActivity(), R.string.no_connectivity, Toast.LENGTH_SHORT).show();
