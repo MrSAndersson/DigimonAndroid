@@ -192,7 +192,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         // Set Host Comment
         if (!(hosts.get(groupPosition).getComment().equals("") && hosts.get(groupPosition).getCommentAuthor().equals("")))
         {
-            String comment = hosts.get(groupPosition).getComment() + "\n/" + hosts.get(groupPosition).getCommentAuthor();
+            String comment = "Comment:\n" + hosts.get(groupPosition).getComment() + "\n/" + hosts.get(groupPosition).getCommentAuthor();
             groupViewHolder.hostComment.setText(comment);
         }
 
@@ -266,7 +266,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         // Configure Service Comment
         if (!(hosts.get(groupPosition).getServiceComment(childPosition).equals("") && hosts.get(groupPosition).getServiceCommentAuthor(childPosition).equals("")))
         {
-            String comment = hosts.get(groupPosition).getServiceComment(childPosition) + "\n/" + hosts.get(groupPosition).getServiceCommentAuthor(childPosition);
+            String comment = "Comment:\n" + hosts.get(groupPosition).getServiceComment(childPosition) + "\n/" + hosts.get(groupPosition).getServiceCommentAuthor(childPosition);
             viewHolder.serviceComment.setText(comment);
         }
 
