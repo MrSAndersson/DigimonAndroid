@@ -4,8 +4,13 @@ package se.standersson.icingalert;
 import android.annotation.SuppressLint;
 import android.content.Context;
 
+import com.android.volley.Cache;
+import com.android.volley.Network;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.BasicNetwork;
+import com.android.volley.toolbox.DiskBasedCache;
+import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.Volley;
 
 
@@ -28,17 +33,14 @@ class VolleySingleton {
         return myVolley;
     }
 
-
-    public RequestQueue getRequestQueue() {
+    RequestQueue getRequestQueue() {
         if (myRequestQueue == null) {
             myRequestQueue = Volley.newRequestQueue(myContext.getApplicationContext());
         }
         return myRequestQueue;
     }
 
-
-
-    public <T> void addToRequestQueue(Request<T> req) {
+    <T> void addToRequestQueue(Request<T> req) {
         getRequestQueue().add(req);
     }
 }

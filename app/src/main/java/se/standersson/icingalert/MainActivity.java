@@ -2,31 +2,22 @@ package se.standersson.icingalert;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.ViewGroup;
-import android.widget.Toast;
-import com.google.firebase.messaging.FirebaseMessaging;
-import org.json.JSONException;
 
-import java.io.FileNotFoundException;
-import java.net.MalformedURLException;
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
+
+import com.google.firebase.messaging.FirebaseMessaging;
 
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
-    private FragmentPagerAdapter adapterViewPager;
+    private MainPagerAdapter mainPagerAdapter;
     private SearchView searchView = null;
 
     @Override
@@ -41,15 +32,15 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public boolean onQueryTextChange(String query) {
 
-        ((MainPagerAdapter) adapterViewPager).getFragment(0).update(Tools.filterTextMatch(Tools.filterProblems(HostSingleton.getInstance().getHosts()), query), true);
-        ((MainPagerAdapter) adapterViewPager).getFragment(1).update(Tools.filterTextMatch(Tools.fullHostList(HostSingleton.getInstance().getHosts()), query), true);
+        mainPagerAdapter.getFragment(0).update(Tools.filterTextMatch(Tools.filterProblems(HostSingleton.getInstance().getHosts()), query), true);
+        mainPagerAdapter.getFragment(1).update(Tools.filterTextMatch(Tools.fullHostList(HostSingleton.getInstance().getHosts()), query), true);
         return true;
     }
 
     @Override
     public boolean onQueryTextSubmit(String query){
-        ((MainPagerAdapter) adapterViewPager).getFragment(0).update(Tools.filterTextMatch(Tools.filterProblems(HostSingleton.getInstance().getHosts()), query), true);
-        ((MainPagerAdapter) adapterViewPager).getFragment(1).update(Tools.filterTextMatch(Tools.fullHostList(HostSingleton.getInstance().getHosts()), query), true);
+        mainPagerAdapter.getFragment(0).update(Tools.filterTextMatch(Tools.filterProblems(HostSingleton.getInstance().getHosts()), query), true);
+        mainPagerAdapter.getFragment(1).update(Tools.filterTextMatch(Tools.fullHostList(HostSingleton.getInstance().getHosts()), query), true);
         return true;
     }
 
@@ -73,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         setContentView(R.layout.activity_main);
 
 
-        Toolbar mainToolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        Toolbar mainToolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(mainToolbar);
 
         // Subscribe to notifications according to saved settings
@@ -85,13 +76,19 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             FirebaseMessaging.getInstance().subscribeToTopic("services");
         }
 
-        ViewPager mainViewPager = (ViewPager) findViewById(R.id.main_view_pager);
-        adapterViewPager = new MainPagerAdapter(getSupportFragmentManager());
-        mainViewPager.setAdapter(adapterViewPager);
+        ViewPager mainViewPager = findViewById(R.id.main_view_pager);
+        mainPagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
+        mainViewPager.setAdapter(mainPagerAdapter);
 
     }
 
+    public MainPagerAdapter getMainPagerAdapter() {
+        return mainPagerAdapter;
+    }
 
+    public SearchView getSearchView() {
+        return searchView;
+    }
 
     private void logOut () {
         // Clear credentials and go back to login page
@@ -105,148 +102,4 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         startActivity(intent);
         finish();
     }
-
-    public void refresh() {
-
-        // Reset the search bar
-        searchView.onActionViewCollapsed();
-        searchView.setQuery("", false);
-        searchView.clearFocus();
-
-        String[] prefsString = Tools.getLogin(this);
-
-        ((MainPagerAdapter) adapterViewPager).getFragment(1).setRefreshSpinner(true);
-        ((MainPagerAdapter) adapterViewPager).getFragment(0).setRefreshSpinner(true);
-
-        if (Tools.isConnected(getApplicationContext())){
-            new refreshFetch().execute(prefsString);
-        } else {
-            Toast.makeText(getApplicationContext(), R.string.no_connectivity, Toast.LENGTH_LONG).show();
-            ((MainPagerAdapter) adapterViewPager).getFragment(0).setRefreshSpinner(false);
-            ((MainPagerAdapter) adapterViewPager).getFragment(1).setRefreshSpinner(false);
-        }
-    }
-
-    private class refreshFetch extends AsyncTask<String[], Integer, String> {
-        /*
-         * AsyncTask that does fetches the data outside of the UI thread and then resets the
-         * expandableListView
-         */
-        @Override
-        protected String doInBackground(String[]... data) {
-            try {
-                return ServerInteraction.fetchData(data[0]);
-            }catch (SocketTimeoutException e) {
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        Toast.makeText(getApplicationContext(), "Connection Timed Out", Toast.LENGTH_LONG).show();
-                    }
-                });
-                return null;
-            } catch (MalformedURLException e) {
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        Toast.makeText(getApplicationContext(), "Invalid URL", Toast.LENGTH_LONG).show();
-                    }
-                });
-                return null;
-            } catch (UnknownHostException e) {
-                runOnUiThread(new Runnable() {
-                    public void run() {
-
-                        Toast.makeText(getApplicationContext(), "Resolve Failed", Toast.LENGTH_LONG).show();
-                    }
-                });
-                return null;
-            } catch (FileNotFoundException e) {
-                runOnUiThread(new Runnable() {
-                    public void run() {
-
-                        Toast.makeText(getApplicationContext(), "FileNotFoundException", Toast.LENGTH_LONG).show();
-                    }
-                });
-                return null;
-            } catch (Exception e) {
-                Log.e("NetworkException", e.toString());
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        Toast.makeText(getApplicationContext(), "Unable to Connect", Toast.LENGTH_LONG).show();
-                    }
-                });
-                return null;
-            }
-        }
-
-        protected void onPostExecute(String reply){
-            if (reply != null) {
-                try {
-                    ServerInteraction.createExpandableListSummary(reply);
-                    ((MainPagerAdapter) adapterViewPager).getFragment(0).update(Tools.filterProblems(HostSingleton.getInstance().getHosts()), true);
-                    ((MainPagerAdapter) adapterViewPager).getFragment(1).update(Tools.fullHostList(HostSingleton.getInstance().getHosts()), true);
-                } catch (JSONException e) {
-                    Toast.makeText(getApplicationContext(), "Unable to parse response", Toast.LENGTH_LONG).show();
-                }
-            }
-            ((MainPagerAdapter)adapterViewPager).getFragment(0).setRefreshSpinner(false);
-            ((MainPagerAdapter)adapterViewPager).getFragment(1).setRefreshSpinner(false);
-        }
-
-    }
-
-    private static class MainPagerAdapter extends FragmentPagerAdapter {
-        private static final int NUM_ITEMS = 2;
-        private final HostListFragment[] fragmentArray = new HostListFragment[2];
-
-        MainPagerAdapter(android.support.v4.app.FragmentManager fragmentManager) {
-            super(fragmentManager);
-        }
-
-        // Returns total number of pages
-        @Override
-        public int getCount() {
-            return NUM_ITEMS;
-        }
-
-        // Returns the fragment to display for that page
-        @Override
-        public android.support.v4.app.Fragment getItem(int position) {
-            switch (position) {
-                case 0: // Trouble List
-                    HostListFragment troubleFragment = HostListFragment.newInstance(position, Tools.filterProblems(HostSingleton.getInstance().getHosts()));
-                    fragmentArray[0] = troubleFragment;
-                    return troubleFragment;
-                case 1: // All-things-list
-                    HostListFragment allFragment = HostListFragment.newInstance(position, Tools.fullHostList(HostSingleton.getInstance().getHosts()));
-                    fragmentArray[1] = allFragment;
-                    return allFragment;
-                default:
-                    return null;
-            }
-        }
-
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            HostListFragment fragment = (HostListFragment) super.instantiateItem(container, position);
-            fragmentArray[position] = fragment;
-            return fragment;
-        }
-
-        // Returns the page title for the top indicator
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return "Trouble";
-                case 1:
-                    return "All";
-                default:
-                    return "Wrong";
-            }
-        }
-
-        private HostListFragment getFragment(int position){
-            return fragmentArray[position];
-        }
-    }
-
 }

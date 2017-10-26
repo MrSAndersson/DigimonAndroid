@@ -55,7 +55,7 @@ public class HostListFragment extends Fragment {
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                ((MainActivity)parentActivity).refresh();
+                new MainDataFetch((MainActivity)parentActivity).refresh();
             }
         });
 

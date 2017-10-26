@@ -156,7 +156,7 @@ public class AcknowledgementDialogFragment extends DialogFragment {
                         } else {
                             Toast.makeText(activity, "Acknowledgement set", Toast.LENGTH_LONG).show();
                         }
-                        activity.refresh();
+                        new MainDataFetch(activity).refresh();
                     } catch (JSONException e) {
                         Log.d("MainList: ", "JSONException");
                     }

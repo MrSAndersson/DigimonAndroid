@@ -68,9 +68,9 @@ public class LoginActivity extends AppCompatActivity {
     public void logInButton(@SuppressWarnings("UnusedParameters") View view){
 
         // Get the settings from the text boxes
-        EditText editTextServer = (EditText) findViewById(R.id.login_server);
-        EditText editTextUsername = (EditText) findViewById(R.id.login_username);
-        EditText editTextPassword = (EditText) findViewById(R.id.login_password);
+        EditText editTextServer = findViewById(R.id.login_server);
+        EditText editTextUsername = findViewById(R.id.login_username);
+        EditText editTextPassword = findViewById(R.id.login_password);
 
         prefsString[0] = editTextServer.getText().toString();
         prefsString[1] = editTextUsername.getText().toString();
@@ -194,7 +194,7 @@ public class LoginActivity extends AppCompatActivity {
             prefStorage.edit().putString("password", prefsString[2]).apply();
 
             //Parse reply and start MainActivity
-            ServerInteraction.createExpandableListSummary(reply);
+            Tools.createExpandableListSummary(reply);
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
 
