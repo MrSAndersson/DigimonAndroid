@@ -77,7 +77,7 @@ class HostList implements Serializable, Comparable<HostList> {
     }
 
     String getServiceCommentAuthor(int servicePosition) {
-        return HostSingleton.getInstance().getHosts().get(hostPosition).getServiceCommentAuthor(servicePosition);
+        return HostSingleton.getInstance().getHosts().get(hostPosition).getServiceCommentAuthor(service.get(servicePosition));
     }
 
     long getServiceLastStateChange(int servicePosition) {

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -95,6 +96,7 @@ final class Tools {
                             && data.getJSONArray("comments").getJSONObject(y).getJSONObject("attrs").getString("service_name").equals(serviceName)) {
                         serviceComment = data.getJSONArray("comments").getJSONObject(y).getJSONObject("attrs").getString("text");
                         serviceCommentAuthor = data.getJSONArray("comments").getJSONObject(y).getJSONObject("attrs").getString("author");
+                        Log.d("Hej", "Lol");
                     }
                 }
             } else {
