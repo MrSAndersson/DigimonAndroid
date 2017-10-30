@@ -18,11 +18,10 @@ import java.util.List;
 final class Tools {
 
 
-    static void createExpandableListSummary(String reply) throws JSONException {
+    static void createExpandableListSummary(JSONObject data) throws JSONException {
         /*
          * Prepare status info into the hosts list
          */
-        JSONObject data = new JSONObject(reply);
         List<Host> hosts = new ArrayList<>();
         HashMap<String, Integer> hostPositions = new HashMap<>();
 

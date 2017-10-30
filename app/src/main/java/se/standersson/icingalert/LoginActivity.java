@@ -265,25 +265,19 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void startMainActivity(String reply){
-        try{
-            /*
-            Store the login details
-            */
-            SharedPreferences prefStorage = getSharedPreferences("Login", 0);
-            prefStorage.edit().putString("serverString", prefsString[0]).apply();
-            prefStorage.edit().putString("username", prefsString[1]).apply();
-            prefStorage.edit().putString("password", prefsString[2]).apply();
+        /*
+        Store the login details
+        */
+        SharedPreferences prefStorage = getSharedPreferences("Login", 0);
+        prefStorage.edit().putString("serverString", prefsString[0]).apply();
+        prefStorage.edit().putString("username", prefsString[1]).apply();
+        prefStorage.edit().putString("password", prefsString[2]).apply();
 
-            //Parse reply and start MainActivity
-            Tools.createExpandableListSummary(reply);
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+        //Start MainActivity
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
 
-            finish();
-        } catch (JSONException e){
-            Toast.makeText(this, "Unable to parse reply", Toast.LENGTH_LONG).show();
-        }
-
+        finish();
     }
 
     private void showLoginUI() {

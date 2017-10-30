@@ -11,12 +11,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-
+import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 
 
-public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
+public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, MainDataReceived{
     private MainPagerAdapter mainPagerAdapter;
     private SearchView searchView = null;
 
@@ -75,11 +75,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         if (notificationPrefs.getBoolean("service_push", false)){
             FirebaseMessaging.getInstance().subscribeToTopic("services");
         }
-
-        ViewPager mainViewPager = findViewById(R.id.main_view_pager);
-        mainPagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
-        mainViewPager.setAdapter(mainPagerAdapter);
-
+        new MainDataFetch(this).refresh(this);
     }
 
     public MainPagerAdapter getMainPagerAdapter() {
@@ -106,5 +102,17 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    public void mainDataReceived(boolean success) {
+        if (success) {
+            ViewPager mainViewPager = findViewById(R.id.main_view_pager);
+            mainPagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
+            mainViewPager.setAdapter(mainPagerAdapter);
+        } else {
+            Toast.makeText(getApplicationContext(), "Failed to get Data", Toast.LENGTH_LONG).show();
+            logOut(false);
+        }
     }
 }

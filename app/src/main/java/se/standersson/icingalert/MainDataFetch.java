@@ -52,9 +52,11 @@ class MainDataFetch {
         this.myMainDataReceived = refreshCallback;
         // Reset the search bar
         SearchView searchView = mainActivity.getSearchView();
-        searchView.onActionViewCollapsed();
-        searchView.setQuery("", false);
-        searchView.clearFocus();
+        if (searchView != null) {
+            searchView.onActionViewCollapsed();
+            searchView.setQuery("", false);
+            searchView.clearFocus();
+        }
 
 
         if (Tools.isConnected(mainActivity)){
@@ -100,16 +102,17 @@ class MainDataFetch {
                             && completeData.has("services")
                             && completeData.has("comments")) {
                         try {
-                            Tools.createExpandableListSummary(completeData.toString());
+                            Tools.createExpandableListSummary(completeData);
                             myMainDataReceived.mainDataReceived(true);
                         } catch (JSONException e) {
                             Toast.makeText(mainActivity, "Unable to parse response", Toast.LENGTH_LONG).show();
+                            myMainDataReceived.mainDataReceived(false);
                         }
                     }
                 } catch (JSONException e) {
                     Toast.makeText(mainActivity, "Failed to parse JSON", Toast.LENGTH_LONG).show();
+                    myMainDataReceived.mainDataReceived(false);
                 }
-                myMainDataReceived.mainDataReceived(false);
             }
         }, new Response.ErrorListener() {
 
