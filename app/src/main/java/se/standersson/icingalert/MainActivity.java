@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.logout:
-                logOut();
+                logOut(true);
                 return true;
             case R.id.preferences:
                 Intent prefIntent = new Intent(this, Preferences.class);
@@ -90,14 +90,19 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         return searchView;
     }
 
-    private void logOut () {
-        // Clear credentials and go back to login page
-        SharedPreferences prefStorage = getSharedPreferences("Login", 0);
-        prefStorage.edit().putString("serverString", "").apply();
-        prefStorage.edit().putString("username", "").apply();
-        prefStorage.edit().putString("password", "").apply();
-        FirebaseMessaging.getInstance().unsubscribeFromTopic("hosts");
-        FirebaseMessaging.getInstance().unsubscribeFromTopic("services");
+    private void logOut (boolean clearCredentials) {
+
+        if (clearCredentials) {
+            SharedPreferences prefStorage = getSharedPreferences("Login", 0);
+            prefStorage.edit().putString("serverString", "").apply();
+            prefStorage.edit().putString("username", "").apply();
+            prefStorage.edit().putString("password", "").apply();
+            FirebaseMessaging.getInstance().unsubscribeFromTopic("hosts");
+            FirebaseMessaging.getInstance().unsubscribeFromTopic("services");
+        }
+
+        // Go back to login page
+
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
         finish();

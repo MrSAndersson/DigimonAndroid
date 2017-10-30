@@ -10,16 +10,32 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -118,12 +134,77 @@ public class LoginActivity extends AppCompatActivity {
             case MY_PERMISSIONS_REQUEST_INTERNET: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    new sendRequest().execute(prefsString);
+                    sendRequest();
                 } else {
                     Toast.makeText(this, "No Internet Permissions given", Toast.LENGTH_LONG).show();
                     showLoginUI();
                 }
             }
+        }
+    }
+
+    private void sendRequest(){
+        if (Tools.isConnected(this)) {
+
+            VolleySingleton.getInstance(this).getRequestQueue();
+
+            final String requestString = prefsString[0] + "/v1/objects/services?service=";
+
+            JsonObjectRequest loginTestRequest = new JsonObjectRequest(Request.Method.GET, requestString, null, new Response.Listener<JSONObject>() {
+
+                @Override
+                public void onResponse(JSONObject response) {
+                     /*
+            Store the login details
+            */
+                    SharedPreferences prefStorage = getSharedPreferences("Login", 0);
+                    prefStorage.edit().putString("serverString", prefsString[0]).apply();
+                    prefStorage.edit().putString("username", prefsString[1]).apply();
+                    prefStorage.edit().putString("password", prefsString[2]).apply();
+
+                    Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                    startActivity(intent);
+
+                    finish();
+                }
+            }, new Response.ErrorListener() {
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                    // Show login UI
+                    progressBar.setVisibility(View.GONE);
+                    showLoginUI();
+
+                    // Handle various kinds of Network errors
+                    if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+                        Toast.makeText(getBaseContext(),"Connection Timeout", Toast.LENGTH_LONG).show();
+                    } else if (error instanceof AuthFailureError) {
+                        Toast.makeText(getBaseContext(),"Auth Error", Toast.LENGTH_LONG).show();
+                    } else if (error instanceof ServerError) {
+                        Toast.makeText(getBaseContext(),"Server Error", Toast.LENGTH_LONG).show();
+                    } else if (error instanceof NetworkError) {
+                        Toast.makeText(getBaseContext(),"Network Error", Toast.LENGTH_LONG).show();
+                    } else if (error instanceof ParseError) {
+                        Toast.makeText(getBaseContext(),"Could not parse response", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getBaseContext(),"Could not get data", Toast.LENGTH_LONG).show();
+                    }
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<>();
+                    String credentials = String.format("Basic %s", Base64.encodeToString(String.format("%s:%s", prefsString[1], prefsString[2]).getBytes(), Base64.DEFAULT));
+                    params.put("Authorization", credentials);
+                    params.put("Accept", "application/json");
+                    return params;
+                }
+            };
+
+            VolleySingleton.getInstance(this).addToRequestQueue(loginTestRequest);
+        } else {
+            Toast.makeText(this, R.string.no_connectivity, Toast.LENGTH_SHORT).show();
         }
     }
 

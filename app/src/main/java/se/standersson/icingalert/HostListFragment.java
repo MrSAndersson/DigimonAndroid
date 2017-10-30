@@ -1,7 +1,6 @@
 package se.standersson.icingalert;
 
 
-import android.content.Context;
 import android.graphics.drawable.TransitionDrawable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -15,10 +14,11 @@ import android.widget.ExpandableListView;
 import java.io.Serializable;
 import java.util.List;
 
-public class HostListFragment extends Fragment {
+public class HostListFragment extends Fragment implements MainDataReceived{
+    private HostListFragment thisClass = this;
     private SwipeRefreshLayout swipeContainer;
     private View view;
-    private Context parentActivity;
+    private MainPagerAdapter mainPagerAdapter;
     private List<HostList> hosts;
     private boolean backgroundIsBlue = false;
     private int fragmentPosition;
@@ -36,7 +36,6 @@ public class HostListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        parentActivity = getActivity();
         // noinspection unchecked
         this.hosts = (List<HostList>) getArguments().getSerializable("hosts");
         this.fragmentPosition = getArguments().getInt("position");
@@ -48,6 +47,8 @@ public class HostListFragment extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_problem, container, false);
 
+        mainPagerAdapter = ((MainActivity)getActivity()).getMainPagerAdapter();
+
         /*
          * Set up a callback for refresh PullDown
          */
@@ -55,7 +56,10 @@ public class HostListFragment extends Fragment {
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                new MainDataFetch((MainActivity)parentActivity).refresh();
+                // Show the update spinners on the main ExpandableListViews
+                mainPagerAdapter.getFragment(1).setRefreshSpinner(true);
+                mainPagerAdapter.getFragment(0).setRefreshSpinner(true);
+                new MainDataFetch((MainActivity)getActivity()).refresh(thisClass);
             }
         });
 
@@ -136,4 +140,15 @@ public class HostListFragment extends Fragment {
         }
     }
 
+    @Override
+    public void mainDataReceived(boolean success) {
+        // Remove the update spinners from the main ExpandableListViews
+        mainPagerAdapter.getFragment(0).setRefreshSpinner(false);
+        mainPagerAdapter.getFragment(1).setRefreshSpinner(false);
+
+        if (success) {
+            mainPagerAdapter.getFragment(0).update(Tools.filterProblems(HostSingleton.getInstance().getHosts()), true);
+            mainPagerAdapter.getFragment(1).update(Tools.fullHostList(HostSingleton.getInstance().getHosts()), true);
+        }
+    }
 }

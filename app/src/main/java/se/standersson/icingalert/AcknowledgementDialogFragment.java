@@ -35,10 +35,11 @@ import java.util.Map;
  * Holds the Acknowledgement Dialog
  */
 
-public class AcknowledgementDialogFragment extends DialogFragment {
+public class AcknowledgementDialogFragment extends DialogFragment implements MainDataReceived{
     private int groupPosition;
     private int childPosition;
     private List <HostList> hosts;
+    private MainPagerAdapter mainPagerAdapter;
 
     static AcknowledgementDialogFragment newInstance(List<HostList> hosts, int groupPosition, int childPosition) {
         AcknowledgementDialogFragment fragment = new AcknowledgementDialogFragment();
@@ -65,7 +66,13 @@ public class AcknowledgementDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         super.onCreateDialog(savedInstanceState);
         final boolean isService = getArguments().getBoolean("isService", false);
+
+        //Set mainPagerAdapter (Needed to update fragments)
+        mainPagerAdapter = ((MainActivity) getActivity()).getMainPagerAdapter();
+
         groupPosition = getArguments().getInt("groupPosition");
+
+        // If Acknowledging a service, set a childPosition
         if (isService) {
             childPosition = getArguments().getInt("childPosition");
         } else {
@@ -117,6 +124,7 @@ public class AcknowledgementDialogFragment extends DialogFragment {
 
     private void sendAcknowledgement(final String author, final String comment, final boolean isService, boolean notify) {
         final MainActivity activity = (MainActivity) getActivity();
+        final AcknowledgementDialogFragment thisClass = this;
 
         if (Tools.isConnected(getActivity())) {
             String hostName =  hosts.get(groupPosition).getHostName();
@@ -156,7 +164,14 @@ public class AcknowledgementDialogFragment extends DialogFragment {
                         } else {
                             Toast.makeText(activity, "Acknowledgement set", Toast.LENGTH_LONG).show();
                         }
-                        new MainDataFetch(activity).refresh();
+
+                        // Show the update spinners on the main ExpandableListViews
+                        mainPagerAdapter.getFragment(1).setRefreshSpinner(true);
+                        mainPagerAdapter.getFragment(0).setRefreshSpinner(true);
+
+                        // Update Data form the server
+                        new MainDataFetch(activity).refresh(thisClass);
+
                     } catch (JSONException e) {
                         Log.d("MainList: ", "JSONException");
                     }
@@ -180,6 +195,19 @@ public class AcknowledgementDialogFragment extends DialogFragment {
             VolleySingleton.getInstance(getActivity()).addToRequestQueue(notificationChangeRequest);
         } else {
             Toast.makeText(getActivity(), R.string.no_connectivity, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void mainDataReceived(boolean success) {
+
+        // Remove the update spinners from the main ExpandableListViews
+        mainPagerAdapter.getFragment(0).setRefreshSpinner(false);
+        mainPagerAdapter.getFragment(1).setRefreshSpinner(false);
+
+        if (success) {
+            mainPagerAdapter.getFragment(0).update(Tools.filterProblems(HostSingleton.getInstance().getHosts()), true);
+            mainPagerAdapter.getFragment(1).update(Tools.fullHostList(HostSingleton.getInstance().getHosts()), true);
         }
     }
 }

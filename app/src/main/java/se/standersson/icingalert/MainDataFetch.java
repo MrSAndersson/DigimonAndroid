@@ -21,18 +21,22 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+
+interface MainDataReceived {
+    void mainDataReceived(boolean success);
+}
+
 class MainDataFetch {
     private MainActivity mainActivity;
     private JSONObject completeData;
     private final String credentials;
     private String serverString;
-    private MainPagerAdapter mainPagerAdapter;
+    private MainDataReceived myMainDataReceived;
 
 
     MainDataFetch(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
         this.completeData = new JSONObject();
-        this.mainPagerAdapter = mainActivity.getMainPagerAdapter();
 
         final String[] prefs = Tools.getLogin(mainActivity);
 
@@ -44,17 +48,13 @@ class MainDataFetch {
         credentials = String.format("Basic %s", Base64.encodeToString(String.format("%s:%s", username, password).getBytes(), Base64.DEFAULT));
     }
 
-    void refresh() {
+    void refresh(MainDataReceived refreshCallback) {
+        this.myMainDataReceived = refreshCallback;
         // Reset the search bar
         SearchView searchView = mainActivity.getSearchView();
         searchView.onActionViewCollapsed();
         searchView.setQuery("", false);
         searchView.clearFocus();
-
-
-        // Show the update spinners on the main ExpandableListViews
-        mainPagerAdapter.getFragment(1).setRefreshSpinner(true);
-        mainPagerAdapter.getFragment(0).setRefreshSpinner(true);
 
 
         if (Tools.isConnected(mainActivity)){
@@ -73,17 +73,15 @@ class MainDataFetch {
             sendRequest(commentsURL, "comments");
 
         } else {
-            Toast.makeText(mainActivity, R.string.no_connectivity, Toast.LENGTH_LONG).show();
 
-            // Remove the update spinners from the main ExpandableListViews
-            mainPagerAdapter.getFragment(0).setRefreshSpinner(false);
-            mainPagerAdapter.getFragment(1).setRefreshSpinner(false);
+            Toast.makeText(mainActivity, R.string.no_connectivity, Toast.LENGTH_LONG).show();
+            refreshCallback.mainDataReceived(false);
         }
     }
 
     private void sendRequest(final String url, final String jsonPart) {
 
-        JsonObjectRequest notificationChangeRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest mainDataRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
@@ -103,30 +101,21 @@ class MainDataFetch {
                             && completeData.has("comments")) {
                         try {
                             Tools.createExpandableListSummary(completeData.toString());
-                            mainPagerAdapter.getFragment(0).update(Tools.filterProblems(HostSingleton.getInstance().getHosts()), true);
-                            mainPagerAdapter.getFragment(1).update(Tools.fullHostList(HostSingleton.getInstance().getHosts()), true);
+                            myMainDataReceived.mainDataReceived(true);
                         } catch (JSONException e) {
                             Toast.makeText(mainActivity, "Unable to parse response", Toast.LENGTH_LONG).show();
                         }
-                        // Remove the update spinners from the main ExpandableListViews
-                        mainPagerAdapter.getFragment(0).setRefreshSpinner(false);
-                        mainPagerAdapter.getFragment(1).setRefreshSpinner(false);
                     }
                 } catch (JSONException e) {
-                    // Remove the update spinners from the main ExpandableListViews
-                    mainPagerAdapter.getFragment(0).setRefreshSpinner(false);
-                    mainPagerAdapter.getFragment(1).setRefreshSpinner(false);
                     Toast.makeText(mainActivity, "Failed to parse JSON", Toast.LENGTH_LONG).show();
                 }
+                myMainDataReceived.mainDataReceived(false);
             }
         }, new Response.ErrorListener() {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-
-                // Remove the update spinners from the main ExpandableListViews
-                mainPagerAdapter.getFragment(0).setRefreshSpinner(false);
-                mainPagerAdapter.getFragment(1).setRefreshSpinner(false);
+                myMainDataReceived.mainDataReceived(false);
 
                 // Handle various kinds of Network errors
                 if (error instanceof TimeoutError || error instanceof NoConnectionError) {
@@ -156,7 +145,7 @@ class MainDataFetch {
         };
 
         // Add the constructed request to the queue
-        VolleySingleton.getInstance(mainActivity).addToRequestQueue(notificationChangeRequest);
+        VolleySingleton.getInstance(mainActivity).addToRequestQueue(mainDataRequest);
     }
 
 }
