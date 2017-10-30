@@ -206,8 +206,8 @@ public class AcknowledgementDialogFragment extends DialogFragment implements Mai
         mainPagerAdapter.getFragment(1).setRefreshSpinner(false);
 
         if (success) {
-            mainPagerAdapter.getFragment(0).update(Tools.filterProblems(HostSingleton.getInstance().getHosts()), true);
-            mainPagerAdapter.getFragment(1).update(Tools.fullHostList(HostSingleton.getInstance().getHosts()), true);
+            mainPagerAdapter.getFragment(0).update(Tools.filterProblems(HostSingleton.getInstance().getHosts()));
+            mainPagerAdapter.getFragment(1).update(Tools.fullHostList(HostSingleton.getInstance().getHosts()));
         }
     }
 }

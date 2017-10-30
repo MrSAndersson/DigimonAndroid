@@ -15,7 +15,7 @@ import java.io.Serializable;
 import java.util.List;
 
 public class HostListFragment extends Fragment implements MainDataReceived{
-    private HostListFragment thisClass = this;
+    private final HostListFragment thisClass = this;
     private SwipeRefreshLayout swipeContainer;
     private View view;
     private MainPagerAdapter mainPagerAdapter;
@@ -107,7 +107,7 @@ public class HostListFragment extends Fragment implements MainDataReceived{
         }
     }
 
-    public void update(List<HostList> hosts, boolean collapse){
+    public void update(List<HostList> hosts){
         this.globalProblemHostCount = hosts.size();
         ExpandableListView listView = view.findViewById(R.id.main_expand_list);
         mainExpandableListAdapter adapter = (mainExpandableListAdapter) listView.getExpandableListAdapter();
@@ -132,11 +132,9 @@ public class HostListFragment extends Fragment implements MainDataReceived{
             }
         }
 
-        if (collapse) {
-            //Collapse all groups
-            for (int x = 0; x < hosts.size(); x++) {
-                listView.collapseGroup(x);
-            }
+        //Collapse all groups
+        for (int x = 0; x < hosts.size(); x++) {
+            listView.collapseGroup(x);
         }
     }
 
@@ -147,8 +145,8 @@ public class HostListFragment extends Fragment implements MainDataReceived{
         mainPagerAdapter.getFragment(1).setRefreshSpinner(false);
 
         if (success) {
-            mainPagerAdapter.getFragment(0).update(Tools.filterProblems(HostSingleton.getInstance().getHosts()), true);
-            mainPagerAdapter.getFragment(1).update(Tools.fullHostList(HostSingleton.getInstance().getHosts()), true);
+            mainPagerAdapter.getFragment(0).update(Tools.filterProblems(HostSingleton.getInstance().getHosts()));
+            mainPagerAdapter.getFragment(1).update(Tools.fullHostList(HostSingleton.getInstance().getHosts()));
         }
     }
 }

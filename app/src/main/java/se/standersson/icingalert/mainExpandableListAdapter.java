@@ -84,6 +84,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
 
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            assert inflater != null;
             convertView = inflater.inflate(R.layout.main_expanded_list_group, parent, false);
             groupViewHolder = new GroupViewHolder(convertView);
             convertView.setTag(groupViewHolder);
@@ -251,6 +252,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         */
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            assert inflater != null;
             convertView = inflater.inflate(R.layout.main_expanded_list_item, parent, false);
             viewHolder = new ChildViewHolder(convertView);
             convertView.setTag(viewHolder);

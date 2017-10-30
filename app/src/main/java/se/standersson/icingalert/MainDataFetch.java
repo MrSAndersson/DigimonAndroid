@@ -27,10 +27,10 @@ interface MainDataReceived {
 }
 
 class MainDataFetch {
-    private MainActivity mainActivity;
-    private JSONObject completeData;
+    private final MainActivity mainActivity;
+    private final JSONObject completeData;
     private final String credentials;
-    private String serverString;
+    private final String serverString;
     private MainDataReceived myMainDataReceived;
 
 

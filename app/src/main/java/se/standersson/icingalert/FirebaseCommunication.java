@@ -19,7 +19,7 @@ public class FirebaseCommunication extends FirebaseMessagingService {
 
 
         //Set the details of the notification to be shown to the user
-        NotificationCompat.Builder notification = new NotificationCompat.Builder(this)
+        NotificationCompat.Builder notification = new NotificationCompat.Builder(this, "IcingAlert")
                         .setSmallIcon(R.mipmap.ic_launcher)
                         .setContentTitle(remoteMessage.getNotification().getTitle())
                         .setContentText(remoteMessage.getNotification().getBody())
@@ -33,6 +33,7 @@ public class FirebaseCommunication extends FirebaseMessagingService {
     // Gets an instance of the NotificationManager service
         NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     // Builds the notification and issues it.
+        assert mNotifyMgr != null;
         mNotifyMgr.notify(mNotificationId, notification.build());
     }
 }

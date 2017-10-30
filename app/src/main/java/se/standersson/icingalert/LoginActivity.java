@@ -4,14 +4,12 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -27,13 +25,9 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -114,7 +108,7 @@ public class LoginActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, MY_PERMISSIONS_REQUEST_INTERNET);
         } else {
-            new sendRequest().execute(prefsString);
+            sendRequest();
         }
     }
 
@@ -148,15 +142,15 @@ public class LoginActivity extends AppCompatActivity {
 
             VolleySingleton.getInstance(this).getRequestQueue();
 
-            final String requestString = prefsString[0] + "/v1/objects/services?service=";
+            final String requestString = prefsString[0] + "/v1";
 
             JsonObjectRequest loginTestRequest = new JsonObjectRequest(Request.Method.GET, requestString, null, new Response.Listener<JSONObject>() {
 
                 @Override
                 public void onResponse(JSONObject response) {
                      /*
-            Store the login details
-            */
+                        Store the login details
+                     */
                     SharedPreferences prefStorage = getSharedPreferences("Login", 0);
                     prefStorage.edit().putString("serverString", prefsString[0]).apply();
                     prefStorage.edit().putString("username", prefsString[1]).apply();
@@ -177,16 +171,20 @@ public class LoginActivity extends AppCompatActivity {
                     showLoginUI();
 
                     // Handle various kinds of Network errors
-                    if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+                    if (error instanceof TimeoutError) {
                         Toast.makeText(getBaseContext(),"Connection Timeout", Toast.LENGTH_LONG).show();
+                    } else if (error instanceof NoConnectionError) {
+                        Toast.makeText(getBaseContext(),"Connection Error", Toast.LENGTH_LONG).show();
                     } else if (error instanceof AuthFailureError) {
-                        Toast.makeText(getBaseContext(),"Auth Error", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getBaseContext(),"Wrong Credentials", Toast.LENGTH_LONG).show();
                     } else if (error instanceof ServerError) {
-                        Toast.makeText(getBaseContext(),"Server Error", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getBaseContext(),"Server Error, check Server String", Toast.LENGTH_LONG).show();
                     } else if (error instanceof NetworkError) {
                         Toast.makeText(getBaseContext(),"Network Error", Toast.LENGTH_LONG).show();
                     } else if (error instanceof ParseError) {
                         Toast.makeText(getBaseContext(),"Could not parse response", Toast.LENGTH_LONG).show();
+                    } else if (error.getCause().getCause() instanceof MalformedURLException) {
+                        Toast.makeText(getBaseContext(), "Malformed URL", Toast.LENGTH_LONG).show();
                     } else {
                         Toast.makeText(getBaseContext(),"Could not get data", Toast.LENGTH_LONG).show();
                     }
@@ -206,78 +204,6 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, R.string.no_connectivity, Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private class sendRequest extends AsyncTask<String[], Integer, String> {
-        @Override
-        protected String doInBackground(String[]... data) {
-            try{
-                return ServerInteraction.fetchData(data[0]);
-            }catch (SocketTimeoutException e) {
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        Toast.makeText(getApplicationContext(), "Connection Timed Out", Toast.LENGTH_LONG).show();
-                    }
-                });
-                return null;
-            } catch (MalformedURLException e) {
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        Toast.makeText(getApplicationContext(), "Invalid URL", Toast.LENGTH_LONG).show();
-                    }
-                });
-                return null;
-            } catch (UnknownHostException e) {
-                runOnUiThread(new Runnable() {
-                    public void run() {
-
-                        Toast.makeText(getApplicationContext(), "Resolve Failed", Toast.LENGTH_LONG).show();
-                    }
-                });
-                return null;
-            } catch (FileNotFoundException e) {
-                runOnUiThread(new Runnable() {
-                    public void run() {
-
-                        Toast.makeText(getApplicationContext(), "FileNotFoundException", Toast.LENGTH_LONG).show();
-                    }
-                });
-                return null;
-            } catch (Exception e) {
-                Log.e("NetworkException", e.toString());
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        Toast.makeText(getApplicationContext(), "Unable to Connect", Toast.LENGTH_LONG).show();
-                    }
-                });
-                return null;
-            }
-        }
-
-        protected void onPostExecute(String reply){
-            if (reply != null) {
-                startMainActivity(reply);
-            } else {
-                progressBar.setVisibility(View.GONE);
-                showLoginUI();
-            }
-        }
-    }
-
-    private void startMainActivity(String reply){
-        /*
-        Store the login details
-        */
-        SharedPreferences prefStorage = getSharedPreferences("Login", 0);
-        prefStorage.edit().putString("serverString", prefsString[0]).apply();
-        prefStorage.edit().putString("username", prefsString[1]).apply();
-        prefStorage.edit().putString("password", prefsString[2]).apply();
-
-        //Start MainActivity
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-
-        finish();
     }
 
     private void showLoginUI() {
