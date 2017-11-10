@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -64,6 +65,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         setContentView(R.layout.activity_main);
 
 
+        // Show progress bar until we've actually gotten the data.
+        findViewById(R.id.main_progressbar).setVisibility(View.VISIBLE);
+        findViewById(R.id.main_view_pager).setVisibility(View.GONE);
+
+
         Toolbar mainToolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(mainToolbar);
 
@@ -110,6 +116,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             ViewPager mainViewPager = findViewById(R.id.main_view_pager);
             mainPagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
             mainViewPager.setAdapter(mainPagerAdapter);
+
+            // Hide progress bar and show main lists
+            findViewById(R.id.main_progressbar).setVisibility(View.GONE);
+            findViewById(R.id.main_view_pager).setVisibility(View.VISIBLE);
         } else {
             Toast.makeText(getApplicationContext(), "Failed to get Data", Toast.LENGTH_LONG).show();
             logOut(false);
