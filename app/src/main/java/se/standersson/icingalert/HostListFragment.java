@@ -24,10 +24,11 @@ public class HostListFragment extends Fragment implements MainDataReceived{
     private int fragmentPosition;
     private int globalProblemHostCount;
 
-    static HostListFragment newInstance(int position, List<HostList> hosts) {
+    static HostListFragment newInstance(int position, List<HostList> hosts, int globalProblemHostCount) {
         HostListFragment fragment = new HostListFragment();
         Bundle args = new Bundle();
         args.putInt("position", position);
+        args.putInt("globalProblemHostCount", globalProblemHostCount);
         args.putSerializable("hosts", (Serializable) hosts);
         fragment.setArguments(args);
         return fragment;
@@ -39,7 +40,7 @@ public class HostListFragment extends Fragment implements MainDataReceived{
         // noinspection unchecked
         this.hosts = (List<HostList>) getArguments().getSerializable("hosts");
         this.fragmentPosition = getArguments().getInt("position");
-        this.globalProblemHostCount = Tools.filterProblems(HostSingleton.getInstance().getHosts()).size();
+        this.globalProblemHostCount = getArguments().getInt("globalProblemHostCount");
     }
 
     @Override

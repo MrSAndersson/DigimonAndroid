@@ -20,13 +20,16 @@ class MainPagerAdapter extends FragmentPagerAdapter {
     // Returns the fragment to display for that page
     @Override
     public android.support.v4.app.Fragment getItem(int position) {
+        // Get the number of hosts with any kind of problem
+        int globalProblemHostCount = Tools.filterProblems(HostSingleton.getInstance().getHosts()).size();
+        
         switch (position) {
             case 0: // Trouble List
-                HostListFragment troubleFragment = HostListFragment.newInstance(position, Tools.filterProblems(HostSingleton.getInstance().getHosts()));
+                HostListFragment troubleFragment = HostListFragment.newInstance(position, Tools.filterProblems(HostSingleton.getInstance().getHosts()), globalProblemHostCount);
                 fragmentArray[0] = troubleFragment;
                 return troubleFragment;
             case 1: // All-things-list
-                HostListFragment allFragment = HostListFragment.newInstance(position, Tools.fullHostList(HostSingleton.getInstance().getHosts()));
+                HostListFragment allFragment = HostListFragment.newInstance(position, Tools.fullHostList(HostSingleton.getInstance().getHosts()), globalProblemHostCount);
                 fragmentArray[1] = allFragment;
                 return allFragment;
             default:
