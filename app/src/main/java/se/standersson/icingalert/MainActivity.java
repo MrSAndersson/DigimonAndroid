@@ -16,6 +16,9 @@ import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import java.io.Serializable;
+import java.util.List;
+
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, MainDataReceived{
     private MainPagerAdapter mainPagerAdapter;
@@ -60,6 +63,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("hosts", (Serializable) HostSingleton.getInstance().getHosts());
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -81,7 +90,27 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         if (notificationPrefs.getBoolean("service_push", false)){
             FirebaseMessaging.getInstance().subscribeToTopic("services");
         }
-        new MainDataFetch(this).refresh(this);
+
+        if (savedInstanceState == null) {
+            // No previous data, get new instead
+            new MainDataFetch(this).refresh(this);
+        } else if (savedInstanceState.containsKey("hosts")) {
+            // Data saved exists since before, use that and redraw UI with that
+
+            //noinspection unchecked
+            HostSingleton.getInstance().putHosts((List<Host>) savedInstanceState.getSerializable("hosts"));
+
+            ViewPager mainViewPager = findViewById(R.id.main_view_pager);
+            mainPagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
+            mainViewPager.setAdapter(mainPagerAdapter);
+
+            // Hide progress bar and show main lists
+            findViewById(R.id.main_progressbar).setVisibility(View.GONE);
+            findViewById(R.id.main_view_pager).setVisibility(View.VISIBLE);
+        } else {
+            Toast.makeText(getApplicationContext(), "Restoring state failed, please sign in again.", Toast.LENGTH_LONG).show();
+            logOut(false);
+        }
     }
 
     public MainPagerAdapter getMainPagerAdapter() {
