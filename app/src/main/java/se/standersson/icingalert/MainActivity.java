@@ -19,7 +19,6 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import java.io.Serializable;
 import java.util.List;
 
-import se.standersson.icingalert.dummy.DummyContent;
 
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, MainDataReceived, HostListFragment2.OnListFragmentInteractionListener {

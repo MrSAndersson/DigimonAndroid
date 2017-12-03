@@ -14,16 +14,9 @@ import android.view.ViewGroup;
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * A fragment representing a list of Items.
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
- * interface.
- */
 public class HostListFragment2 extends Fragment implements MainDataReceived{
 
     private int globalProblemHostCount;
-    private int fragmentPosition;
     private OnListFragmentInteractionListener mListener;
     private HostListFragment2 thisClass = this;
     private List<HostList> hosts;
@@ -44,7 +37,6 @@ public class HostListFragment2 extends Fragment implements MainDataReceived{
     public static HostListFragment2 newInstance(int position, List<HostList> hosts) {
         HostListFragment2 fragment = new HostListFragment2();
         Bundle args = new Bundle();
-        args.putInt("position", position);
         args.putSerializable("hosts", (Serializable) hosts);
         fragment.setArguments(args);
         return fragment;
@@ -56,7 +48,9 @@ public class HostListFragment2 extends Fragment implements MainDataReceived{
         if (getArguments() != null) {
             // noinspection unchecked
             this.hosts = (List<HostList>) getArguments().getSerializable("hosts");
-            this.fragmentPosition = getArguments().getInt("position");
+            if (this.hosts != null) {
+                this.globalProblemHostCount = hosts.size();
+            }
         }
     }
 
@@ -84,8 +78,7 @@ public class HostListFragment2 extends Fragment implements MainDataReceived{
         // If list is empty, display All Clear
         TransitionDrawable backgroundTransition = (TransitionDrawable) view.getBackground();
 
-        // TODO: Replace 0 with the proper fragmentPosition after removing mainExpandableListView
-        if (globalProblemHostCount != 0 && fragmentPosition == 0) {
+        if (globalProblemHostCount == 0) {
             recyclerView.setVisibility(View.GONE);
             view.findViewById(R.id.main_list_all_clear).setVisibility(View.VISIBLE);
             if (!backgroundIsBlue) {
@@ -126,18 +119,7 @@ public class HostListFragment2 extends Fragment implements MainDataReceived{
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onListFragmentInteraction(HostList host);
     }
 
@@ -170,8 +152,8 @@ public class HostListFragment2 extends Fragment implements MainDataReceived{
 
         // If list is empty, display All Clear
         TransitionDrawable backgroundTransition = (TransitionDrawable) view.getBackground();
-        // TODO: Replace 0 with the proper fragmentPosition after removing mainExpandableListView
-        if (globalProblemHostCount == 0 && fragmentPosition == 0) {
+
+        if (globalProblemHostCount == 0) {
             recyclerView.setVisibility(View.GONE);
             view.findViewById(R.id.main_list_all_clear).setVisibility(View.VISIBLE);
             if (!backgroundIsBlue) {
