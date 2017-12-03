@@ -19,8 +19,10 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import java.io.Serializable;
 import java.util.List;
 
+import se.standersson.icingalert.dummy.DummyContent;
 
-public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, MainDataReceived{
+
+public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, MainDataReceived, HostListFragment2.OnListFragmentInteractionListener {
     private MainPagerAdapter mainPagerAdapter;
     private SearchView searchView = null;
 
@@ -154,4 +156,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             logOut(false);
         }
     }
+
+    @Override
+    public void onListFragmentInteraction(HostList host) {
+
+    }
+
 }

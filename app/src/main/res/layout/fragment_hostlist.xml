@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:animateLayoutChanges="true">
+
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        card_view:cardCornerRadius="5dp"
+        card_view:cardBackgroundColor="@color/colorGroup"
+        card_view:cardElevation="@dimen/cardview_default_elevation"
+        android:layout_margin="3dp"
+        android:foreground="?android:attr/selectableItemBackground">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/main_list_hostname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/text_margin"
+                android:textAppearance="?attr/textAppearanceListItem" />
+
+            <LinearLayout
+                android:id="@+id/main_exp_list_state_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:orientation="horizontal"
+                android:layout_centerVertical="true">
+
+                <TextView
+                    android:id="@+id/main_exp_list_critical_count"
+                    android:padding="4dp"
+                    android:textAlignment="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/critical_box"
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/main_exp_list_critical_ack_count"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp"
+                    android:padding="4dp"
+                    android:layout_width="wrap_content"
+                    android:textAlignment="center"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:background="@drawable/critical_box_ack"
+                    android:textColor="@android:color/white" />
+
+
+                <TextView
+                    android:id="@+id/main_exp_list_warning_count"
+                    android:padding="4dp"
+                    android:layout_width="wrap_content"
+                    android:textAlignment="center"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/warning_box"
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/main_exp_list_warning_ack_count"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp"
+                    android:padding="4dp"
+                    android:layout_width="wrap_content"
+                    android:textAlignment="center"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:background="@drawable/warning_box_ack"
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/main_exp_list_unknown_count"
+                    android:padding="4dp"
+                    android:textAlignment="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/unknown_box"
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/main_exp_list_unknown_ack_count"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp"
+                    android:padding="4dp"
+                    android:layout_width="wrap_content"
+                    android:textAlignment="center"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:background="@drawable/unknown_box_ack"
+                    android:textColor="@android:color/white" />
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

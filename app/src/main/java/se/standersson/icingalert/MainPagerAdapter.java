@@ -4,8 +4,9 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.view.ViewGroup;
 
 class MainPagerAdapter extends FragmentPagerAdapter {
-    private static final int NUM_ITEMS = 2;
+    private static final int TAB_COUNT = 4;
     private final HostListFragment[] fragmentArray = new HostListFragment[2];
+    private final HostListFragment2[] fragmentArray2 = new HostListFragment2[2];
 
     MainPagerAdapter(android.support.v4.app.FragmentManager fragmentManager) {
         super(fragmentManager);
@@ -14,7 +15,7 @@ class MainPagerAdapter extends FragmentPagerAdapter {
     // Returns total number of pages
     @Override
     public int getCount() {
-        return NUM_ITEMS;
+        return TAB_COUNT;
     }
 
     // Returns the fragment to display for that page
@@ -32,6 +33,14 @@ class MainPagerAdapter extends FragmentPagerAdapter {
                 HostListFragment allFragment = HostListFragment.newInstance(position, Tools.fullHostList(HostSingleton.getInstance().getHosts()), globalProblemHostCount);
                 fragmentArray[1] = allFragment;
                 return allFragment;
+            case 2:
+                HostListFragment2 testTroubleFragment = HostListFragment2.newInstance(position, Tools.filterProblems(HostSingleton.getInstance().getHosts()));
+                fragmentArray2[0] = testTroubleFragment;
+                return testTroubleFragment;
+            case 3:
+                HostListFragment2 testAllFragment = HostListFragment2.newInstance(position, Tools.fullHostList(HostSingleton.getInstance().getHosts()));
+                fragmentArray2[1] = testAllFragment;
+                return testAllFragment;
             default:
                 return null;
         }
@@ -39,9 +48,16 @@ class MainPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        HostListFragment fragment = (HostListFragment) super.instantiateItem(container, position);
-        fragmentArray[position] = fragment;
-        return fragment;
+        if (position < 2) {
+            HostListFragment fragment = (HostListFragment) super.instantiateItem(container, position);
+            fragmentArray[position] = fragment;
+            return fragment;
+        } else {
+            HostListFragment2 fragment2 = (HostListFragment2) super.instantiateItem(container, position);
+            fragmentArray2[position - 2] = fragment2;
+            return fragment2;
+        }
+
     }
 
     // Returns the page title for the top indicator
@@ -52,6 +68,10 @@ class MainPagerAdapter extends FragmentPagerAdapter {
                 return "Trouble";
             case 1:
                 return "All";
+            case 2:
+                return "NewTrouble";
+            case 3:
+                return "NewAll";
             default:
                 return "Wrong";
         }
@@ -59,5 +79,9 @@ class MainPagerAdapter extends FragmentPagerAdapter {
 
     HostListFragment getFragment(int position){
         return fragmentArray[position];
+    }
+
+    HostListFragment2 getFragment2(int position) {
+        return fragmentArray2[position];
     }
 }

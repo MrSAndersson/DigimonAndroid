@@ -1,0 +1,42 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="se.standersson.icingalert.HostListFragment"
+    android:background="@drawable/all_clear_background_transition">
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/main_list_swipe"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+        <android.support.v7.widget.RecyclerView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/main_list"
+            android:name="se.standersson.icingalert.HostListFragment2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            app:layoutManager="LinearLayoutManager"
+            tools:context="se.standersson.icingalert.HostListFragment2"
+            tools:listitem="@layout/fragment_hostlist"/>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <ImageView
+        android:id="@+id/main_list_all_clear"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:paddingStart="5dp"
+        android:paddingEnd="0dp"
+        android:layout_centerInParent="true"
+        android:scaleType="fitCenter"
+        android:contentDescription="@string/sun_cloud_desc"
+        android:src="@drawable/ic_sun_cloud"/>
+
+</RelativeLayout>
