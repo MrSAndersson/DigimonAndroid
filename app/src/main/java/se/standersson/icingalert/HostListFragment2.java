@@ -5,15 +5,11 @@ import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import se.standersson.icingalert.dummy.DummyContent;
-import se.standersson.icingalert.dummy.DummyContent.DummyItem;
 
 import java.io.Serializable;
 import java.util.List;
@@ -88,6 +84,7 @@ public class HostListFragment2 extends Fragment implements MainDataReceived{
         // If list is empty, display All Clear
         TransitionDrawable backgroundTransition = (TransitionDrawable) view.getBackground();
 
+        // TODO: Replace 0 with the proper fragmentPosition after removing mainExpandableListView
         if (globalProblemHostCount != 0 && fragmentPosition == 0) {
             recyclerView.setVisibility(View.GONE);
             view.findViewById(R.id.main_list_all_clear).setVisibility(View.VISIBLE);
@@ -173,6 +170,7 @@ public class HostListFragment2 extends Fragment implements MainDataReceived{
 
         // If list is empty, display All Clear
         TransitionDrawable backgroundTransition = (TransitionDrawable) view.getBackground();
+        // TODO: Replace 0 with the proper fragmentPosition after removing mainExpandableListView
         if (globalProblemHostCount == 0 && fragmentPosition == 0) {
             recyclerView.setVisibility(View.GONE);
             view.findViewById(R.id.main_list_all_clear).setVisibility(View.VISIBLE);
