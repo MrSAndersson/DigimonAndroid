@@ -36,6 +36,17 @@ public class MyHostListRecyclerViewAdapter extends RecyclerView.Adapter<MyHostLi
         holder.host = hosts.get(position);
         holder.hostName.setText(hosts.get(position).getHostName());
 
+        // Set hostName background
+        if (holder.host.isDown()) {
+            if (holder.host.isAcknowledged()) {
+                holder.hostName.setBackground(context.getDrawable(R.drawable.host_down_ack_box));
+            } else {
+                holder.hostName.setBackground(context.getDrawable(R.drawable.host_down_box));
+            }
+        } else {
+            holder.hostName.setBackgroundColor(0x00000000);
+        }
+
 
         // Set and show the number of failing services
 
