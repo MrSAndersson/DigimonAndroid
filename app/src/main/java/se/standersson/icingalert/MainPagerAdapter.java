@@ -52,11 +52,11 @@ class MainPagerAdapter extends FragmentPagerAdapter {
             HostListFragment fragment = (HostListFragment) super.instantiateItem(container, position);
             fragmentArray[position] = fragment;
             return fragment;
-        } else {
-            HostListFragment2 fragment2 = (HostListFragment2) super.instantiateItem(container, position);
-            fragmentArray2[position - 2] = fragment2;
-            return fragment2;
         }
+
+        HostListFragment2 fragment2 = (HostListFragment2) super.instantiateItem(container, position);
+        fragmentArray2[position - 2] = fragment2;
+        return fragment2;
 
     }
 

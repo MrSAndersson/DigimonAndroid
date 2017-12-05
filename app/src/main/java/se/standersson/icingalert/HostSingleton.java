@@ -9,6 +9,7 @@ import java.util.List;
 class HostSingleton {
     private static HostSingleton hostSingleton;
     private List<Host> hosts;
+    private int problemHostCount;
 
 
     static synchronized HostSingleton getInstance() {
@@ -18,7 +19,12 @@ class HostSingleton {
         return hostSingleton;
     }
 
+    int getProblemHostCount() {
+        return problemHostCount;
+    }
+
     void putHosts(List<Host> hosts) {
+        problemHostCount = Tools.filterProblems(hosts).size();
         this.hosts = hosts;
     }
 

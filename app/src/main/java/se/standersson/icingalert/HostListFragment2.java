@@ -16,7 +16,6 @@ import java.util.List;
 
 public class HostListFragment2 extends Fragment implements MainDataReceived{
 
-    private int globalProblemHostCount;
     private OnListFragmentInteractionListener mListener;
     private HostListFragment2 thisClass = this;
     private List<HostList> hosts;
@@ -32,7 +31,6 @@ public class HostListFragment2 extends Fragment implements MainDataReceived{
     public HostListFragment2() {
     }
 
-    // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
     public static HostListFragment2 newInstance(int position, List<HostList> hosts) {
         HostListFragment2 fragment = new HostListFragment2();
@@ -48,9 +46,6 @@ public class HostListFragment2 extends Fragment implements MainDataReceived{
         if (getArguments() != null) {
             // noinspection unchecked
             this.hosts = (List<HostList>) getArguments().getSerializable("hosts");
-            if (this.hosts != null) {
-                this.globalProblemHostCount = hosts.size();
-            }
         }
     }
 
@@ -78,7 +73,7 @@ public class HostListFragment2 extends Fragment implements MainDataReceived{
         // If list is empty, display All Clear
         TransitionDrawable backgroundTransition = (TransitionDrawable) view.getBackground();
 
-        if (globalProblemHostCount == 0) {
+        if (isAllClear()) {
             recyclerView.setVisibility(View.GONE);
             view.findViewById(R.id.main_list_all_clear).setVisibility(View.VISIBLE);
             if (!backgroundIsBlue) {
@@ -144,7 +139,8 @@ public class HostListFragment2 extends Fragment implements MainDataReceived{
     }
 
     public void update(List<HostList> hosts){
-        this.globalProblemHostCount = hosts.size();
+
+        // Update RecyclerView with the latest data and tell it to update itself
         RecyclerView recyclerView = view.findViewById(R.id.main_list);
         MyHostListRecyclerViewAdapter adapter = (MyHostListRecyclerViewAdapter) recyclerView.getAdapter();
         adapter.updateHostList(hosts);
@@ -153,7 +149,7 @@ public class HostListFragment2 extends Fragment implements MainDataReceived{
         // If list is empty, display All Clear
         TransitionDrawable backgroundTransition = (TransitionDrawable) view.getBackground();
 
-        if (globalProblemHostCount == 0) {
+        if (isAllClear()) {
             recyclerView.setVisibility(View.GONE);
             view.findViewById(R.id.main_list_all_clear).setVisibility(View.VISIBLE);
             if (!backgroundIsBlue) {
@@ -167,6 +163,14 @@ public class HostListFragment2 extends Fragment implements MainDataReceived{
                 backgroundTransition.reverseTransition(180);
                 backgroundIsBlue = false;
             }
+        }
+    }
+
+    boolean isAllClear() {
+        if ( HostSingleton.getInstance().getProblemHostCount() == 0 && hosts.size() == 0) {
+            return true;
+        } else {
+            return false;
         }
     }
 }
