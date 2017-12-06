@@ -2,6 +2,7 @@ package se.standersson.icingalert;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ public class MyHostListRecyclerViewAdapter extends RecyclerView.Adapter<MyHostLi
     private final OnListFragmentInteractionListener mListener;
     private final Context context;
     private List<HostList> hosts;
+    private ViewGroup parentViewGroup;
 
     MyHostListRecyclerViewAdapter(Context context, List<HostList> hosts, OnListFragmentInteractionListener listener) {
         this.hosts = hosts;
@@ -26,6 +28,7 @@ public class MyHostListRecyclerViewAdapter extends RecyclerView.Adapter<MyHostLi
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        this.parentViewGroup = parent;
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_hostlist, parent, false);
         return new ViewHolder(view);
     }
@@ -129,6 +132,12 @@ public class MyHostListRecyclerViewAdapter extends RecyclerView.Adapter<MyHostLi
             @Override
             public void onClick(View v) {
                 if (null != mListener) {
+                    if (holder.hostComment.getVisibility() == View.GONE) {
+                        holder.hostComment.setVisibility(View.VISIBLE);
+                    } else {
+                        holder.hostComment.setVisibility(View.GONE);
+                    }
+                    TransitionManager.beginDelayedTransition(parentViewGroup);
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
                     mListener.onListFragmentInteraction(holder.host);
@@ -145,6 +154,7 @@ public class MyHostListRecyclerViewAdapter extends RecyclerView.Adapter<MyHostLi
     class ViewHolder extends RecyclerView.ViewHolder {
         final View view;
         final TextView hostName;
+        final TextView hostComment;
         final TextView criticalCount;
         final TextView criticalAckCount;
         final TextView warningCount;
@@ -157,6 +167,7 @@ public class MyHostListRecyclerViewAdapter extends RecyclerView.Adapter<MyHostLi
             super(view);
             this.view = view;
             hostName = view.findViewById(R.id.main_list_hostname);
+            hostComment = view.findViewById(R.id.main_list_host_comment);
             criticalCount = view.findViewById(R.id.main_list_critical_count);
             criticalAckCount = view.findViewById(R.id.main_list_critical_ack_count);
             warningCount = view.findViewById(R.id.main_list_warning_count);
