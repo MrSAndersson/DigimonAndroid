@@ -18,7 +18,7 @@ public class MyHostListRecyclerViewAdapter extends RecyclerView.Adapter<MyHostLi
     private final OnListFragmentInteractionListener mListener;
     private final Context context;
     private List<HostList> hosts;
-    private ViewGroup parentViewGroup;
+    private RecyclerView parentRecycerView;
 
     MyHostListRecyclerViewAdapter(Context context, List<HostList> hosts, OnListFragmentInteractionListener listener) {
         this.hosts = hosts;
@@ -28,7 +28,6 @@ public class MyHostListRecyclerViewAdapter extends RecyclerView.Adapter<MyHostLi
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        this.parentViewGroup = parent;
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_hostlist, parent, false);
         return new ViewHolder(view);
     }
@@ -137,13 +136,19 @@ public class MyHostListRecyclerViewAdapter extends RecyclerView.Adapter<MyHostLi
                     } else {
                         holder.hostComment.setVisibility(View.GONE);
                     }
-                    TransitionManager.beginDelayedTransition(parentViewGroup);
+                    TransitionManager.beginDelayedTransition(parentRecycerView);
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
                     mListener.onListFragmentInteraction(holder.host);
                 }
             }
         });
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        this.parentRecycerView = recyclerView;
     }
 
     @Override
