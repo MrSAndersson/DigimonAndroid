@@ -2,12 +2,15 @@ package se.standersson.icingalert;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
+import android.transition.Fade;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import se.standersson.icingalert.HostListFragment2.OnListFragmentInteractionListener;
 
@@ -18,7 +21,9 @@ public class MyHostListRecyclerViewAdapter extends RecyclerView.Adapter<MyHostLi
     private final OnListFragmentInteractionListener mListener;
     private final Context context;
     private List<HostList> hosts;
-    private RecyclerView parentRecycerView;
+    private RecyclerView parentRecyclerView;
+    private Transition transition;
+
 
     MyHostListRecyclerViewAdapter(Context context, List<HostList> hosts, OnListFragmentInteractionListener listener) {
         this.hosts = hosts;
@@ -136,7 +141,7 @@ public class MyHostListRecyclerViewAdapter extends RecyclerView.Adapter<MyHostLi
                     } else {
                         holder.hostComment.setVisibility(View.GONE);
                     }
-                    TransitionManager.beginDelayedTransition(parentRecycerView);
+                    TransitionManager.beginDelayedTransition(parentRecyclerView, transition);
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
                     mListener.onListFragmentInteraction(holder.host);
@@ -148,7 +153,8 @@ public class MyHostListRecyclerViewAdapter extends RecyclerView.Adapter<MyHostLi
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
-        this.parentRecycerView = recyclerView;
+        this.parentRecyclerView = recyclerView;
+        transition = TransitionInflater.from(context).inflateTransition(R.transition.main_list_transition);
     }
 
     @Override
