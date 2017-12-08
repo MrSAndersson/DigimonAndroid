@@ -19,13 +19,14 @@
     <string name="logout_item">Logout</string>
 
     <!-- Service List -->
-    <string name="service_notifications">Send Notifications</string>
+    <string name="send_notifications">Send Notifications</string>
     <string name="expand_icon">Expand Icon</string>
     <string name="sun_cloud_desc">Clear Skies</string>
     <string name="acknowledgement_dialog_title">Add Acknowledgement for</string>
     <string name="acknowledgement_dialog_hint">Comment</string>
     <string name="acknowledgement_dialog_notify">Send Notification</string>
     <string name="send_acknowledgement">Acknowledge</string>
+    <string name="host_more_description">Host Menu</string>
 
 
     <!-- String related to the Preferences menu -->

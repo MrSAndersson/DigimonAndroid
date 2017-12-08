@@ -1,15 +1,19 @@
 package se.standersson.icingalert;
 
 import android.content.Context;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import se.standersson.icingalert.HostListFragment2.OnListFragmentInteractionListener;
 
 import java.util.List;
+import java.util.Random;
 
 public class MyHostListRecyclerViewAdapter extends RecyclerView.Adapter<MyHostListRecyclerViewAdapter.ViewHolder> {
 
@@ -49,6 +53,86 @@ public class MyHostListRecyclerViewAdapter extends RecyclerView.Adapter<MyHostLi
             holder.hostName.setBackgroundColor(0x00000000);
         }
 
+        // TODO: Fix acknowledgeless comments
+        // Set hostComment
+        if (holder.host.getComment().equals("")) {
+            holder.hostComment.setVisibility(View.GONE);
+        } else {
+            holder.hostComment.setVisibility(View.VISIBLE);
+            String comment = "Comment:\n" + holder.host.getComment() + "\n/" + holder.host.getCommentAuthor();
+            holder.hostComment.setText(comment);
+        }
+
+        // Set and show the number of failing services
+        setHostStatusCounters(holder);
+
+        holder.moreButton.setOnClickListener(new hostMoreMenu(holder));
+
+        holder.view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (null != mListener) {
+                    if (holder.hostComment.getVisibility() == View.GONE && !holder.host.getComment().equals("")) {
+                        holder.hostComment.setVisibility(View.VISIBLE);
+                    } else {
+                        holder.hostComment.setVisibility(View.GONE);
+                    }
+                    // Stop all currently running transitions and start a new one
+                    android.support.transition.TransitionManager.endTransitions(parentRecyclerView);
+                    android.support.transition.TransitionManager.beginDelayedTransition(parentRecyclerView, transition);
+                    // Notify the active callbacks interface (the activity, if the
+                    // fragment is attached to one) that an item has been selected.
+                    mListener.onListFragmentInteraction(holder.host);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        this.parentRecyclerView = recyclerView;
+        transition = android.support.transition.TransitionInflater.from(context).inflateTransition(R.transition.main_list_transition);
+    }
+
+    @Override
+    public int getItemCount() {
+        return hosts.size();
+    }
+
+    class ViewHolder extends RecyclerView.ViewHolder {
+        final View view;
+        final TextView hostName;
+        final TextView hostComment;
+        final TextView criticalCount;
+        final TextView criticalAckCount;
+        final TextView warningCount;
+        final TextView warningAckCount;
+        final TextView unknownCount;
+        final TextView unknownAckCount;
+        final ImageButton moreButton;
+        HostList host;
+
+        ViewHolder(View view) {
+            super(view);
+            this.view = view;
+            hostName = view.findViewById(R.id.main_list_hostname);
+            hostComment = view.findViewById(R.id.main_list_host_comment);
+            criticalCount = view.findViewById(R.id.main_list_critical_count);
+            criticalAckCount = view.findViewById(R.id.main_list_critical_ack_count);
+            warningCount = view.findViewById(R.id.main_list_warning_count);
+            warningAckCount = view.findViewById(R.id.main_list_warning_ack_count);
+            unknownCount = view.findViewById(R.id.main_list_unknown_count);
+            unknownAckCount = view.findViewById(R.id.main_list_unknown_ack_count);
+            moreButton = view.findViewById(R.id.main_list_more_button);
+        }
+    }
+
+    void updateHostList(List<HostList> hosts){
+        this.hosts = hosts;
+    }
+
+    private void setHostStatusCounters(ViewHolder holder) {
 
         // Set and show the number of failing services
 
@@ -125,67 +209,22 @@ public class MyHostListRecyclerViewAdapter extends RecyclerView.Adapter<MyHostLi
             holder.unknownCount.setVisibility(View.VISIBLE);
             holder.unknownAckCount.setVisibility(View.VISIBLE);
         }
-
-
-        holder.view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    if (holder.hostComment.getVisibility() == View.GONE) {
-                        holder.hostComment.setVisibility(View.VISIBLE);
-                    } else {
-                        holder.hostComment.setVisibility(View.GONE);
-                    }
-                    // Stop all currently running transitions and start a new one
-                    android.support.transition.TransitionManager.endTransitions(parentRecyclerView);
-                    android.support.transition.TransitionManager.beginDelayedTransition(parentRecyclerView, transition);
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.host);
-                }
-            }
-        });
     }
 
-    @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
-        this.parentRecyclerView = recyclerView;
-        transition = android.support.transition.TransitionInflater.from(context).inflateTransition(R.transition.main_list_transition);
-    }
+    class hostMoreMenu implements View.OnClickListener{
+        final ViewHolder holder;
 
-    @Override
-    public int getItemCount() {
-        return hosts.size();
-    }
-
-    class ViewHolder extends RecyclerView.ViewHolder {
-        final View view;
-        final TextView hostName;
-        final TextView hostComment;
-        final TextView criticalCount;
-        final TextView criticalAckCount;
-        final TextView warningCount;
-        final TextView warningAckCount;
-        final TextView unknownCount;
-        final TextView unknownAckCount;
-        HostList host;
-
-        ViewHolder(View view) {
-            super(view);
-            this.view = view;
-            hostName = view.findViewById(R.id.main_list_hostname);
-            hostComment = view.findViewById(R.id.main_list_host_comment);
-            criticalCount = view.findViewById(R.id.main_list_critical_count);
-            criticalAckCount = view.findViewById(R.id.main_list_critical_ack_count);
-            warningCount = view.findViewById(R.id.main_list_warning_count);
-            warningAckCount = view.findViewById(R.id.main_list_warning_ack_count);
-            unknownCount = view.findViewById(R.id.main_list_unknown_count);
-            unknownAckCount = view.findViewById(R.id.main_list_unknown_ack_count);
+        hostMoreMenu(ViewHolder holder) {
+            this.holder = holder;
         }
-    }
-
-    void updateHostList(List<HostList> hosts){
-        this.hosts = hosts;
+        @Override
+        public void onClick(View v) {
+            PopupMenu popup = new PopupMenu(context, v);
+            MenuInflater inflater = popup.getMenuInflater();
+            inflater.inflate(R.menu.main_list_host_menu, popup.getMenu());
+            // TODO: Fix hostIsNotifying
+            popup.getMenu().findItem(R.id.host_notifying).setChecked(true);
+            popup.show();
+        }
     }
 }

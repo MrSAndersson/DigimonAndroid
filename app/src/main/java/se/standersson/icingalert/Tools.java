@@ -19,7 +19,7 @@ import java.util.List;
 final class Tools {
 
 
-    static void createExpandableListSummary(JSONObject data) throws JSONException {
+    static void parseData(JSONObject data) throws JSONException {
         /*
          * Prepare status info into the hosts list
          */

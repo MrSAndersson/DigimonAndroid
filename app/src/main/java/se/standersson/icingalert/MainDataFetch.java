@@ -102,7 +102,7 @@ class MainDataFetch {
                             && completeData.has("services")
                             && completeData.has("comments")) {
                         try {
-                            Tools.createExpandableListSummary(completeData);
+                            Tools.parseData(completeData);
                             myMainDataReceived.mainDataReceived(true);
                         } catch (JSONException e) {
                             Toast.makeText(mainActivity, "Unable to parse response", Toast.LENGTH_LONG).show();

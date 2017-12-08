@@ -25,8 +25,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_marginStart="9dp"
-            android:layout_marginTop="9dp"
-            android:layout_marginBottom="9dp">
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -57,7 +57,7 @@
                     android:id="@+id/main_list_state_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
+                    android:layout_toStartOf="@+id/main_list_more_button"
                     android:orientation="horizontal"
                     android:layout_centerVertical="true">
 
@@ -127,6 +127,14 @@
 
                 </LinearLayout>
 
+                <ImageButton
+                    android:id="@+id/main_list_more_button"
+                    android:layout_width="33dp"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_more_vert_black"
+                    android:contentDescription="@string/host_more_description"
+                    android:backgroundTint="@color/colorGroup"
+                    android:layout_alignParentEnd="true" />
 
             </RelativeLayout>
 
@@ -134,9 +142,9 @@
                 android:id="@+id/main_list_host_comment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Message: \nThis is a message with some important text in it"
                 android:layout_marginStart="9dp"
                 android:layout_marginTop="3dp"
+                android:layout_marginBottom="5dp"
                 android:visibility="gone"/>
 
         </LinearLayout>

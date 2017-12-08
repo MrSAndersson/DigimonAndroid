@@ -85,7 +85,7 @@
                     android:layout_height="wrap_content"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
-                    android:text="@string/service_notifications"
+                    android:text="@string/send_notifications"
                     android:textSize="12sp"
                     android:textColor="@android:color/primary_text_light"
                     android:layout_marginBottom="@dimen/activity_vertical_margin" />
