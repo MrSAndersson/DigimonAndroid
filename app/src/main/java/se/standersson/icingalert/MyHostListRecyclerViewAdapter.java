@@ -2,11 +2,6 @@ package se.standersson.icingalert;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SimpleItemAnimator;
-import android.transition.Fade;
-import android.transition.Transition;
-import android.transition.TransitionInflater;
-import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +17,7 @@ public class MyHostListRecyclerViewAdapter extends RecyclerView.Adapter<MyHostLi
     private final Context context;
     private List<HostList> hosts;
     private RecyclerView parentRecyclerView;
-    private Transition transition;
+    private android.support.transition.Transition transition;
 
 
     MyHostListRecyclerViewAdapter(Context context, List<HostList> hosts, OnListFragmentInteractionListener listener) {
@@ -141,7 +136,9 @@ public class MyHostListRecyclerViewAdapter extends RecyclerView.Adapter<MyHostLi
                     } else {
                         holder.hostComment.setVisibility(View.GONE);
                     }
-                    TransitionManager.beginDelayedTransition(parentRecyclerView, transition);
+                    // Stop all currently running transitions and start a new one
+                    android.support.transition.TransitionManager.endTransitions(parentRecyclerView);
+                    android.support.transition.TransitionManager.beginDelayedTransition(parentRecyclerView, transition);
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
                     mListener.onListFragmentInteraction(holder.host);
@@ -154,7 +151,7 @@ public class MyHostListRecyclerViewAdapter extends RecyclerView.Adapter<MyHostLi
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         this.parentRecyclerView = recyclerView;
-        transition = TransitionInflater.from(context).inflateTransition(R.transition.main_list_transition);
+        transition = android.support.transition.TransitionInflater.from(context).inflateTransition(R.transition.main_list_transition);
     }
 
     @Override

@@ -1,7 +1,5 @@
 <transitionSet xmlns:android="http://schemas.android.com/apk/res/android"
     android:transitionOrdering="together">
-    <slide
-        android:duration="200"/>
-    <changeBounds
-        android:duration="200"/>
+    <slide  android:duration="150"/>
+    <changeBounds  android:duration="150"/>
 </transitionSet>
