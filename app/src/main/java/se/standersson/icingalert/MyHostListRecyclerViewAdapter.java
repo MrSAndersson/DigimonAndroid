@@ -13,7 +13,6 @@ import android.widget.TextView;
 import se.standersson.icingalert.HostListFragment2.OnListFragmentInteractionListener;
 
 import java.util.List;
-import java.util.Random;
 
 public class MyHostListRecyclerViewAdapter extends RecyclerView.Adapter<MyHostListRecyclerViewAdapter.ViewHolder> {
 

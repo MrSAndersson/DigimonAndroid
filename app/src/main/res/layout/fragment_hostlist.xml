@@ -129,7 +129,7 @@
 
                 <ImageButton
                     android:id="@+id/main_list_more_button"
-                    android:layout_width="33dp"
+                    android:layout_width="24dp"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_more_vert_black"
                     android:contentDescription="@string/host_more_description"

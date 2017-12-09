@@ -24,8 +24,8 @@ class HostSingleton {
     }
 
     void putHosts(List<Host> hosts) {
-        problemHostCount = Tools.filterProblems(hosts).size();
         this.hosts = hosts;
+        problemHostCount = Tools.filterProblems(hosts).size();
     }
 
     List<Host> getHosts() {
