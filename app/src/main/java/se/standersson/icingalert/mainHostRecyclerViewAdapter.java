@@ -10,22 +10,20 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import se.standersson.icingalert.HostListFragment2.OnListFragmentInteractionListener;
-
 import java.util.List;
 
-public class MyHostListRecyclerViewAdapter extends RecyclerView.Adapter<MyHostListRecyclerViewAdapter.ViewHolder> {
+public class mainHostRecyclerViewAdapter extends RecyclerView.Adapter<mainHostRecyclerViewAdapter.ViewHolder> {
 
-    private final OnListFragmentInteractionListener mListener;
     private final Context context;
     private List<HostList> hosts;
     private RecyclerView parentRecyclerView;
+    private RecyclerView.RecycledViewPool recycledViewPool;
     private android.support.transition.Transition transition;
 
 
-    MyHostListRecyclerViewAdapter(Context context, List<HostList> hosts, OnListFragmentInteractionListener listener) {
+    mainHostRecyclerViewAdapter(Context context, List<HostList> hosts) {
         this.hosts = hosts;
-        this.mListener = listener;
+        this.recycledViewPool = new RecyclerView.RecycledViewPool();
         this.context = context;
     }
 
@@ -37,9 +35,14 @@ public class MyHostListRecyclerViewAdapter extends RecyclerView.Adapter<MyHostLi
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-
         holder.host = hosts.get(position);
-        holder.hostName.setText(hosts.get(position).getHostName());
+        holder.hostName.setText(holder.host.getHostName());
+
+        if (holder.host.isExpanded()) {
+            holder.serviceList.setVisibility(View.VISIBLE);
+        } else {
+            holder.serviceList.setVisibility(View.GONE);
+        }
 
         // Set hostName background
         if (holder.host.isDown()) {
@@ -64,24 +67,24 @@ public class MyHostListRecyclerViewAdapter extends RecyclerView.Adapter<MyHostLi
         // Set and show the number of failing services
         setHostStatusCounters(holder);
 
+        // Initiate Service List
+        holder.serviceList.setAdapter(new mainServiceRecyclerViewAdapter(context, holder.host));
+
         holder.moreButton.setOnClickListener(new hostMoreMenu(holder));
 
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (null != mListener) {
-                    if (holder.hostComment.getVisibility() == View.GONE && !holder.host.getComment().equals("")) {
-                        holder.hostComment.setVisibility(View.VISIBLE);
-                    } else {
-                        holder.hostComment.setVisibility(View.GONE);
-                    }
-                    // Stop all currently running transitions and start a new one
-                    android.support.transition.TransitionManager.endTransitions(parentRecyclerView);
-                    android.support.transition.TransitionManager.beginDelayedTransition(parentRecyclerView, transition);
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.host);
+                if (holder.host.isExpanded()) {
+                    holder.serviceList.setVisibility(View.GONE);
+                    holder.host.setExpanded(false);
+                } else {
+                    holder.serviceList.setVisibility(View.VISIBLE);
+                    holder.host.setExpanded(true);
                 }
+                // Stop all currently running transitions and start a new one
+                android.support.transition.TransitionManager.endTransitions(parentRecyclerView);
+                android.support.transition.TransitionManager.beginDelayedTransition(parentRecyclerView, transition);
             }
         });
     }
@@ -109,6 +112,7 @@ public class MyHostListRecyclerViewAdapter extends RecyclerView.Adapter<MyHostLi
         final TextView unknownCount;
         final TextView unknownAckCount;
         final ImageButton moreButton;
+        final RecyclerView serviceList;
         HostList host;
 
         ViewHolder(View view) {
@@ -123,6 +127,8 @@ public class MyHostListRecyclerViewAdapter extends RecyclerView.Adapter<MyHostLi
             unknownCount = view.findViewById(R.id.main_list_unknown_count);
             unknownAckCount = view.findViewById(R.id.main_list_unknown_ack_count);
             moreButton = view.findViewById(R.id.main_list_more_button);
+            serviceList = view.findViewById(R.id.service_list);
+            serviceList.setRecycledViewPool(recycledViewPool);
         }
     }
 

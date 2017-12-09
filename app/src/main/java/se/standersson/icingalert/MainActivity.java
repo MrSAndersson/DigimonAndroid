@@ -21,7 +21,7 @@ import java.util.List;
 
 
 
-public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, MainDataReceived, HostListFragment2.OnListFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, MainDataReceived {
     private MainPagerAdapter mainPagerAdapter;
     private SearchView searchView = null;
 
@@ -161,10 +161,4 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             logOut(false);
         }
     }
-
-    @Override
-    public void onListFragmentInteraction(HostList host) {
-
-    }
-
 }

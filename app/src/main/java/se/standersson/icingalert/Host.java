@@ -48,12 +48,20 @@ class HostList implements Serializable, Comparable<HostList> {
         return HostSingleton.getInstance().getHosts().get(hostPosition).isDown();
     }
 
+    boolean isExpanded() {
+        return HostSingleton.getInstance().getHosts().get(hostPosition).isExpanded();
+    }
+
     boolean isAcknowledged() {
         return HostSingleton.getInstance().getHosts().get(hostPosition).isAcknowledged();
     }
 
     boolean isNotifying() {
         return HostSingleton.getInstance().getHosts().get(hostPosition).isNotifying();
+    }
+
+    void setExpanded(boolean isExpanded) {
+        HostSingleton.getInstance().getHosts().get(hostPosition).setIsExpanded(isExpanded);
     }
 
     void setNotifying(boolean isNotifying) {
@@ -68,6 +76,9 @@ class HostList implements Serializable, Comparable<HostList> {
         return HostSingleton.getInstance().getHosts().get(hostPosition).getStateAckCount(state);
     }
 
+    Service getService(int servicePosition) {
+        return HostSingleton.getInstance().getHosts().get(hostPosition).getService(service.get(servicePosition));
+    }
     String getServiceName(int servicePosition) {
         return HostSingleton.getInstance().getHosts().get(hostPosition).getServiceName(service.get(servicePosition));
     }
@@ -136,7 +147,8 @@ class Host implements Serializable, Comparable<Host>{
     private final List<Integer> warnAckList = new ArrayList<>();
     private final List<Integer> unknownList = new ArrayList<>();
     private final List<Integer> unknownAckList = new ArrayList<>();
-    private boolean isDown = false;
+    private boolean isExpanded;
+    private boolean isDown;
     private boolean isNotifying;
     private final boolean acknowledged;
     private final String comment;
@@ -150,9 +162,8 @@ class Host implements Serializable, Comparable<Host>{
         this.isNotifying = isNotifying;
         this.comment = comment;
         this.commentAuthor = commentAuthor;
-        if (isDown) {
-            this.isDown = true;
-        }
+        this.isDown = isDown;
+        this.isExpanded = false;
     }
 
     //Add a service with name, details and state. Also increment the state counters
@@ -184,6 +195,10 @@ class Host implements Serializable, Comparable<Host>{
                 }
                 break;
         }
+    }
+
+    Service getService(int servicePosition) {
+        return services.get(servicePosition);
     }
 
     String getServiceName(int servicePosition) {
@@ -296,8 +311,16 @@ class Host implements Serializable, Comparable<Host>{
         return isNotifying;
     }
 
+    boolean isExpanded() {
+        return isExpanded;
+    }
+
     void setIsNotifying(boolean isNotifying) {
         this.isNotifying = isNotifying;
+    }
+
+    void setIsExpanded(boolean isExpanded) {
+        this.isExpanded = isExpanded;
     }
 
     String getComment() {
@@ -320,83 +343,83 @@ class Host implements Serializable, Comparable<Host>{
     public int compareTo(@NonNull Host other) {
             return this.getHostName().compareToIgnoreCase(other.getHostName());
     }
+}
 
-    class Service implements Serializable, Comparable<Service> {
-        private final String name;
-        private final String details;
-        private final int state;
-        private final int last_state;
-        private final long last_state_change;
-        private boolean isExpanded=false;
-        private boolean notifications;
-        private final boolean acknowledged;
-        private final String comment;
-        private final String commentAuthor;
+class Service implements Serializable, Comparable<Service> {
+    private final String name;
+    private final String details;
+    private final int state;
+    private final int last_state;
+    private final long last_state_change;
+    private boolean isExpanded=false;
+    private boolean notifications;
+    private final boolean acknowledged;
+    private final String comment;
+    private final String commentAuthor;
 
 
-        Service(String name, String details, int state, int last_state, long last_state_change, boolean notifications, boolean acknowledged, String comment, String commentAuthor) {
-            this.name = name;
-            this.details = details;
-            this.state = state;
-            this.last_state = last_state;
-            this.last_state_change = last_state_change;
-            this.notifications = notifications;
-            this.acknowledged = acknowledged;
-            this.comment = comment;
-            this.commentAuthor = commentAuthor;
-        }
+    Service(String name, String details, int state, int last_state, long last_state_change, boolean notifications, boolean acknowledged, String comment, String commentAuthor) {
+        this.name = name;
+        this.details = details;
+        this.state = state;
+        this.last_state = last_state;
+        this.last_state_change = last_state_change;
+        this.notifications = notifications;
+        this.acknowledged = acknowledged;
+        this.comment = comment;
+        this.commentAuthor = commentAuthor;
+    }
 
-        String getServiceName() {
-            return name;
-        }
+    String getServiceName() {
+        return name;
+    }
 
-        String getDetails() {
-            return details;
-        }
+    String getDetails() {
+        return details;
+    }
 
-        int getState() {
-            return state;
-        }
+    int getState() {
+        return state;
+    }
 
-        int getLastState(){
-            return last_state;
-        }
+    int getLastState(){
+        return last_state;
+    }
 
-        long getLastStateChange(){
-            return last_state_change;
-        }
+    long getLastStateChange(){
+        return last_state_change;
+    }
 
-        boolean isNotifying() {
-            return notifications;
-        }
+    boolean isNotifying() {
+        return notifications;
+    }
 
-        boolean isExpanded() {
-            return isExpanded;
-        }
+    boolean isExpanded() {
+        return isExpanded;
+    }
 
-        void setIsExpanded(boolean expanded) {
-            isExpanded = expanded;
-        }
+    void setIsExpanded(boolean expanded) {
+        isExpanded = expanded;
+    }
 
-        void setIsNotifying(boolean notifications) {
-            this.notifications = notifications;
-        }
+    void setIsNotifying(boolean notifications) {
+        this.notifications = notifications;
+    }
 
-        boolean isAcknowledged() {
-            return acknowledged;
-        }
+    boolean isAcknowledged() {
+        return acknowledged;
+    }
 
-        String getComment() {
-            return comment;
-        }
+    String getComment() {
+        return comment;
+    }
 
-        String getCommentAuthor() {
-            return commentAuthor;
-        }
+    String getCommentAuthor() {
+        return commentAuthor;
+    }
 
-        @Override
-        public int compareTo(@NonNull Service other) {
-            return this.getServiceName().compareToIgnoreCase(other.getServiceName());
-        }
+    @Override
+    public int compareTo(@NonNull Service other) {
+        return this.getServiceName().compareToIgnoreCase(other.getServiceName());
     }
 }

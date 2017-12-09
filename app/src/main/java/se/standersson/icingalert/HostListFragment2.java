@@ -16,7 +16,6 @@ import java.util.List;
 
 public class HostListFragment2 extends Fragment implements MainDataReceived{
 
-    private OnListFragmentInteractionListener mListener;
     private HostListFragment2 thisClass = this;
     private List<HostList> hosts;
     private SwipeRefreshLayout swipeContainer;
@@ -91,31 +90,8 @@ public class HostListFragment2 extends Fragment implements MainDataReceived{
 
         // Set the adapter
         Context context = view.getContext();
-        recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        recyclerView.setAdapter(new MyHostListRecyclerViewAdapter(context, hosts, mListener));
+        recyclerView.setAdapter(new mainHostRecyclerViewAdapter(context, hosts));
         return view;
-    }
-
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    public interface OnListFragmentInteractionListener {
-        void onListFragmentInteraction(HostList host);
     }
 
     @Override
@@ -142,7 +118,7 @@ public class HostListFragment2 extends Fragment implements MainDataReceived{
 
         // Update RecyclerView with the latest data and tell it to update itself
         RecyclerView recyclerView = view.findViewById(R.id.main_list);
-        MyHostListRecyclerViewAdapter adapter = (MyHostListRecyclerViewAdapter) recyclerView.getAdapter();
+        mainHostRecyclerViewAdapter adapter = (mainHostRecyclerViewAdapter) recyclerView.getAdapter();
         adapter.updateHostList(hosts);
         adapter.notifyDataSetChanged();
 

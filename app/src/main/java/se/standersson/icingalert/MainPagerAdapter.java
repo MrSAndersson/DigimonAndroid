@@ -1,6 +1,7 @@
 package se.standersson.icingalert;
 
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
 class MainPagerAdapter extends FragmentPagerAdapter {
