@@ -52,6 +52,14 @@ class HostList implements Serializable, Comparable<HostList> {
         return HostSingleton.getInstance().getHosts().get(hostPosition).isAcknowledged();
     }
 
+    boolean isNotifying() {
+        return HostSingleton.getInstance().getHosts().get(hostPosition).isNotifying();
+    }
+
+    void setNotifying(boolean isNotifying) {
+        HostSingleton.getInstance().getHosts().get(hostPosition).setIsNotifying(isNotifying);
+    }
+
     int getStateCount(int state) {
         return HostSingleton.getInstance().getHosts().get(hostPosition).getStateCount(state);
     }
@@ -129,15 +137,17 @@ class Host implements Serializable, Comparable<Host>{
     private final List<Integer> unknownList = new ArrayList<>();
     private final List<Integer> unknownAckList = new ArrayList<>();
     private boolean isDown = false;
+    private boolean isNotifying;
     private final boolean acknowledged;
     private final String comment;
     private final String commentAuthor;
 
 
     //Constructor for hosts
-    Host(String hostName, boolean isDown, boolean acknowledged, String comment, String commentAuthor) {
+    Host(String hostName, boolean isDown, boolean acknowledged, boolean isNotifying, String comment, String commentAuthor) {
         this.hostName = hostName;
         this.acknowledged = acknowledged;
+        this.isNotifying = isNotifying;
         this.comment = comment;
         this.commentAuthor = commentAuthor;
         if (isDown) {
@@ -280,6 +290,14 @@ class Host implements Serializable, Comparable<Host>{
 
     boolean isAcknowledged() {
         return acknowledged;
+    }
+
+    boolean isNotifying() {
+        return isNotifying;
+    }
+
+    void setIsNotifying(boolean isNotifying) {
+        this.isNotifying = isNotifying;
     }
 
     String getComment() {

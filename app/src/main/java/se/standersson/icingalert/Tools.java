@@ -35,42 +35,35 @@ final class Tools {
         String hostName, hostComment, hostCommentAuthor, serviceName, serviceDetails, serviceComment, serviceCommentAuthor;
         int state, lastState;
         long lastStateChange;
-        boolean notifications, hostAcknowledged, serviceAcknowledged;
+        boolean hostIsDown, hostAcknowledged, hostIsNotifying, serviceAcknowledged, serviceIsNotifying;
 
         /*
             * Add all downed hosts to the list first in order to sort them to the top
              */
         for (int x = 0, y = 0; x < hostsCount; x++) {
-            if (data.getJSONArray("hosts").getJSONObject(x).getJSONObject("attrs").getInt("state") == 1) {
-                hostName = data.getJSONArray("hosts").getJSONObject(x).getJSONObject("attrs").getString("name");
-                hostPositions.put(hostName, hosts.size());
+            hostName = data.getJSONArray("hosts").getJSONObject(x).getJSONObject("attrs").getString("name");
+            hostIsNotifying = data.getJSONArray("hosts").getJSONObject(x).getJSONObject("attrs").getBoolean("enable_notifications");
+            hostPositions.put(hostName, hosts.size());
 
-                // Check for acknowledgements
-                hostComment = "";
-                hostCommentAuthor = "";
-                if (data.getJSONArray("hosts").getJSONObject(x).getJSONObject("attrs").getInt("acknowledgement") != 0) {
-                    hostAcknowledged = true;
-                    for (int z = 0 ; z < data.getJSONArray("comments").length() ;  z++) {
-                        if (data.getJSONArray("comments").getJSONObject(z).getJSONObject("attrs").getString("host_name").equals(hostName)
-                                && data.getJSONArray("comments").getJSONObject(z).getJSONObject("attrs").getString("service_name").equals("")) {
-                            hostComment = data.getJSONArray("comments").getJSONObject(z).getJSONObject("attrs").getString("text");
-                            hostCommentAuthor = data.getJSONArray("comments").getJSONObject(z).getJSONObject("attrs").getString("author");
-                        }
-                    }
-                } else {
-                    hostAcknowledged = false;
-                    hostComment = "";
-                }
+            // Check for acknowledgements
+
+            hostAcknowledged = data.getJSONArray("hosts").getJSONObject(x).getJSONObject("attrs").getInt("acknowledgement") == 0 ? false : true;
+            hostIsDown = data.getJSONArray("hosts").getJSONObject(x).getJSONObject("attrs").getInt("state") == 0 ? false : true;
 
 
-
-                hosts.add(new Host(hostName, true, hostAcknowledged, hostComment, hostCommentAuthor));
-                y++;
-                if (y == hostsDownCount) {
-                    break;
+            // Check for host comments
+            hostComment = "";
+            hostCommentAuthor = "";
+            for (int z = 0 ; z < data.getJSONArray("comments").length() ;  z++) {
+                if (data.getJSONArray("comments").getJSONObject(z).getJSONObject("attrs").getString("host_name").equals(hostName)
+                        && data.getJSONArray("comments").getJSONObject(z).getJSONObject("attrs").getString("service_name").equals("")) {
+                    hostComment = data.getJSONArray("comments").getJSONObject(z).getJSONObject("attrs").getString("text");
+                    hostCommentAuthor = data.getJSONArray("comments").getJSONObject(z).getJSONObject("attrs").getString("author");
                 }
             }
-        }
+
+            hosts.add(new Host(hostName, hostIsDown, hostAcknowledged, hostIsNotifying, hostComment, hostCommentAuthor));
+    }
 
             /*
             * Loop through all services and store the hostname and the location of their respective services
@@ -82,35 +75,25 @@ final class Tools {
             state = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getInt("state");
             lastState = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getInt("last_state");
             lastStateChange = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getLong("last_state_change");
-            notifications = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getBoolean("enable_notifications");
+            serviceIsNotifying = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getBoolean("enable_notifications");
             serviceComment = "";
             serviceCommentAuthor = "";
 
 
             // Check for acknowledgements
-            if (data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getInt("acknowledgement") != 0) {
-                serviceAcknowledged = true;
+            serviceAcknowledged = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getInt("acknowledgement") == 0 ? false : true;
 
-                for (int y = 0 ; y < data.getJSONArray("comments").length() ; y++) {
-                    if (data.getJSONArray("comments").getJSONObject(y).getJSONObject("attrs").getString("host_name").equals(hostName)
-                            && data.getJSONArray("comments").getJSONObject(y).getJSONObject("attrs").getString("service_name").equals(serviceName)) {
-                        serviceComment = data.getJSONArray("comments").getJSONObject(y).getJSONObject("attrs").getString("text");
-                        serviceCommentAuthor = data.getJSONArray("comments").getJSONObject(y).getJSONObject("attrs").getString("author");
-                        Log.d("Hej", "Lol");
-                    }
+
+            // Set comment
+            for (int y = 0 ; y < data.getJSONArray("comments").length() ; y++) {
+                if (data.getJSONArray("comments").getJSONObject(y).getJSONObject("attrs").getString("host_name").equals(hostName)
+                        && data.getJSONArray("comments").getJSONObject(y).getJSONObject("attrs").getString("service_name").equals(serviceName)) {
+                    serviceComment = data.getJSONArray("comments").getJSONObject(y).getJSONObject("attrs").getString("text");
+                    serviceCommentAuthor = data.getJSONArray("comments").getJSONObject(y).getJSONObject("attrs").getString("author");
                 }
-            } else {
-                serviceAcknowledged = false;
             }
 
-
-            if (hostPositions.containsKey(hostName)) {
-                hosts.get(hostPositions.get(hostName)).addService(serviceName, serviceDetails, state, lastState, lastStateChange, notifications, serviceAcknowledged, serviceComment, serviceCommentAuthor);
-            } else {
-                hostPositions.put(hostName, hosts.size());
-                hosts.add(new Host(hostName, false, false, "", ""));
-                hosts.get(hostPositions.get(hostName)).addService(serviceName, serviceDetails, state, lastState, lastStateChange, notifications, serviceAcknowledged, serviceComment, serviceCommentAuthor);
-            }
+            hosts.get(hostPositions.get(hostName)).addService(serviceName, serviceDetails, state, lastState, lastStateChange, serviceIsNotifying, serviceAcknowledged, serviceComment, serviceCommentAuthor);
         }
 
         // Sort all hosts and services in name order

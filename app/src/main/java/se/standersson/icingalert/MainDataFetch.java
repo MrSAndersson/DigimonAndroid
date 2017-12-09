@@ -64,7 +64,7 @@ class MainDataFetch {
 
             // Create the request URLs
             String statusURL = serverString + "/v1/status/CIB";
-            String hostURL = serverString + "/v1/objects/hosts?attrs=last_check_result&attrs=state&attrs=name&attrs=acknowledgement";
+            String hostURL = serverString + "/v1/objects/hosts?attrs=last_check_result&attrs=state&attrs=name&attrs=acknowledgement&attrs=enable_notifications";
             String serviceURL = serverString + "/v1/objects/services?attrs=last_check_result&attrs=state&attrs=name&attrs=host_name&attrs=last_state&attrs=last_state_change&attrs=enable_notifications&attrs=acknowledgement";
             String commentsURL = serverString + "/v1/objects/comments?attrs=author&attrs=host_name&attrs=service_name&attrs=text";
 

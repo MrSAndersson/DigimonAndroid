@@ -52,7 +52,6 @@ public class MyHostListRecyclerViewAdapter extends RecyclerView.Adapter<MyHostLi
             holder.hostName.setBackgroundColor(0x00000000);
         }
 
-        // TODO: Fix acknowledgeless comments
         // Set hostComment
         if (holder.host.getComment().equals("")) {
             holder.hostComment.setVisibility(View.GONE);
@@ -221,8 +220,10 @@ public class MyHostListRecyclerViewAdapter extends RecyclerView.Adapter<MyHostLi
             PopupMenu popup = new PopupMenu(context, v);
             MenuInflater inflater = popup.getMenuInflater();
             inflater.inflate(R.menu.main_list_host_menu, popup.getMenu());
-            // TODO: Fix hostIsNotifying
-            popup.getMenu().findItem(R.id.host_notifying).setChecked(true);
+
+            // TODO: setup server call
+            // Configure host_notifying checkbox
+            popup.getMenu().findItem(R.id.host_notifying).setChecked(holder.host.isNotifying());
             popup.show();
         }
     }
