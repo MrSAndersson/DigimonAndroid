@@ -11,6 +11,7 @@
     <color name="colorUnknown">#AA44FF</color>
     <color name="colorUnknownAck">#CA78FD</color>
     <color name="colorGroup">#eeeeee</color>
+    <color name="colorGreyBackground">#e6e6e6</color>
 
 
 </resources>
