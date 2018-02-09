@@ -1,6 +1,9 @@
 package se.standersson.icingalert;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
@@ -251,6 +254,24 @@ public class mainHostRecyclerViewAdapter extends RecyclerView.Adapter<mainHostRe
                     switch (item.getItemId()) {
 
                         case R.id.host_acknowledge:
+                            // Check that user has set Acknowledgement Author in the app settings
+                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                            if (prefs.getString("acknowledgement_author", "").equals("")) {
+                                Toast.makeText(context, "No Author set. Set Acknowledgement Author in the Settings", Toast.LENGTH_SHORT).show();
+                            } else if (!holder.host.isDown()) {
+                                // If host is already up, don't show dialogue
+                                Toast.makeText(context, "Host is up, no need to Acknowledge", Toast.LENGTH_SHORT).show();
+                            } else {
+
+                                AcknowledgementDialogFragment dialog = AcknowledgementDialogFragment.newInstance(hosts, holder.host.getHost());
+
+                                try {
+                                    final AppCompatActivity activity = (AppCompatActivity) context;
+                                    dialog.show(activity.getFragmentManager(), "acknowledgementDialog");
+                                } catch (ClassCastException e) {
+                                    Log.d("Error", "Can't get the fragment manager with this");
+                                }
+                            }
                             break;
 
                         case R.id.host_notifying:
