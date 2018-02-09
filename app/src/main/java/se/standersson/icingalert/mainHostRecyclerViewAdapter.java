@@ -3,14 +3,29 @@ package se.standersson.icingalert;
 import android.content.Context;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class mainHostRecyclerViewAdapter extends RecyclerView.Adapter<mainHostRecyclerViewAdapter.ViewHolder> {
 
@@ -230,7 +245,90 @@ public class mainHostRecyclerViewAdapter extends RecyclerView.Adapter<mainHostRe
             // TODO: setup server call
             // Configure host_notifying checkbox
             popup.getMenu().findItem(R.id.host_notifying).setChecked(holder.host.isNotifying());
+            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    switch (item.getItemId()) {
+
+                        case R.id.host_acknowledge:
+                            break;
+
+                        case R.id.host_notifying:
+                            // Invert checked state since it was clicked
+                            item.setChecked(!item.isChecked());
+                            updateNotifying(item);
+                            break;
+
+                        default:
+                            break;
+                    }
+                    return true;
+                }
+            });
             popup.show();
         }
+
+        private void updateNotifying(final MenuItem item) {
+
+            final boolean isChecked = item.isChecked();
+
+            if (Tools.isConnected(context)) {
+
+                VolleySingleton.getInstance(context).getRequestQueue();
+                final String[] prefsString = Tools.getLogin(context);
+
+                final String requestString = prefsString[0] + "/v1/objects/hosts?host=" + holder.host.getHostName();
+
+                JSONObject actionJSON = new JSONObject();
+                try {
+                    actionJSON.put("attrs", new JSONObject());
+                    actionJSON.getJSONObject("attrs").put("enable_notifications", isChecked);
+                } catch (JSONException e) {
+                    Log.d("MainList: ", "JSONException");
+                }
+
+                JsonObjectRequest notificationChangeRequest = new JsonObjectRequest(Request.Method.POST, requestString, actionJSON, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        // Display the result
+                        if (isChecked) {
+                            Toast.makeText(context, "Notifications Enabled!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(context, "Notifications Disabled!", Toast.LENGTH_SHORT).show();
+                        }
+                        holder.host.setNotifying(isChecked);
+                    }
+                }, new Response.ErrorListener() {
+
+                    // If the server replies with an error
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(context, "Could not update server: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                }) {
+
+                    // Override the request headers to add credentials
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<>();
+                        String credentials = String.format("Basic %s", Base64.encodeToString(String.format("%s:%s", prefsString[1], prefsString[2]).getBytes(), Base64.DEFAULT));
+                        params.put("Authorization", credentials);
+                        params.put("Accept", "application/json");
+                        return params;
+                    }
+                };
+
+
+                VolleySingleton.getInstance(context).addToRequestQueue(notificationChangeRequest);
+            } else {
+                Toast.makeText(context, R.string.no_connectivity, Toast.LENGTH_SHORT).show();
+            }
+
+
+        }
     }
+
+
 }
