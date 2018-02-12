@@ -34,7 +34,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
-                    android:layout_toStartOf="@+id/main_list_service_more_button"
+                    android:layout_toStartOf="@+id/main_list_service_last_state_change"
                     android:layout_centerVertical="true">
 
                     <TextView
@@ -44,7 +44,17 @@
 
                 </LinearLayout>
 
-
+                <TextView
+                    android:id="@+id/main_list_service_last_state_change"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toStartOf="@+id/main_list_service_more_button"
+                    android:layout_centerVertical="true"
+                    android:textSize="12sp"
+                    android:textColor="@android:color/primary_text_light"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:layout_marginStart="5dp"
+                    android:textStyle="italic" />
 
                 <ImageButton
                     android:id="@+id/main_list_service_more_button"
@@ -62,12 +72,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:visibility="gone">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="17/2-2018"/>
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="5dp">
 
                 <TextView
                     android:id="@+id/main_list_service_details"
