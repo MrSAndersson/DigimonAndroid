@@ -26,7 +26,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,28 +35,25 @@ import java.util.Map;
  */
 
 public class AcknowledgementDialogFragment extends DialogFragment implements MainDataReceived{
-    private int groupPosition;
-    private int childPosition;
-    private List <HostAbstract> hosts;
+    private Service service;
+    private HostAbstract host;
     private MainPagerAdapter mainPagerAdapter;
 
-    static AcknowledgementDialogFragment newInstance(List<HostAbstract> hosts, int groupPosition, int childPosition) {
+    static AcknowledgementDialogFragment newInstance(HostAbstract host,Service service) {
         AcknowledgementDialogFragment fragment = new AcknowledgementDialogFragment();
         Bundle args = new Bundle();
-        args.putInt("groupPosition", groupPosition);
-        args.putInt("childPosition", childPosition);
         args.putBoolean("isService", true);
-        args.putSerializable("hosts", (Serializable) hosts);
+        args.putSerializable("hosts", host);
+        args.putSerializable("service", service);
         fragment.setArguments(args);
         return fragment;
     }
 
-    static AcknowledgementDialogFragment newInstance(List<HostAbstract> hosts, int groupPosition) {
+    static AcknowledgementDialogFragment newInstance(HostAbstract host) {
         AcknowledgementDialogFragment fragment = new AcknowledgementDialogFragment();
         Bundle args = new Bundle();
-        args.putInt("groupPosition", groupPosition);
 
-        args.putSerializable("hosts", (Serializable) hosts);
+        args.putSerializable("hosts", host);
         fragment.setArguments(args);
         return fragment;
     }
@@ -70,16 +66,12 @@ public class AcknowledgementDialogFragment extends DialogFragment implements Mai
         //Set mainPagerAdapter (Needed to update fragments)
         mainPagerAdapter = ((MainActivity) getActivity()).getMainPagerAdapter();
 
-        groupPosition = getArguments().getInt("groupPosition");
-
-        // If Acknowledging a service, set a childPosition
+        // If Acknowledging a service, set a servicePosition
         if (isService) {
-            childPosition = getArguments().getInt("childPosition");
-        } else {
-            childPosition = 0;
+            service = (Service) getArguments().getSerializable("service");
         }
-        // noinspection unchecked
-        hosts = (List<HostAbstract>) getArguments().getSerializable("hosts");
+
+        host = (HostAbstract) getArguments().getSerializable("hosts");
 
         // Build a dialog using the AlertDialog.Builder class
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -88,12 +80,11 @@ public class AcknowledgementDialogFragment extends DialogFragment implements Mai
         // Configure the view
         LayoutInflater inflater = getActivity().getLayoutInflater();
         @SuppressLint("InflateParams") final View view = inflater.inflate(R.layout.acknowledgement_layout, null);
-        assert hosts != null;
         if (isService) {
-            String serviceString = hosts.get(groupPosition).getServiceName(childPosition);
+            String serviceString = service.getServiceName();
             ((TextView) view.findViewById(R.id.acknowledgement_servicename)).setText(serviceString);
         }
-        String hostString = hosts.get(groupPosition).getHostName();
+        String hostString = host.getHostName();
         ((TextView)view.findViewById(R.id.acknowledgement_hostname)).setText(hostString);
 
         builder.setView(view)
@@ -127,8 +118,8 @@ public class AcknowledgementDialogFragment extends DialogFragment implements Mai
         final AcknowledgementDialogFragment thisClass = this;
 
         if (Tools.isConnected(getActivity())) {
-            String hostName =  hosts.get(groupPosition).getHostName();
-            String serviceIdentifier = hostName + "!" + hosts.get(groupPosition).getServiceName(childPosition);
+            String hostName =  host.getHostName();
+            String serviceIdentifier = hostName + "!" + service.getServiceName();
 
             VolleySingleton.getInstance(getActivity()).getRequestQueue();
             final String[] prefsString = Tools.getLogin(getActivity());

@@ -216,7 +216,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
                     Toast.makeText(context, "No Author set. Set Acknowledgement Author in the Settings", Toast.LENGTH_SHORT).show();
                 } else {
 
-                    AcknowledgementDialogFragment dialog = AcknowledgementDialogFragment.newInstance(hosts, groupPosition);
+                    AcknowledgementDialogFragment dialog = AcknowledgementDialogFragment.newInstance(hosts.get(groupPosition));
 
                     try {
                         final AppCompatActivity activity = (AppCompatActivity) context;
@@ -287,7 +287,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
                     Toast.makeText(context, "No Author set. Set Acknowledgement Author in the Settings", Toast.LENGTH_SHORT).show();
                 } else {
 
-                    AcknowledgementDialogFragment dialog = AcknowledgementDialogFragment.newInstance(hosts, groupPosition, childPosition);
+                    AcknowledgementDialogFragment dialog = AcknowledgementDialogFragment.newInstance(hosts.get(groupPosition), hosts.get(groupPosition).getService(childPosition));
 
                     try {
                         final AppCompatActivity activity = (AppCompatActivity) context;

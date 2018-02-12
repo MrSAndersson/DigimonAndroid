@@ -243,10 +243,8 @@ public class mainHostRecyclerViewAdapter extends RecyclerView.Adapter<mainHostRe
         public void onClick(View v) {
             PopupMenu popup = new PopupMenu(context, v);
             MenuInflater inflater = popup.getMenuInflater();
-            inflater.inflate(R.menu.main_list_host_menu, popup.getMenu());
+            inflater.inflate(R.menu.main_list_host_more_menu, popup.getMenu());
 
-            // TODO: setup server call
-            // Configure host_notifying checkbox
             popup.getMenu().findItem(R.id.host_notifying).setChecked(holder.host.isNotifying());
             popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 @Override
@@ -263,7 +261,7 @@ public class mainHostRecyclerViewAdapter extends RecyclerView.Adapter<mainHostRe
                                 Toast.makeText(context, "Host is up, no need to Acknowledge", Toast.LENGTH_SHORT).show();
                             } else {
 
-                                AcknowledgementDialogFragment dialog = AcknowledgementDialogFragment.newInstance(hosts, holder.host.getHost());
+                                AcknowledgementDialogFragment dialog = AcknowledgementDialogFragment.newInstance(holder.host);
 
                                 try {
                                     final AppCompatActivity activity = (AppCompatActivity) context;
