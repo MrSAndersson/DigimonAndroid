@@ -47,7 +47,7 @@ public class mainHostRecyclerViewAdapter extends RecyclerView.Adapter<mainHostRe
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_hostlist, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.main_hostlist_cardview, parent, false);
         return new ViewHolder(view);
     }
 

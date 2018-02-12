@@ -24,7 +24,7 @@
             android:layout_marginRight="16dp"
             app:layoutManager="LinearLayoutManager"
             tools:context="se.standersson.icingalert.HostListFragment2"
-            tools:listitem="@layout/fragment_hostlist"/>
+            tools:listitem="@layout/main_hostlist_cardview"/>
 
     </android.support.v4.widget.SwipeRefreshLayout>
 

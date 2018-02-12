@@ -5,7 +5,6 @@ import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,7 +49,7 @@ public class HostListFragment2 extends Fragment implements MainDataReceived{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_hostlist_list, container, false);
+        view = inflater.inflate(R.layout.fragment_hostlist_base, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.main_list);
 
         mainPagerAdapter = ((MainActivity)getActivity()).getMainPagerAdapter();

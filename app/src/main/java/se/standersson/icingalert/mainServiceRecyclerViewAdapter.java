@@ -19,7 +19,7 @@ public class mainServiceRecyclerViewAdapter extends RecyclerView.Adapter<mainSer
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.main_servicelist, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.main_servicelist_cardview, parent, false);
         return new ViewHolder(view);
     }
 
@@ -43,7 +43,7 @@ public class mainServiceRecyclerViewAdapter extends RecyclerView.Adapter<mainSer
         ViewHolder(View view) {
             super(view);
             this.view = view;
-            serviceName = view.findViewById(R.id.service_name);
+            serviceName = view.findViewById(R.id.main_list_service_name);
         }
     }
 }

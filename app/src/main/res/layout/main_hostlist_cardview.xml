@@ -132,7 +132,7 @@
                     android:id="@+id/main_list_more_button"
                     android:layout_width="30dp"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_more_vert_black"
+                    android:src="@drawable/ic_host_more"
                     android:contentDescription="@string/host_more_description"
                     android:backgroundTint="@color/colorGroup"
                     android:layout_alignParentEnd="true" />
@@ -158,7 +158,7 @@
                 android:layout_marginEnd="9dp"
                 app:layoutManager="LinearLayoutManager"
                 tools:context="se.standersson.icingalert.HostListFragment2"
-                tools:listitem="@layout/main_servicelist"
+                tools:listitem="@layout/main_servicelist_cardview"
                 android:visibility="gone"/>
 
 
