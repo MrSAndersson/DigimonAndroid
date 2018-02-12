@@ -16,7 +16,7 @@ import java.util.List;
 public class HostListFragment2 extends Fragment implements MainDataReceived{
 
     private HostListFragment2 thisClass = this;
-    private List<HostList> hosts;
+    private List<HostAbstract> hosts;
     private SwipeRefreshLayout swipeContainer;
     private MainPagerAdapter mainPagerAdapter;
     private View view;
@@ -30,7 +30,7 @@ public class HostListFragment2 extends Fragment implements MainDataReceived{
     }
 
     @SuppressWarnings("unused")
-    public static HostListFragment2 newInstance(int position, List<HostList> hosts) {
+    public static HostListFragment2 newInstance(int position, List<HostAbstract> hosts) {
         HostListFragment2 fragment = new HostListFragment2();
         Bundle args = new Bundle();
         args.putSerializable("hosts", (Serializable) hosts);
@@ -43,7 +43,7 @@ public class HostListFragment2 extends Fragment implements MainDataReceived{
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             // noinspection unchecked
-            this.hosts = (List<HostList>) getArguments().getSerializable("hosts");
+            this.hosts = (List<HostAbstract>) getArguments().getSerializable("hosts");
         }
     }
 
@@ -113,7 +113,7 @@ public class HostListFragment2 extends Fragment implements MainDataReceived{
         }
     }
 
-    public void update(List<HostList> hosts){
+    public void update(List<HostAbstract> hosts){
 
         // Update RecyclerView with the latest data and tell it to update itself
         RecyclerView recyclerView = view.findViewById(R.id.main_list);

@@ -38,10 +38,10 @@ import java.util.Map;
 public class AcknowledgementDialogFragment extends DialogFragment implements MainDataReceived{
     private int groupPosition;
     private int childPosition;
-    private List <HostList> hosts;
+    private List <HostAbstract> hosts;
     private MainPagerAdapter mainPagerAdapter;
 
-    static AcknowledgementDialogFragment newInstance(List<HostList> hosts, int groupPosition, int childPosition) {
+    static AcknowledgementDialogFragment newInstance(List<HostAbstract> hosts, int groupPosition, int childPosition) {
         AcknowledgementDialogFragment fragment = new AcknowledgementDialogFragment();
         Bundle args = new Bundle();
         args.putInt("groupPosition", groupPosition);
@@ -52,7 +52,7 @@ public class AcknowledgementDialogFragment extends DialogFragment implements Mai
         return fragment;
     }
 
-    static AcknowledgementDialogFragment newInstance(List<HostList> hosts, int groupPosition) {
+    static AcknowledgementDialogFragment newInstance(List<HostAbstract> hosts, int groupPosition) {
         AcknowledgementDialogFragment fragment = new AcknowledgementDialogFragment();
         Bundle args = new Bundle();
         args.putInt("groupPosition", groupPosition);
@@ -79,7 +79,7 @@ public class AcknowledgementDialogFragment extends DialogFragment implements Mai
             childPosition = 0;
         }
         // noinspection unchecked
-        hosts = (List<HostList>) getArguments().getSerializable("hosts");
+        hosts = (List<HostAbstract>) getArguments().getSerializable("hosts");
 
         // Build a dialog using the AlertDialog.Builder class
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());

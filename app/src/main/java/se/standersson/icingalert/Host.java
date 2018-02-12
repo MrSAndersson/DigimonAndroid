@@ -11,11 +11,11 @@ import java.util.List;
  * Map of a subset of host/services and pointers to their place in HostSingleton
  */
 
-class HostList implements Serializable, Comparable<HostList> {
+class HostAbstract implements Serializable, Comparable<HostAbstract> {
     private final int hostPosition;
     private final List<Integer> service = new ArrayList<>();
 
-    HostList(int hostPosition) {
+    HostAbstract(int hostPosition) {
         this.hostPosition = hostPosition;
     }
 
@@ -128,7 +128,7 @@ class HostList implements Serializable, Comparable<HostList> {
      */
 
     @Override
-    public int compareTo(@NonNull HostList other) {
+    public int compareTo(@NonNull HostAbstract other) {
         return this.getHostName().compareToIgnoreCase(
                 other.getHostName());
     }

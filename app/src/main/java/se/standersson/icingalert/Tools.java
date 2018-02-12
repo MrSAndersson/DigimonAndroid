@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -107,34 +106,34 @@ final class Tools {
     }
 
 
-    static List<HostList> filterProblems(List<Host> hosts){
+    static List<HostAbstract> filterProblems(List<Host> hosts){
 
         /*
         * Copy over downed hosts with all their services and all the hosts with troubled services
         */
 
         int hostCount = hosts.size();
-        final List<HostList> hostList = new ArrayList<>();
+        final List<HostAbstract> hostAbstract = new ArrayList<>();
 
         int addedCounter = 0;
         for (int x = 0 ; x < hostCount ; x++) {
             boolean hasBeenAdded = false;
             if (hosts.get(x).isDown()){
-                hostList.add(new HostList(x));
+                hostAbstract.add(new HostAbstract(x));
                 hasBeenAdded = true;
                 for (int y = 0 ; y < hosts.get(x).getServiceCount() ; y++) {
-                    hostList.get(hostList.size()-1).addService(y);
+                    hostAbstract.get(hostAbstract.size()-1).addService(y);
                 }
             } else {
                 for (int y = 0 ; y < hosts.get(x).getServiceCount() ; y++) {
                     if (hosts.get(x).getServiceState(y) != 0){
                         try{
-                            hostList.get(addedCounter);
+                            hostAbstract.get(addedCounter);
                         } catch (IndexOutOfBoundsException e) {
-                            hostList.add(new HostList(x));
+                            hostAbstract.add(new HostAbstract(x));
                             hasBeenAdded = true;
                         }
-                        hostList.get(hostList.size()-1).addService(y);
+                        hostAbstract.get(hostAbstract.size()-1).addService(y);
                     }
                 }
             }
@@ -146,9 +145,9 @@ final class Tools {
         /*
          * Sort hosts according to being down and number of failing services
          */
-        Collections.sort(hostList, new Comparator<HostList>() {
+        Collections.sort(hostAbstract, new Comparator<HostAbstract>() {
             @Override
-            public int compare(HostList o1, HostList o2) {
+            public int compare(HostAbstract o1, HostAbstract o2) {
                 int warn = 1;
                 int crit = 2;
                 int unknown = 3;
@@ -173,34 +172,34 @@ final class Tools {
                 }
             }
         });
-        return hostList;
+        return hostAbstract;
     }
 
     /*
      * Filter based on a string
      */
-    static List<HostList> filterTextMatch(List<HostList> hosts, String searchString) {
-        List<HostList> newHostList = new ArrayList<>();
+    static List<HostAbstract> filterTextMatch(List<HostAbstract> hosts, String searchString) {
+        List<HostAbstract> newHostAbstract = new ArrayList<>();
         int addedCounter = 0;
         for (int x = 0 ; x < hosts.size() ; x++) {
             boolean hasBeenAdded = false;
             if (hosts.get(x).getHostName().toLowerCase().contains(searchString.toLowerCase())) {
-                newHostList.add(new HostList(hosts.get(x).getHost()));
+                newHostAbstract.add(new HostAbstract(hosts.get(x).getHost()));
                 hasBeenAdded = true;
                 for (int y = 0 ; y < hosts.get(x).getServiceCount() ; y++) {
-                    newHostList.get(newHostList.size()-1).addService(y);
+                    newHostAbstract.get(newHostAbstract.size()-1).addService(y);
                 }
             } else {
                 for (int y = 0; y < hosts.get(x).getServiceCount() ; y++) {
                     if (hosts.get(x).getServiceName(y).toLowerCase().contains(searchString.toLowerCase()) ||
                             hosts.get(x).getServiceDetails(y).toLowerCase().contains(searchString.toLowerCase())) {
                         try{
-                            newHostList.get(addedCounter);
+                            newHostAbstract.get(addedCounter);
                         } catch (IndexOutOfBoundsException e) {
-                            newHostList.add(new HostList(hosts.get(x).getHost()));
+                            newHostAbstract.add(new HostAbstract(hosts.get(x).getHost()));
                             hasBeenAdded = true;
                         }
-                        newHostList.get(newHostList.size()-1).addService(y);
+                        newHostAbstract.get(newHostAbstract.size()-1).addService(y);
                     }
                 }
             }
@@ -209,21 +208,21 @@ final class Tools {
                 addedCounter++;
             }
         }
-        return newHostList;
+        return newHostAbstract;
     }
 
-    // Create a HostList containing everything
-    static List<HostList> fullHostList(List<Host> hosts) {
-        List<HostList> newHostList = new ArrayList<>();
+    // Create a HostAbstract containing everything
+    static List<HostAbstract> fullHostList(List<Host> hosts) {
+        List<HostAbstract> newHostAbstract = new ArrayList<>();
 
         for (int x=0 ; x < hosts.size() ; x++) {
-            newHostList.add(new HostList(x));
+            newHostAbstract.add(new HostAbstract(x));
             for (int y=0 ; y < HostSingleton.getInstance().getHosts().get(x).getServiceCount() ; y++) {
-                newHostList.get(x).addService(y);
+                newHostAbstract.get(x).addService(y);
             }
         }
 
-        return newHostList;
+        return newHostAbstract;
     }
 
     static String[] getLogin(Context context){

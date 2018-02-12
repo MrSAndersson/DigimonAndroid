@@ -9,10 +9,10 @@ import android.widget.TextView;
 
 
 public class mainServiceRecyclerViewAdapter extends RecyclerView.Adapter<mainServiceRecyclerViewAdapter.ViewHolder> {
-    private final HostList host;
+    private final HostAbstract host;
     private final Context context;
 
-    mainServiceRecyclerViewAdapter(Context context, HostList host) {
+    mainServiceRecyclerViewAdapter(Context context, HostAbstract host) {
         this.context = context;
         this.host = host;
     }

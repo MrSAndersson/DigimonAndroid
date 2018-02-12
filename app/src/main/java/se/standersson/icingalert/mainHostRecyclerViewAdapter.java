@@ -33,13 +33,13 @@ import java.util.Map;
 public class mainHostRecyclerViewAdapter extends RecyclerView.Adapter<mainHostRecyclerViewAdapter.ViewHolder> {
 
     private final Context context;
-    private List<HostList> hosts;
+    private List<HostAbstract> hosts;
     private RecyclerView parentRecyclerView;
     private RecyclerView.RecycledViewPool recycledViewPool;
     private android.support.transition.Transition transition;
 
 
-    mainHostRecyclerViewAdapter(Context context, List<HostList> hosts) {
+    mainHostRecyclerViewAdapter(Context context, List<HostAbstract> hosts) {
         this.hosts = hosts;
         this.recycledViewPool = new RecyclerView.RecycledViewPool();
         this.context = context;
@@ -131,7 +131,7 @@ public class mainHostRecyclerViewAdapter extends RecyclerView.Adapter<mainHostRe
         final TextView unknownAckCount;
         final ImageButton moreButton;
         final RecyclerView serviceList;
-        HostList host;
+        HostAbstract host;
 
         ViewHolder(View view) {
             super(view);
@@ -150,7 +150,7 @@ public class mainHostRecyclerViewAdapter extends RecyclerView.Adapter<mainHostRe
         }
     }
 
-    void updateHostList(List<HostList> hosts){
+    void updateHostList(List<HostAbstract> hosts){
         this.hosts = hosts;
     }
 

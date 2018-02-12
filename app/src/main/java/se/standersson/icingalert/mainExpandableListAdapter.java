@@ -34,10 +34,10 @@ import java.util.Map;
 
 class mainExpandableListAdapter extends BaseExpandableListAdapter {
     private final Context context;
-    private List<HostList> hosts;
+    private List<HostAbstract> hosts;
 
 
-    mainExpandableListAdapter(Context context, List<HostList> hosts) {
+    mainExpandableListAdapter(Context context, List<HostAbstract> hosts) {
         this.context = context;
         this.hosts = hosts;
     }
@@ -497,7 +497,7 @@ class mainExpandableListAdapter extends BaseExpandableListAdapter {
         }
     }
 
-    void updateHostList(List<HostList> hosts){
+    void updateHostList(List<HostAbstract> hosts){
         this.hosts = hosts;
     }
 

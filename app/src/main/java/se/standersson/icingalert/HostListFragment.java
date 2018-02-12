@@ -19,12 +19,12 @@ public class HostListFragment extends Fragment implements MainDataReceived{
     private SwipeRefreshLayout swipeContainer;
     private View view;
     private MainPagerAdapter mainPagerAdapter;
-    private List<HostList> hosts;
+    private List<HostAbstract> hosts;
     private boolean backgroundIsBlue = false;
     private int fragmentPosition;
     private int globalProblemHostCount;
 
-    static HostListFragment newInstance(int position, List<HostList> hosts, int globalProblemHostCount) {
+    static HostListFragment newInstance(int position, List<HostAbstract> hosts, int globalProblemHostCount) {
         HostListFragment fragment = new HostListFragment();
         Bundle args = new Bundle();
         args.putInt("position", position);
@@ -38,7 +38,7 @@ public class HostListFragment extends Fragment implements MainDataReceived{
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // noinspection unchecked
-        this.hosts = (List<HostList>) getArguments().getSerializable("hosts");
+        this.hosts = (List<HostAbstract>) getArguments().getSerializable("hosts");
         this.fragmentPosition = getArguments().getInt("position");
         this.globalProblemHostCount = getArguments().getInt("globalProblemHostCount");
     }
@@ -108,7 +108,7 @@ public class HostListFragment extends Fragment implements MainDataReceived{
         }
     }
 
-    public void update(List<HostList> hosts){
+    public void update(List<HostAbstract> hosts){
         this.globalProblemHostCount = hosts.size();
         ExpandableListView listView = view.findViewById(R.id.main_expand_list);
         mainExpandableListAdapter adapter = (mainExpandableListAdapter) listView.getExpandableListAdapter();
