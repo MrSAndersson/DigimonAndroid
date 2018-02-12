@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         card_view:cardCornerRadius="5dp"
-        card_view:cardBackgroundColor="@color/colorGroup"
+        card_view:cardBackgroundColor="@color/colorServiceCard"
         card_view:cardElevation="@dimen/cardview_default_elevation"
         android:layout_marginTop="3dp"
         android:layout_marginBottom="3dp"
@@ -40,7 +40,10 @@
                     <TextView
                         android:id="@+id/main_list_service_name"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorServiceName"/>
 
                 </LinearLayout>
 
@@ -62,7 +65,7 @@
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_service_more"
                     android:contentDescription="@string/host_more_description"
-                    android:backgroundTint="@color/colorGroup"
+                    android:backgroundTint="@color/colorServiceCard"
                     android:layout_alignParentEnd="true" />
 
             </RelativeLayout>
@@ -79,7 +82,18 @@
                 <TextView
                     android:id="@+id/main_list_service_details"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:textColor="@android:color/primary_text_light"/>
+
+                <TextView
+                    android:id="@+id/main_list_service_comment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/primary_text_light"/>
             </LinearLayout>
 
         </LinearLayout>

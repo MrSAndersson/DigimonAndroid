@@ -42,6 +42,21 @@ public class mainServiceRecyclerViewAdapter extends RecyclerView.Adapter<mainSer
         // Set Service Details
         holder.serviceDetails.setText(holder.service.getDetails());
 
+        // Configure Service Comment
+        if (!holder.service.getComment().equals("") && !holder.service.getCommentAuthor().equals(""))
+        {
+            String comment = "Comment:\n" + holder.service.getComment() + "\n/" + holder.service.getCommentAuthor();
+            holder.serviceComment.setText(comment);
+        } else {
+            holder.serviceComment.setText("");
+        }
+
+        if (holder.serviceComment.getText() == "") {
+            holder.serviceComment.setVisibility(View.GONE);
+        } else {
+            holder.serviceComment.setVisibility(View.VISIBLE);
+        }
+
         if (holder.service.isExpanded()) {
             holder.view.findViewById(R.id.main_list_service_exp).setVisibility(View.VISIBLE);
             holder.lastStateChange.setVisibility(View.VISIBLE);
@@ -80,6 +95,7 @@ public class mainServiceRecyclerViewAdapter extends RecyclerView.Adapter<mainSer
         final TextView serviceName;
         final TextView lastStateChange;
         final TextView serviceDetails;
+        final TextView serviceComment;
 
         Service service;
 
@@ -89,6 +105,7 @@ public class mainServiceRecyclerViewAdapter extends RecyclerView.Adapter<mainSer
             serviceName = view.findViewById(R.id.main_list_service_name);
             lastStateChange = view.findViewById(R.id.main_list_service_last_state_change);
             serviceDetails = view.findViewById(R.id.main_list_service_details);
+            serviceComment = view.findViewById(R.id.main_list_service_comment);
         }
     }
 
