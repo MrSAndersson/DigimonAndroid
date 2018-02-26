@@ -6,7 +6,6 @@
 
     <android.support.v7.widget.CardView
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/card_view"
         android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -28,7 +27,8 @@
                 android:id="@+id/main_list_service_indicator"
                 android:layout_width="15dp"
                 android:layout_height="match_parent"
-                android:src="@drawable/service_critical_indicator"/>
+                android:src="@drawable/service_critical_indicator"
+                android:contentDescription="@string/service_status_indicator_desc"/>
 
 
             <LinearLayout

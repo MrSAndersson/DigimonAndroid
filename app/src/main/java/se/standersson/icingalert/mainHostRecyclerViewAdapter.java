@@ -35,7 +35,7 @@ public class mainHostRecyclerViewAdapter extends RecyclerView.Adapter<mainHostRe
     private final Context context;
     private List<HostAbstract> hosts;
     private RecyclerView parentRecyclerView;
-    private RecyclerView.RecycledViewPool recycledViewPool;
+    private final RecyclerView.RecycledViewPool recycledViewPool;
     private android.support.transition.Transition transition;
 
 

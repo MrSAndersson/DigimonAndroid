@@ -15,7 +15,7 @@ import java.util.List;
 
 public class HostListFragment2 extends Fragment implements MainDataReceived{
 
-    private HostListFragment2 thisClass = this;
+    private final HostListFragment2 thisClass = this;
     private List<HostAbstract> hosts;
     private SwipeRefreshLayout swipeContainer;
     private MainPagerAdapter mainPagerAdapter;
@@ -141,11 +141,7 @@ public class HostListFragment2 extends Fragment implements MainDataReceived{
         }
     }
 
-    boolean isAllClear() {
-        if ( HostSingleton.getInstance().getProblemHostCount() == 0 && hosts.size() == 0) {
-            return true;
-        } else {
-            return false;
-        }
+    private boolean isAllClear() {
+        return HostSingleton.getInstance().getProblemHostCount() == 0 && hosts.size() == 0;
     }
 }

@@ -29,7 +29,6 @@ final class Tools {
         // Check how many Hosts and Services are having trouble
         int servicesCount = data.getJSONArray("services").length();
         int hostsCount = data.getJSONArray("hosts").length();
-        int hostsDownCount = data.getJSONObject("status").getInt("num_hosts_down");
 
         String hostName, hostComment, hostCommentAuthor, serviceName, serviceDetails, serviceComment, serviceCommentAuthor;
         int state, lastState;
@@ -39,15 +38,15 @@ final class Tools {
         /*
             * Add all downed hosts to the list first in order to sort them to the top
              */
-        for (int x = 0, y = 0; x < hostsCount; x++) {
+        for (int x = 0; x < hostsCount; x++) {
             hostName = data.getJSONArray("hosts").getJSONObject(x).getJSONObject("attrs").getString("name");
             hostIsNotifying = data.getJSONArray("hosts").getJSONObject(x).getJSONObject("attrs").getBoolean("enable_notifications");
             hostPositions.put(hostName, hosts.size());
 
             // Check for acknowledgements
 
-            hostAcknowledged = data.getJSONArray("hosts").getJSONObject(x).getJSONObject("attrs").getInt("acknowledgement") == 0 ? false : true;
-            hostIsDown = data.getJSONArray("hosts").getJSONObject(x).getJSONObject("attrs").getInt("state") == 0 ? false : true;
+            hostAcknowledged = data.getJSONArray("hosts").getJSONObject(x).getJSONObject("attrs").getInt("acknowledgement") != 0;
+            hostIsDown = data.getJSONArray("hosts").getJSONObject(x).getJSONObject("attrs").getInt("state") != 0;
 
 
             // Check for host comments
@@ -80,7 +79,7 @@ final class Tools {
 
 
             // Check for acknowledgements
-            serviceAcknowledged = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getInt("acknowledgement") == 0 ? false : true;
+            serviceAcknowledged = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getInt("acknowledgement") != 0;
 
 
             // Set comment

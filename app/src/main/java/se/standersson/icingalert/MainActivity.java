@@ -36,9 +36,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public boolean onQueryTextChange(String query) {
-
-        mainPagerAdapter.getFragment(0).update(Tools.filterTextMatch(Tools.filterProblems(HostSingleton.getInstance().getHosts()), query));
-        mainPagerAdapter.getFragment(1).update(Tools.filterTextMatch(Tools.fullHostList(HostSingleton.getInstance().getHosts()), query));
         mainPagerAdapter.getFragment2(0).update(Tools.filterTextMatch(Tools.filterProblems(HostSingleton.getInstance().getHosts()), query));
         mainPagerAdapter.getFragment2(1).update(Tools.filterTextMatch(Tools.fullHostList(HostSingleton.getInstance().getHosts()), query));
         return true;
@@ -46,8 +43,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public boolean onQueryTextSubmit(String query){
-        mainPagerAdapter.getFragment(0).update(Tools.filterTextMatch(Tools.filterProblems(HostSingleton.getInstance().getHosts()), query));
-        mainPagerAdapter.getFragment(1).update(Tools.filterTextMatch(Tools.fullHostList(HostSingleton.getInstance().getHosts()), query));
         mainPagerAdapter.getFragment2(0).update(Tools.filterTextMatch(Tools.filterProblems(HostSingleton.getInstance().getHosts()), query));
         mainPagerAdapter.getFragment2(1).update(Tools.filterTextMatch(Tools.fullHostList(HostSingleton.getInstance().getHosts()), query));
         return true;
@@ -150,8 +145,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             ViewPager mainViewPager = findViewById(R.id.main_view_pager);
             mainPagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
             mainViewPager.setAdapter(mainPagerAdapter);
-            // TODO: Remove this limit set after removing listview
-            mainViewPager.setOffscreenPageLimit(3);
 
             // Hide progress bar and show main lists
             findViewById(R.id.main_progressbar).setVisibility(View.GONE);

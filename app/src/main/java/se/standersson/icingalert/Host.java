@@ -148,7 +148,7 @@ class Host implements Serializable, Comparable<Host>{
     private final List<Integer> unknownList = new ArrayList<>();
     private final List<Integer> unknownAckList = new ArrayList<>();
     private boolean isExpanded;
-    private boolean isDown;
+    private final boolean isDown;
     private boolean isNotifying;
     private final boolean acknowledged;
     private final String comment;
