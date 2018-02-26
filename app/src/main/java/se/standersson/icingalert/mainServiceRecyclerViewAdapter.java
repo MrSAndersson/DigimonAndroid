@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -87,6 +88,48 @@ public class mainServiceRecyclerViewAdapter extends RecyclerView.Adapter<mainSer
             holder.lastStateChange.setVisibility(View.GONE);
         }
 
+        // Configure Status Indicator
+
+        final int OK = 0;
+        final int WARNING = 1;
+        final int CRITICAL = 2;
+        final int UNKNOWN = 3;
+
+        switch (holder.service.getState()) {
+            case OK:
+                holder.statusIndicator.setVisibility(View.INVISIBLE);
+                break;
+            case WARNING:
+                if (holder.service.isAcknowledged()) {
+                    holder.statusIndicator.setImageDrawable(context.getDrawable(R.drawable.service_warning_ack_indicator));
+                } else {
+                    holder.statusIndicator.setImageDrawable(context.getDrawable(R.drawable.service_warning_indicator));
+                }
+                holder.statusIndicator.setVisibility(View.VISIBLE);
+                break;
+            case CRITICAL:
+                if (holder.service.isAcknowledged()) {
+                    holder.statusIndicator.setImageDrawable(context.getDrawable(R.drawable.service_critical_ack_indicator));
+                } else {
+                    holder.statusIndicator.setImageDrawable(context.getDrawable(R.drawable.service_critical_indicator));
+                }
+                holder.statusIndicator.setVisibility(View.VISIBLE);
+                break;
+            case UNKNOWN:
+                if (holder.service.isAcknowledged()) {
+                    holder.statusIndicator.setImageDrawable(context.getDrawable(R.drawable.service_unknown_ack_indicator));
+                } else {
+                    holder.statusIndicator.setImageDrawable(context.getDrawable(R.drawable.service_unknown_indicator));
+                }
+                holder.statusIndicator.setVisibility(View.VISIBLE);
+                break;
+            default:
+                holder.statusIndicator.setVisibility(View.INVISIBLE);
+                break;
+        }
+
+
+
         holder.moreMenu.setOnClickListener(new serviceMoreMenu(holder));
 
         holder.view.setOnClickListener(new View.OnClickListener() {
@@ -121,6 +164,7 @@ public class mainServiceRecyclerViewAdapter extends RecyclerView.Adapter<mainSer
         final ImageButton moreMenu;
         final TextView serviceDetails;
         final TextView serviceComment;
+        final ImageView statusIndicator;
 
         Service service;
 
@@ -132,6 +176,7 @@ public class mainServiceRecyclerViewAdapter extends RecyclerView.Adapter<mainSer
             moreMenu = view.findViewById(R.id.main_list_service_more_button);
             serviceDetails = view.findViewById(R.id.main_list_service_details);
             serviceComment = view.findViewById(R.id.main_list_service_comment);
+            statusIndicator = view.findViewById(R.id.main_list_service_indicator);
         }
     }
 

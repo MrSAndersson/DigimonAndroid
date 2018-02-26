@@ -10,7 +10,7 @@
         android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        card_view:cardCornerRadius="5dp"
+        card_view:cardCornerRadius="@dimen/service_cardview_corner"
         card_view:cardBackgroundColor="@color/colorServiceCard"
         card_view:cardElevation="@dimen/cardview_default_elevation"
         android:layout_marginTop="3dp"
@@ -21,79 +21,93 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="wrap_content">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp">
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_toStartOf="@+id/main_list_service_last_state_change"
-                    android:layout_centerVertical="true">
+            <ImageView
+                android:id="@+id/main_list_service_indicator"
+                android:layout_width="15dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/service_critical_indicator"/>
 
-                    <TextView
-                        android:id="@+id/main_list_service_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="15sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/colorServiceName"/>
-
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/main_list_service_last_state_change"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toStartOf="@+id/main_list_service_more_button"
-                    android:layout_centerVertical="true"
-                    android:textSize="12sp"
-                    android:textColor="@android:color/primary_text_light"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:layout_marginStart="5dp"
-                    android:textStyle="italic" />
-
-                <ImageButton
-                    android:id="@+id/main_list_service_more_button"
-                    android:layout_width="22dp"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_service_more"
-                    android:contentDescription="@string/host_more_description"
-                    android:backgroundTint="@color/colorServiceCard"
-                    android:layout_alignParentEnd="true" />
-
-            </RelativeLayout>
 
             <LinearLayout
-                android:id="@+id/main_list_service_exp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:layout_marginBottom="5dp">
+                android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/main_list_service_details"
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="12sp"
-                    android:textColor="@android:color/primary_text_light"/>
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp">
 
-                <TextView
-                    android:id="@+id/main_list_service_comment"
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_toStartOf="@+id/main_list_service_last_state_change"
+                        android:layout_centerVertical="true">
+
+                        <TextView
+                            android:id="@+id/main_list_service_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/colorServiceName"/>
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/main_list_service_last_state_change"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toStartOf="@+id/main_list_service_more_button"
+                        android:layout_centerVertical="true"
+                        android:textSize="12sp"
+                        android:textColor="@android:color/primary_text_light"
+                        android:layout_marginTop="@dimen/activity_vertical_margin"
+                        android:layout_marginStart="5dp"
+                        android:textStyle="italic" />
+
+                    <ImageButton
+                        android:id="@+id/main_list_service_more_button"
+                        android:layout_width="22dp"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_service_more"
+                        android:contentDescription="@string/host_more_description"
+                        android:backgroundTint="@color/colorServiceCard"
+                        android:layout_alignParentEnd="true" />
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:id="@+id/main_list_service_exp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:textColor="@android:color/primary_text_light"/>
+                    android:orientation="vertical"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="5dp">
+
+                    <TextView
+                        android:id="@+id/main_list_service_details"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:textColor="@android:color/primary_text_light"/>
+
+                    <TextView
+                        android:id="@+id/main_list_service_comment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/primary_text_light"/>
+                </LinearLayout>
+
             </LinearLayout>
 
         </LinearLayout>
