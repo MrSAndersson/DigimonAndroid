@@ -5,7 +5,7 @@ import android.view.ViewGroup;
 
 class MainPagerAdapter extends FragmentPagerAdapter {
     private static final int TAB_COUNT = 2;
-    private final HostListFragment[] fragmentArray2 = new HostListFragment[2];
+    private final HostListFragment[] fragmentArray = new HostListFragment[2];
 
     MainPagerAdapter(android.support.v4.app.FragmentManager fragmentManager) {
         super(fragmentManager);
@@ -22,13 +22,13 @@ class MainPagerAdapter extends FragmentPagerAdapter {
     public android.support.v4.app.Fragment getItem(int position) {
         switch (position) {
             case 0: // Trouble List
-                HostListFragment testTroubleFragment = HostListFragment.newInstance(position, Tools.filterProblems(HostSingleton.getInstance().getHosts()));
-                fragmentArray2[0] = testTroubleFragment;
-                return testTroubleFragment;
+                HostListFragment troubleFragment = HostListFragment.newInstance(position, Tools.filterProblems(HostSingleton.getInstance().getHosts()));
+                fragmentArray[0] = troubleFragment;
+                return troubleFragment;
             case 1:  // All-things-list
-                HostListFragment testAllFragment = HostListFragment.newInstance(position, Tools.fullHostList(HostSingleton.getInstance().getHosts()));
-                fragmentArray2[1] = testAllFragment;
-                return testAllFragment;
+                HostListFragment allFragment = HostListFragment.newInstance(position, Tools.fullHostList(HostSingleton.getInstance().getHosts()));
+                fragmentArray[1] = allFragment;
+                return allFragment;
             default:
                 return null;
         }
@@ -38,7 +38,7 @@ class MainPagerAdapter extends FragmentPagerAdapter {
     public Object instantiateItem(ViewGroup container, int position) {
 
         HostListFragment fragment = (HostListFragment) super.instantiateItem(container, position);
-        fragmentArray2[position] = fragment;
+        fragmentArray[position] = fragment;
         return fragment;
 
     }
@@ -57,6 +57,6 @@ class MainPagerAdapter extends FragmentPagerAdapter {
     }
 
     HostListFragment getFragment(int position) {
-        return fragmentArray2[position];
+        return fragmentArray[position];
     }
 }
