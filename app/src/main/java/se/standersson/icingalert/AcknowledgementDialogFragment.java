@@ -156,8 +156,8 @@ public class AcknowledgementDialogFragment extends DialogFragment implements Mai
                         }
 
                         // Show the update spinners on the main ExpandableListViews
-                        mainPagerAdapter.getFragment2(1).setRefreshSpinner(true);
-                        mainPagerAdapter.getFragment2(0).setRefreshSpinner(true);
+                        mainPagerAdapter.getFragment(1).setRefreshSpinner(true);
+                        mainPagerAdapter.getFragment(0).setRefreshSpinner(true);
 
                         // Update Data form the server
                         new MainDataFetch(activity).refresh(thisClass);
@@ -192,12 +192,12 @@ public class AcknowledgementDialogFragment extends DialogFragment implements Mai
     public void mainDataReceived(boolean success) {
 
         // Remove the update spinners from the main ExpandableListViews
-        mainPagerAdapter.getFragment2(0).setRefreshSpinner(false);
-        mainPagerAdapter.getFragment2(1).setRefreshSpinner(false);
+        mainPagerAdapter.getFragment(0).setRefreshSpinner(false);
+        mainPagerAdapter.getFragment(1).setRefreshSpinner(false);
 
         if (success) {
-            mainPagerAdapter.getFragment2(0).update(Tools.filterProblems(HostSingleton.getInstance().getHosts()));
-            mainPagerAdapter.getFragment2(1).update(Tools.fullHostList(HostSingleton.getInstance().getHosts()));
+            mainPagerAdapter.getFragment(0).update(Tools.filterProblems(HostSingleton.getInstance().getHosts()));
+            mainPagerAdapter.getFragment(1).update(Tools.fullHostList(HostSingleton.getInstance().getHosts()));
         }
     }
 }

@@ -62,8 +62,8 @@ public class HostListFragment extends Fragment implements MainDataReceived{
             @Override
             public void onRefresh() {
                 // Show the update spinners on the main ExpandableListViews
-                mainPagerAdapter.getFragment2(0).setRefreshSpinner(true);
-                mainPagerAdapter.getFragment2(1).setRefreshSpinner(true);
+                mainPagerAdapter.getFragment(0).setRefreshSpinner(true);
+                mainPagerAdapter.getFragment(1).setRefreshSpinner(true);
                 new MainDataFetch((MainActivity)getActivity()).refresh(thisClass);
             }
         });
@@ -96,12 +96,12 @@ public class HostListFragment extends Fragment implements MainDataReceived{
     @Override
     public void mainDataReceived(boolean success) {
         // Remove the update spinners from the main ExpandableListViews
-        mainPagerAdapter.getFragment2(0).setRefreshSpinner(false);
-        mainPagerAdapter.getFragment2(1).setRefreshSpinner(false);
+        mainPagerAdapter.getFragment(0).setRefreshSpinner(false);
+        mainPagerAdapter.getFragment(1).setRefreshSpinner(false);
 
         if (success) {
-            mainPagerAdapter.getFragment2(0).update(Tools.filterProblems(HostSingleton.getInstance().getHosts()));
-            mainPagerAdapter.getFragment2(1).update(Tools.fullHostList(HostSingleton.getInstance().getHosts()));
+            mainPagerAdapter.getFragment(0).update(Tools.filterProblems(HostSingleton.getInstance().getHosts()));
+            mainPagerAdapter.getFragment(1).update(Tools.fullHostList(HostSingleton.getInstance().getHosts()));
         }
     }
 

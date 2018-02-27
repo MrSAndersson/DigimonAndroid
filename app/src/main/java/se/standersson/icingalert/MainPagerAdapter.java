@@ -56,7 +56,7 @@ class MainPagerAdapter extends FragmentPagerAdapter {
         }
     }
 
-    HostListFragment getFragment2(int position) {
+    HostListFragment getFragment(int position) {
         return fragmentArray2[position];
     }
 }
