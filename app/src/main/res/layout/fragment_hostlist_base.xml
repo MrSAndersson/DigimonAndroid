@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="se.standersson.icingalert.HostListFragment2"
+    tools:context="se.standersson.icingalert.HostListFragment"
     android:background="@drawable/all_clear_background_transition">
 
     <android.support.v4.widget.SwipeRefreshLayout
@@ -23,7 +23,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             app:layoutManager="LinearLayoutManager"
-            tools:context="se.standersson.icingalert.HostListFragment2"
+            tools:context="se.standersson.icingalert.HostListFragment"
             tools:listitem="@layout/main_hostlist_cardview"/>
 
     </android.support.v4.widget.SwipeRefreshLayout>

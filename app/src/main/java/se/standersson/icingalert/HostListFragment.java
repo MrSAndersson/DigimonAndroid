@@ -13,9 +13,9 @@ import android.view.ViewGroup;
 import java.io.Serializable;
 import java.util.List;
 
-public class HostListFragment2 extends Fragment implements MainDataReceived{
+public class HostListFragment extends Fragment implements MainDataReceived{
 
-    private final HostListFragment2 thisClass = this;
+    private final HostListFragment thisClass = this;
     private List<HostAbstract> hosts;
     private SwipeRefreshLayout swipeContainer;
     private MainPagerAdapter mainPagerAdapter;
@@ -26,12 +26,12 @@ public class HostListFragment2 extends Fragment implements MainDataReceived{
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public HostListFragment2() {
+    public HostListFragment() {
     }
 
     @SuppressWarnings("unused")
-    public static HostListFragment2 newInstance(int position, List<HostAbstract> hosts) {
-        HostListFragment2 fragment = new HostListFragment2();
+    public static HostListFragment newInstance(int position, List<HostAbstract> hosts) {
+        HostListFragment fragment = new HostListFragment();
         Bundle args = new Bundle();
         args.putSerializable("hosts", (Serializable) hosts);
         fragment.setArguments(args);

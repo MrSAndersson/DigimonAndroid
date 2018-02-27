@@ -5,7 +5,7 @@ import android.view.ViewGroup;
 
 class MainPagerAdapter extends FragmentPagerAdapter {
     private static final int TAB_COUNT = 2;
-    private final HostListFragment2[] fragmentArray2 = new HostListFragment2[2];
+    private final HostListFragment[] fragmentArray2 = new HostListFragment[2];
 
     MainPagerAdapter(android.support.v4.app.FragmentManager fragmentManager) {
         super(fragmentManager);
@@ -22,11 +22,11 @@ class MainPagerAdapter extends FragmentPagerAdapter {
     public android.support.v4.app.Fragment getItem(int position) {
         switch (position) {
             case 0: // Trouble List
-                HostListFragment2 testTroubleFragment = HostListFragment2.newInstance(position, Tools.filterProblems(HostSingleton.getInstance().getHosts()));
+                HostListFragment testTroubleFragment = HostListFragment.newInstance(position, Tools.filterProblems(HostSingleton.getInstance().getHosts()));
                 fragmentArray2[0] = testTroubleFragment;
                 return testTroubleFragment;
             case 1:  // All-things-list
-                HostListFragment2 testAllFragment = HostListFragment2.newInstance(position, Tools.fullHostList(HostSingleton.getInstance().getHosts()));
+                HostListFragment testAllFragment = HostListFragment.newInstance(position, Tools.fullHostList(HostSingleton.getInstance().getHosts()));
                 fragmentArray2[1] = testAllFragment;
                 return testAllFragment;
             default:
@@ -37,7 +37,7 @@ class MainPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
 
-        HostListFragment2 fragment = (HostListFragment2) super.instantiateItem(container, position);
+        HostListFragment fragment = (HostListFragment) super.instantiateItem(container, position);
         fragmentArray2[position] = fragment;
         return fragment;
 
@@ -56,7 +56,7 @@ class MainPagerAdapter extends FragmentPagerAdapter {
         }
     }
 
-    HostListFragment2 getFragment2(int position) {
+    HostListFragment getFragment2(int position) {
         return fragmentArray2[position];
     }
 }
