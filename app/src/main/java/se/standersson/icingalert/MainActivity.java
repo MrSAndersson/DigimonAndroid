@@ -73,6 +73,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        boolean refreshOnStart = getIntent().getBooleanExtra("Refresh", false);
+
 
         // Show progress bar until we've actually gotten the data.
         findViewById(R.id.main_progressbar).setVisibility(View.VISIBLE);
@@ -91,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             FirebaseMessaging.getInstance().subscribeToTopic("services");
         }
 
-        if (savedInstanceState == null) {
+        if (savedInstanceState == null || refreshOnStart) {
             // No previous data, get new instead
             new MainDataFetch(this).refresh(this);
         } else if (savedInstanceState.containsKey("hosts")) {
