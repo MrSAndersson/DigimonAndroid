@@ -209,9 +209,12 @@ public class mainServiceRecyclerViewAdapter extends RecyclerView.Adapter<mainSer
                             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                             if (prefs.getString("acknowledgement_author", "").equals("")) {
                                 Toast.makeText(context, "No Author set. Set Acknowledgement Author in the Settings", Toast.LENGTH_SHORT).show();
-                            } else if (holder.service.getState() != 1) {
+                            } else if (holder.service.getState() == 0) {
                                 // If service is OK, don't show dialogue
                                 Toast.makeText(context, "Service is OK, no need to Acknowledge", Toast.LENGTH_SHORT).show();
+                            } else if (holder.service.isAcknowledged()) {
+                              // If service is acknowledged, don't show dialogue
+                                Toast.makeText(context, "Service is already Acknowledged", Toast.LENGTH_SHORT).show();
                             } else {
 
                                 AcknowledgementDialogFragment dialog = AcknowledgementDialogFragment.newInstance(host, holder.service);

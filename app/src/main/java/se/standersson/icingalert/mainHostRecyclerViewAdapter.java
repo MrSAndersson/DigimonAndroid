@@ -259,6 +259,9 @@ public class mainHostRecyclerViewAdapter extends RecyclerView.Adapter<mainHostRe
                             } else if (!holder.host.isDown()) {
                                 // If host is already up, don't show dialogue
                                 Toast.makeText(context, "Host is up, no need to Acknowledge", Toast.LENGTH_SHORT).show();
+                            } else if (holder.host.isAcknowledged()){
+                                // if host is already acknowledged, don't show dialogue
+                                Toast.makeText(context, "Host is already Acknowledged", Toast.LENGTH_SHORT).show();
                             } else {
 
                                 AcknowledgementDialogFragment dialog = AcknowledgementDialogFragment.newInstance(holder.host);
