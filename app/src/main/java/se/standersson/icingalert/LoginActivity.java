@@ -156,10 +156,7 @@ public class LoginActivity extends AppCompatActivity {
                     prefStorage.edit().putString("username", prefsString[1]).apply();
                     prefStorage.edit().putString("password", prefsString[2]).apply();
 
-                    boolean refresh = getIntent().getBooleanExtra("Refresh", false);
-
                     Intent intent = new Intent(getBaseContext(), MainActivity.class);
-                    intent.putExtra("Refresh", refresh);
                     startActivity(intent);
 
                     finish();
