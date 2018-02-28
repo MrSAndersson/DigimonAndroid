@@ -63,17 +63,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putSerializable("hosts", (Serializable) HostSingleton.getInstance().getHosts());
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        boolean refreshOnStart = getIntent().getBooleanExtra("Refresh", false);
 
 
         // Show progress bar until we've actually gotten the data.
@@ -93,26 +85,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             FirebaseMessaging.getInstance().subscribeToTopic("services");
         }
 
-        if (savedInstanceState == null || refreshOnStart) {
-            // No previous data, get new instead
-            new MainDataFetch(this).refresh(this);
-        } else if (savedInstanceState.containsKey("hosts")) {
-            // Data saved exists since before, use that and redraw UI with that
 
-            //noinspection unchecked
-            HostSingleton.getInstance().putHosts((List<Host>) savedInstanceState.getSerializable("hosts"));
+        // Get new data
+        new MainDataFetch(this).refresh(this);
 
-            ViewPager mainViewPager = findViewById(R.id.main_view_pager);
-            mainPagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
-            mainViewPager.setAdapter(mainPagerAdapter);
-
-            // Hide progress bar and show main lists
-            findViewById(R.id.main_progressbar).setVisibility(View.GONE);
-            findViewById(R.id.main_view_pager).setVisibility(View.VISIBLE);
-        } else {
-            Toast.makeText(getApplicationContext(), "Restoring state failed, please sign in again.", Toast.LENGTH_LONG).show();
-            logOut(false);
-        }
     }
 
     public MainPagerAdapter getMainPagerAdapter() {
