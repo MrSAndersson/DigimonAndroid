@@ -14,8 +14,6 @@ public class FirebaseCommunication extends FirebaseMessagingService {
         //Create the intent
         Intent resultIntent = new Intent(this, LoginActivity.class);
 
-        resultIntent.putExtra("Refresh", true);
-
         //Create a pending intent from the intent since it's not starting now
         PendingIntent resultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent, 0);
 

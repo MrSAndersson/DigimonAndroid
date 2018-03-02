@@ -159,7 +159,6 @@ public class LoginActivity extends AppCompatActivity {
                     boolean refresh = getIntent().getBooleanExtra("Refresh", false);
 
                     Intent intent = new Intent(getBaseContext(), MainActivity.class);
-                    intent.putExtra("Refresh", refresh);
                     startActivity(intent);
 
                     finish();

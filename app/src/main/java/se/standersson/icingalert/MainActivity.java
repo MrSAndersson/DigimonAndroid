@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             FirebaseMessaging.getInstance().subscribeToTopic("services");
         }
 
-        if (savedInstanceState == null || refreshOnStart) {
+        if (savedInstanceState == null) {
             // No previous data, get new instead
             new MainDataFetch(this).refresh(this);
         } else if (savedInstanceState.containsKey("hosts")) {
