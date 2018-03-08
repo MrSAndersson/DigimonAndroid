@@ -111,7 +111,7 @@ public class mainHostRecyclerViewAdapter extends RecyclerView.Adapter<mainHostRe
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         this.parentRecyclerView = recyclerView;
-        transition = android.support.transition.TransitionInflater.from(context).inflateTransition(R.transition.main_list_transition);
+        transition = android.support.transition.TransitionInflater.from(context).inflateTransition(R.transition.main_list_host_transition);
     }
 
     @Override
