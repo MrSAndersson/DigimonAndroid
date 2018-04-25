@@ -101,8 +101,8 @@ public class mainHostRecyclerViewAdapter extends RecyclerView.Adapter<mainHostRe
                     holder.host.setExpanded(true);
                 }
                 // Stop all currently running transitions and start a new one
-                android.support.transition.TransitionManager.endTransitions(parentRecyclerView);
-                android.support.transition.TransitionManager.beginDelayedTransition(parentRecyclerView, transition);
+                //android.support.transition.TransitionManager.endTransitions(parentRecyclerView);
+                //android.support.transition.TransitionManager.beginDelayedTransition(parentRecyclerView, transition);
             }
         });
     }
