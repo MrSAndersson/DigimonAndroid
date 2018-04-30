@@ -17,7 +17,6 @@ import android.widget.Toast;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.Serializable;
-import java.util.List;
 
 
 
@@ -69,12 +68,15 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        new MainDataFetch(this).refresh(this);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        boolean refreshOnStart = getIntent().getBooleanExtra("Refresh", false);
-
 
         // Show progress bar until we've actually gotten the data.
         findViewById(R.id.main_progressbar).setVisibility(View.VISIBLE);
@@ -93,26 +95,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             FirebaseMessaging.getInstance().subscribeToTopic("services");
         }
 
-        if (savedInstanceState == null) {
-            // No previous data, get new instead
-            new MainDataFetch(this).refresh(this);
-        } else if (savedInstanceState.containsKey("hosts")) {
-            // Data saved exists since before, use that and redraw UI with that
-
-            //noinspection unchecked
-            HostSingleton.getInstance().putHosts((List<Host>) savedInstanceState.getSerializable("hosts"));
-
-            ViewPager mainViewPager = findViewById(R.id.main_view_pager);
-            mainPagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
-            mainViewPager.setAdapter(mainPagerAdapter);
-
-            // Hide progress bar and show main lists
-            findViewById(R.id.main_progressbar).setVisibility(View.GONE);
-            findViewById(R.id.main_view_pager).setVisibility(View.VISIBLE);
-        } else {
-            Toast.makeText(getApplicationContext(), "Restoring state failed, please sign in again.", Toast.LENGTH_LONG).show();
-            logOut(false);
-        }
     }
 
     public MainPagerAdapter getMainPagerAdapter() {

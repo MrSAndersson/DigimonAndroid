@@ -74,10 +74,8 @@ public class HostListFragment extends Fragment implements MainDataReceived{
         if (isAllClear()) {
             recyclerView.setVisibility(View.GONE);
             view.findViewById(R.id.main_list_all_clear).setVisibility(View.VISIBLE);
-            if (!backgroundIsBlue) {
-                backgroundTransition.startTransition(180);
-                backgroundIsBlue = true;
-            }
+            backgroundTransition.startTransition(180);
+            backgroundIsBlue = true;
         } else {
             recyclerView.setVisibility(View.VISIBLE);
             view.findViewById(R.id.main_list_all_clear).setVisibility(View.GONE);
