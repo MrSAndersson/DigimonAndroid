@@ -17,12 +17,13 @@ import android.widget.Toast;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.Serializable;
-
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, MainDataReceived {
     private MainPagerAdapter mainPagerAdapter;
     private SearchView searchView = null;
+    private boolean freshFetch;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -95,6 +96,30 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             FirebaseMessaging.getInstance().subscribeToTopic("services");
         }
 
+        if (savedInstanceState == null) {
+            // No previous data, get new instead
+            freshFetch = true;
+        } else if (savedInstanceState.containsKey("hosts")) {
+            // Data saved exists since before, use that and redraw UI with that
+
+            //noinspection unchecked
+            HostSingleton.getInstance().putHosts((List<Host>) savedInstanceState.getSerializable("hosts"));
+
+            ViewPager mainViewPager = findViewById(R.id.main_view_pager);
+            mainPagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
+            mainViewPager.setAdapter(mainPagerAdapter);
+
+            // Hide progress bar and show main lists
+            findViewById(R.id.main_progressbar).setVisibility(View.GONE);
+            findViewById(R.id.main_view_pager).setVisibility(View.VISIBLE);
+
+            // Reuse the mainViewPager instead of creating a new one.
+            freshFetch = false;
+        } else {
+            Toast.makeText(getApplicationContext(), "Restoring state failed, please sign in again.", Toast.LENGTH_LONG).show();
+            logOut(false);
+        }
+
     }
 
     public MainPagerAdapter getMainPagerAdapter() {
@@ -126,16 +151,27 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public void mainDataReceived(boolean success) {
         if (success) {
-            ViewPager mainViewPager = findViewById(R.id.main_view_pager);
-            mainPagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
-            mainViewPager.setAdapter(mainPagerAdapter);
+            if (freshFetch) {
+                ViewPager mainViewPager = findViewById(R.id.main_view_pager);
+                mainPagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
+                mainViewPager.setAdapter(mainPagerAdapter);
 
-            // Hide progress bar and show main lists
-            findViewById(R.id.main_progressbar).setVisibility(View.GONE);
-            findViewById(R.id.main_view_pager).setVisibility(View.VISIBLE);
+                // Hide progress bar and show main lists
+                findViewById(R.id.main_progressbar).setVisibility(View.GONE);
+                findViewById(R.id.main_view_pager).setVisibility(View.VISIBLE);
+                freshFetch = false;
+            } else {
+
+                // This means we're reusing a saved mainViewPager. Make sure the RefreshSpinners are off and update content.
+                mainPagerAdapter.getFragment(0).setRefreshSpinner(false);
+                mainPagerAdapter.getFragment(1).setRefreshSpinner(false);
+                mainPagerAdapter.getFragment(0).update(Tools.filterProblems(HostSingleton.getInstance().getHosts()));
+                mainPagerAdapter.getFragment(1).update(Tools.fullHostList(HostSingleton.getInstance().getHosts()));
+            }
         } else {
             Toast.makeText(getApplicationContext(), "Failed to get Data", Toast.LENGTH_LONG).show();
             logOut(false);
         }
+
     }
 }
