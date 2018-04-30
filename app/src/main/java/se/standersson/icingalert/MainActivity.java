@@ -71,6 +71,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     protected void onResume() {
         super.onResume();
+        // If we're reusing a mainViewPager, display the Refresh Spinners
+        if (!freshFetch) {
+            mainPagerAdapter.getFragment(0).setRefreshSpinner(true);
+            mainPagerAdapter.getFragment(1).setRefreshSpinner(true);
+        }
         new MainDataFetch(this).refresh(this);
     }
 
