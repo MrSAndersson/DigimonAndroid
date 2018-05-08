@@ -20,7 +20,7 @@ public class HostListFragment extends Fragment implements MainDataReceived{
     private SwipeRefreshLayout swipeContainer;
     private MainPagerAdapter mainPagerAdapter;
     private View view;
-    private boolean backgroundIsBlue = false;
+    private boolean backgroundIsBlue;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -49,6 +49,7 @@ public class HostListFragment extends Fragment implements MainDataReceived{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        backgroundIsBlue = false;
         view = inflater.inflate(R.layout.fragment_hostlist_base, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.main_list);
 
@@ -114,6 +115,8 @@ public class HostListFragment extends Fragment implements MainDataReceived{
     }
 
     public void update(List<HostAbstract> hosts){
+
+        this.hosts = hosts;
 
         // Update RecyclerView with the latest data and tell it to update itself
         RecyclerView recyclerView = view.findViewById(R.id.main_list);
