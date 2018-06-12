@@ -71,7 +71,13 @@ final class Tools {
             serviceName = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getString("name");
             serviceDetails = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getJSONObject("last_check_result").getString("output");
             state = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getInt("state");
-            lastState = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getInt("last_state");
+
+            try {
+                lastState = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getInt("last_state");
+            } catch (NullPointerException e) {
+                lastState = 3;
+            }
+
             lastStateChange = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getLong("last_state_change");
             serviceIsNotifying = data.getJSONArray("services").getJSONObject(x).getJSONObject("attrs").getBoolean("enable_notifications");
             serviceComment = "";
